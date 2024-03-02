@@ -12,7 +12,7 @@ In this chapter we will see how to use the opentelemetry java agent to perform a
 
 1. Build the application
 2. Download the java agent
-3. Add -javaagent:path/to/opentelemetry-javaagent.jar and other config to your JVM startup arguments and launch your app
+3. Add `-javaagent:path/to/opentelemetry-javaagent.jar` and other config to your JVM startup arguments and launch your app
 
 
 ## Environment set-up

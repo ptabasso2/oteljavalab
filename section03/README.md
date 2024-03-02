@@ -1,4 +1,4 @@
-# Manual tracing and example of span creation and management using the java Otel sdk
+# Manual tracing: Span creation and management using the java Otel SDK
 
 
 
