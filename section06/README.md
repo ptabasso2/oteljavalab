@@ -219,7 +219,7 @@ import io.opentelemetry.semconv.ResourceAttributes;
 ```
 
 
-### Importance of Setting Propagators
+### Importance of setting Propagators
 
 
 The line `setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))` in the OpenTelemetry SDK initialization code above is crucial for ensuring that the tracing context can be propagated across service boundaries in a distributed system. In the previous sections, we omitted the propagators configuration as weren't in need of dealing with context propagation. 
@@ -415,6 +415,194 @@ Let's break down what's happening in this method:
 
 7. **End Span**:
    - Finally, outside the try block but within the finally block, the parent span is ended with `parentSpan.end()`. This marks the completion of the "simulateTemperature" operation in the trace.
+
+
+
+### Adding the SDK to the `temperature calculator` project
+
+The first steps of the instrumentation will be similar to what we have done so far with the `temperature simulator` service:
+
+1. Updating the `build.gradle.sdk` file. We will simply name the artifact differently 
+
+```java
+tasks {
+	bootJar {
+		archiveFileName.set("springtempcalc-0.0.1-SNAPSHOT.jar")
+	}
+}
+```
+
+
+2. Initializing the OpenTelemetry SDK with the propagator as we did above
+3. Modifying the `CalculatorController` class by injecting the OpenTelemetry object and acquiring a Tracer instance
+4. Modifying the  `CalculatorController` class to use a TextMapGetter 
+
+```java
+
+    private static final TextMapGetter<HttpServletRequest> getter = new TextMapGetter<>() {
+        @Override
+        public Iterable<String> keys(HttpServletRequest carrier) {
+            return (Iterable<String>) carrier.getHeaderNames();
+        }
+
+        @Override
+        public String get(HttpServletRequest carrier, String key) {
+            return carrier.getHeader(key);
+        }
+    };
+```
+
+
+This implementation is crucial for extracting trace context from incoming HTTP requests within the OpenTelemetry framework. Let's break down its components and understand its significance:
+
+#### Purpose of `TextMapGetter<HttpServletRequest>`
+
+OpenTelemetry's context propagation relies on the `TextMapGetter` and `TextMapSetter` interfaces to abstract away the details of how context is injected into and extracted from carrier objects. In this case, the carrier object is an `HttpServletRequest`, which represents an incoming HTTP request in a web application.
+
+- **keys(HttpServletRequest carrier)**: This method is designed to return all the keys (header names, in this context) from the `HttpServletRequest`. These keys are used by the OpenTelemetry SDK to iterate over all headers and extract those relevant for tracing (like `traceparent` for W3C Trace Context). 
+
+- **get(HttpServletRequest carrier, String key)**: Given a key (header name), this method retrieves the corresponding header value from the `HttpServletRequest`. This is used by the OpenTelemetry SDK to fetch specific headers that contain trace context information.
+
+#### Usage
+
+This `getter` object is used to extract trace context from incoming HTTP requests. When an HTTP request arrives at your service, the OpenTelemetry SDK utilizes this `getter` to read the trace context encoded in the request headers. This allows your service to continue the trace that was started by the caller, maintaining a cohesive trace across service boundaries.
+
+#### Example of Context Extraction
+
+When handling an incoming request, you would use this `getter` along with the global propagators to extract the trace context, like so:
+
+```java
+Context extractedContext = GlobalOpenTelemetry.getPropagators()
+    .getTextMapPropagator()
+    .extract(Context.current(), request, getter);
+```
+
+In this line, `extract` uses `getter` to scan the `HttpServletRequest`'s headers, looking for headers that represent the trace context (according to the configured propagation format, such as W3C Trace Context). The extracted context can then be used to create a new span as a child of the span from which the context was propagated, ensuring continuity in the distributed trace.
+
+
+This implementation of `TextMapGetter<HttpServletRequest>` is an essential part of integrating OpenTelemetry's tracing capabilities into web applications where HTTP requests are the carriers of trace context. It abstracts the extraction of tracing information from HTTP headers, enabling seamless context propagation across microservices or distributed components within an application.
+
+
+5. In the `CalculatorController` class, we change the implementation of the `measure` 
+
+```java
+@GetMapping("/measureTemperature")
+    public int measure(HttpServletRequest request) {
+        // Extract the context
+        Context context = GlobalOpenTelemetry.getPropagators().getTextMapPropagator()
+                .extract(Context.current(), request, getter);
+
+        // Start a new span as a child of the extracted context
+        Span span = tracer.spanBuilder("measure")
+                .setParent(context)
+                .startSpan();
+
+
+        try (Scope scope = span.makeCurrent()) {
+            // Your business logic here
+            return thermometer.measureOnce();
+        } finally {
+            span.end(); // Make sure to end the span
+        }
+    }
+```
+
+
+
+The `measure` method annotated with `@GetMapping("/measureTemperature")` is a REST controller method designed to handle HTTP GET requests to the `/measureTemperature` endpoint. This method performs temperature measurement by invoking a downstream service or logic encapsulated within a `Thermometer` class. The method also integrates OpenTelemetry tracing to monitor and trace the execution of this temperature measurement operation. Here's a detailed breakdown of what happens inside this method:
+
+
+1. **Context Extraction**:
+   - `GlobalOpenTelemetry.getPropagators().getTextMapPropagator().extract(Context.current(), request, getter);`
+   - This line extracts the tracing context from the incoming HTTP request. It uses a global propagator configured for your application and a custom `TextMapGetter` named `getter` that knows how to read headers from an `HttpServletRequest`.
+   - The extracted context represents the parent tracing information, which may have been propagated from another service that called this endpoint.
+
+
+2. **Span Creation**:
+   - `tracer.spanBuilder("measure").setParent(context).startSpan();`
+   - A new span named "measure" is created and configured to be a child of the extracted context. This means the operation tracked by this span (measuring temperature) is considered part of the larger trace that includes the caller's operations.
+   - Starting the span signals the beginning of the temperature measurement operation from a tracing perspective.
+
+
+3. **Business Logic Execution**:
+   - The business logic, in this case, is encapsulated by the `thermometer.measureOnce()` method call. This method is expected to perform the actual temperature measurement.
+   - Before executing the business logic, the method sets the newly created span as the current active span with `try (Scope scope = span.makeCurrent())`. This allows any further spans created within this scope to be automatically parented to this span, maintaining a proper hierarchy.
+   - The result of `thermometer.measureOnce()` is directly returned to the caller of this endpoint.
+
+
+4. **Span Closure**:
+   - Finally, the span is ended with `span.end()` in the `finally` block. This marks the completion of the "measure" operation in the trace, regardless of the outcome (success or exception) of the business logic.
+   - Ending the span ensures that it gets reported to your tracing backend, where it can be visualized and analyzed along with other spans in the trace.
+
+
+## End
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
