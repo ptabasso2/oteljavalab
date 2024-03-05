@@ -1,5 +1,5 @@
 
-# OpenTelemetry java lab - the definitive working example showing various techniques to trace a Java application using Otel
+# OpenTelemetry java lab - Various techniques to trace a Java application
 
 
 ## Introduction
