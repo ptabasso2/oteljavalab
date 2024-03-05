@@ -11,16 +11,15 @@ The structure is as follows:
 * section01: Overview of the java application that will be used troughout this tutorial (Spring Boot application that exposes a single endpoint)
 * section02: Automatic instrumentation using of the Otel java agent
 * section03: Manual tracing: Span creation and management using the Otel SDK
-* section04: Practical example of manual tracing where spans are generated using the Otel java sdk (ex of creating a simple span, then multiple spans with parent/childhood relationships)
-* section05: Manual tracing and how to use attributes to change the span type, service names etc...
-* section06: Manual tracing to use Baggage item
-* section07: Manual tracing covering inter-process communication using the tracer.inject()/extract() methods for context propagation
-* section08: Manual tracing using the Otel API and the Otel java agent (use of the tracer loaded by the Otel java agent)
-* section09: Manual tracing using the Otel API and the DD java agent (use of the tracer loaded by the DD java agent)
-* section10: Sending other Otel telemetry signals (logs and metrics)
-* section11: Manual tracing using annotations
-* section12: Using peer.service
-* section13: Configuring the AutoConfigureSDK introducing the env variables and system properties.
+* section04: Manual tracing and how to use attributes to change the span type, service names etc...
+* section05: Manual tracing to use Baggage item
+* section06: Manual tracing covering inter-process communication using the tracer.inject()/extract() methods for context propagation
+* section07: Manual tracing using the Otel API and the Otel java agent (use of the tracer loaded by the Otel java agent)
+* section08: Manual tracing using the Otel API and the DD java agent (use of the tracer loaded by the DD java agent)
+* section09: Sending other Otel telemetry signals (logs and metrics)
+* section10: Manual tracing using annotations
+* section11: Using peer.service
+* section12: Configuring the AutoConfigureSDK introducing the env variables and system properties.
 
 Misc
 * sectionxx: Using Jaeger alongside DD
@@ -35,13 +34,6 @@ In each section, we'll describe the required steps to take in order to reach the
 The activities in this lab follow a logical order so that we can get to the more advanced concepts smoothly.
 
 The content of each topic can be found in the corresponding directory `section0X`. Each directory will contain two sub directories (named `activity` and `solution`). The `activity` directory will contain the initial state of the project and the provided instructions will guide you through the details that need to be covered. If you don't wish to follow them or simply need to view the code examples corresponding to the final state of the activity you will find them in the `solution` directory
-
-
-## Goal of this activity (`main` branch)
-
-This exercise is only meant to familiarize yourself with the structure of the project (directory structure, file names) but also the steps to follow to build, run and test the application.
-There won't be much change in the code. Therefore, no solution branch created.
-
 
 
 ## Pre-requisites

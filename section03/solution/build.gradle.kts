@@ -36,3 +36,10 @@ dependencies {
 tasks.named("jar") {
 	enabled = false
 }
+
+
+tasks {
+	bootJar {
+		archiveFileName.set("springtotel-0.0.1-SNAPSHOT.jar")
+	}
+}

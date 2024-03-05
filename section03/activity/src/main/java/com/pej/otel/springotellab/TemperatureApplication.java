@@ -1,8 +1,10 @@
 package com.pej.otel.springotellab;
 
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 
 @SpringBootApplication
 public class TemperatureApplication {
@@ -12,4 +14,5 @@ public class TemperatureApplication {
         app.setBannerMode(Banner.Mode.OFF);
         app.run(args);
     }
+
 }

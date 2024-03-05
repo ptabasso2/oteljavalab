@@ -56,7 +56,7 @@ Simply put we will first declare a bean in the `Application` class to instantiat
 Let's first add the following block in the `TemperatureApplication` class *after* the `main()` method:
 
 ```java
-@Bean
+    @Bean
     public OpenTelemetry openTelemetry(){
 
         Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springotel").build();
@@ -64,7 +64,7 @@ Let's first add the following block in the `TemperatureApplication` class *after
         OtlpGrpcSpanExporter otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder().setTimeout(2, TimeUnit.SECONDS).build();
 
         SdkTracerProvider setTracerProvider = SdkTracerProvider.builder()
-                .addSpanProcessor(BatchSpanProcessor.builder(otlpHttpSpanExporter).setScheduleDelay(100, TimeUnit.MILLISECONDS).build())
+                .addSpanProcessor(BatchSpanProcessor.builder(otlpGrpcSpanExporter).setScheduleDelay(100, TimeUnit.MILLISECONDS).build())
                 .setResource(resource)
                 .build();
 
@@ -129,7 +129,8 @@ Example with the `index()` method:
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
         }
 
-        List<Integer> result = new Thermometer(20, 35).simulateTemperature(measurements.get());
+        thermometer.setTemp(20, 35);
+        List<Integer> result = thermometer.simulateTemperature(measurements.get());
 
         if (location.isPresent()) {
             logger.info("Temperature simulation for {}: {}", location.get(), result);
@@ -149,7 +150,8 @@ Example with the `index()` method:
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
             }
 
-            List<Integer> result = new Thermometer(20, 35).simulateTemperature(measurements.get());
+            thermometer.setTemp(20, 35);
+            List<Integer> result = thermometer.simulateTemperature(measurements.get());
 
             if (location.isPresent()) {
                 logger.info("Temperature simulation for {}: {}", location.get(), result);
@@ -203,11 +205,6 @@ Our plan is now to custom instrument the methods that are inside the `Thermomete
 #### Before: Without Instrumentation
 
 ```java
-public Thermometer(int minTemp, int maxTemp) {
-        this.minTemp = minTemp;
-        this.maxTemp = maxTemp;
-}
-
 
 public List<Integer> simulateTemperature(int measurements) {
     List<Integer> temperatures = new ArrayList<Integer>();
@@ -221,14 +218,21 @@ public List<Integer> simulateTemperature(int measurements) {
 private int measureOnce() {
     return ThreadLocalRandom.current().nextInt(this.minTemp, this.maxTemp + 1);
 }
+
+
+public void setTemp(int minTemp, int maxTemp){
+        this.minTemp = minTemp;
+        this.maxTemp = maxTemp;
+}
+
 ```
 
 
 The initial version of the `Thermometer` class is straightforward: it simulates temperature measurements without any observability into its operations beyond what could be logged or inferred externally. This simplicity is fine for basic operations but lacks the depth needed for troubleshooting, performance monitoring, and understanding the behavior in complex or distributed systems.
 
-- The constructor initializes the object with minimum and maximum temperature bounds.
 - The `simulateTemperature` method generates a list of random temperatures, simulating measurements.
 - The `measureOnce` method generates a single temperature measurement.
+- The `setTemp` method that acts as a setter method to set the temperature bounds
 
 This design is functional but opaque; without external logs, there's no insight into how many measurements were taken, how long they took, or whether any issues occurred during the process.
 
@@ -237,14 +241,12 @@ This design is functional but opaque; without external logs, there's no insight 
 #### After: With Manual Instrumentation
 
 ```java
-private Tracer tracer;
+private final Tracer tracer;
 
-public Thermometer(int minTemp, int maxTemp, Tracer tracer) {
-        this.minTemp = minTemp;
-        this.maxTemp = maxTemp;
-        this.tracer = tracer;
+@Autowired
+Thermometer(OpenTelemetry openTelemetry) {
+   tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
 }
-
 
 public List<Integer> simulateTemperature(int measurements) {
     List<Integer> temperatures = new ArrayList<Integer>();
@@ -318,11 +320,13 @@ Generate a request from another terminal using curl (or from a browser or postma
 
 
 ## Check the results in the Datadog UI (APM traces)
-https://app.datadoghq.com/apm/traces
 
 <p align="left">
-  <img src="img/springotel1.png" width="850" />
+  <img src="img/springotel3.png" width="850" />
 </p>
+
+
+To view the generated traces: https://app.datadoghq.com/apm/traces
 
 ## Final remark
 

@@ -42,7 +42,7 @@ exporters:
     api:
       # You can use the "${ENV_VARIABLE}" syntax to pass values from environment variables.
       # This is recommended for sensitive configuration fields like API keys.
-      key: 7684xxxxxxxxxxxxxxxxxxc2
+      key: 6842ecd178f327162064d66e77edd3c2
 
 # `service` defines the Collector pipelines, observability settings and extensions.
 service:

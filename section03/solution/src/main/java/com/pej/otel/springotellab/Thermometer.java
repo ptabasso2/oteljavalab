@@ -1,24 +1,28 @@
 package com.pej.otel.springotellab;
 
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Component
 public class Thermometer {
 
     private int minTemp;
     private int maxTemp;
 
-    private Tracer tracer;
+    private final Tracer tracer; //= GlobalOpenTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
 
-    public Thermometer(int minTemp, int maxTemp, Tracer tracer) {
-        this.minTemp = minTemp;
-        this.maxTemp = maxTemp;
-        this.tracer = tracer;
+    @Autowired
+    Thermometer(OpenTelemetry openTelemetry) {
+        tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
     }
 
     public List<Integer> simulateTemperature(int measurements) {
@@ -41,5 +45,10 @@ public class Thermometer {
         } finally {
             childSpan.end();
         }
+    }
+
+    public void setTemp(int minTemp, int maxTemp){
+        this.minTemp = minTemp;
+        this.maxTemp = maxTemp;
     }
 }

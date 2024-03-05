@@ -19,15 +19,15 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 public class TemperatureController {
     private static final Logger logger = LoggerFactory.getLogger(TemperatureController.class);
-
     private final Tracer tracer;
-
 
     @Autowired
     TemperatureController(OpenTelemetry openTelemetry) {
-        tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
+        this.tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
     }
 
+    @Autowired
+    Thermometer thermometer;
 
     @GetMapping("/simulateTemperature")
     public List<Integer> index(@RequestParam("location") Optional<String> location,
@@ -40,7 +40,8 @@ public class TemperatureController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
             }
 
-            List<Integer> result = new Thermometer(20, 35, tracer).simulateTemperature(measurements.get());
+            thermometer.setTemp(20, 35);
+            List<Integer> result = thermometer.simulateTemperature(measurements.get());
 
             if (location.isPresent()) {
                 logger.info("Temperature simulation for {}: {}", location.get(), result);
