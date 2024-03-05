@@ -13,7 +13,7 @@ The purpose of this tutorial is to cover various activities around tracing using
 The structure is as follows:
 
 
-* **Section01**: Overview of the java application that will be used troughout this tutorial (Spring Boot application that exposes a single endpoint)
+* **Section01**: Overview of the java application that will be used in this lab
 * **Section02**: Automatic instrumentation using of the Otel java agent
 * **Section03**: Manual tracing: Span creation and management using the Otel SDK
 * **Section04**: Manual tracing: How to set span attributes.
@@ -25,7 +25,11 @@ The structure is as follows:
 In each section, we'll describe the required steps to take in order to reach the goal.
 The activities in this lab follow a logical order so that we can get to the more advanced concepts smoothly.
 
-The content of each topic can be found in the corresponding directory `section0X`. Each directory will contain two sub directories (named `activity` and `solution`). The `activity` directory will contain the initial state of the project and the provided instructions will guide you through the details that need to be covered. If you don't wish to follow them or simply need to view the code examples corresponding to the final state of the activity you will find them in the `solution` directory
+The content of each topic can be found in the corresponding directory `section0X`. 
+
+Each directory will contain two sub directories (named `activity` and `solution`). 
+
+The `activity` directory will contain the initial state of the project and the provided instructions will guide you through the details that need to be covered. If you don't wish to follow them or simply need to view the code examples corresponding to the final state of the activity you will find them in the `solution` directory
 
 
 ## Pre-requisites
