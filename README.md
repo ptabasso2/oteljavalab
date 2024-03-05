@@ -12,7 +12,7 @@
 The purpose of this tutorial is to cover various activities around tracing using OpenTelemetry. Each activity is covered in a dedicated section.
 The structure is as follows:
 
-
+* **Section00**: Setting up the Otel collector contrib and the Datadog exporter
 * **Section01**: Overview of the java application that will be used in this lab
 * **Section02**: Automatic instrumentation using the Otel java agent
 * **Section03**: Manual tracing: Span creation and management using the Otel SDK
