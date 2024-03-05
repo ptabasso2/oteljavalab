@@ -47,6 +47,5 @@ public class TemperatureApplication {
 
         return OpenTelemetrySdk.builder().setTracerProvider(setTracerProvider).setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance())).buildAndRegisterGlobal();
 
-
     }
 }

@@ -41,7 +41,7 @@ The transformation involves splitting the original monolithic application into t
 
 
 <p align="left">
-  <img src="img/springotel61.png" width="720" />
+  <img src="img/springotel61.png" width="850" />
 </p>
 
 
@@ -60,68 +60,96 @@ The transformation involves splitting the original monolithic application into t
         - It defines endpoints (e.g., `/measureTemperature`) that accept requests for temperature calculations, processes them, and returns the results.
         - OpenTelemetry tracing is integrated to extract the tracing context from incoming requests, ensuring that the distributed tracing spans across both the simulator and calculator services.
 
-### Integration and Observability
+### Goal of this activity
 
-- **Context Propagation**: To maintain observability across microservices, the OpenTelemetry framework is used to propagate tracing context between the Temperature Simulator and the Temperature Calculator. This ensures that calls between services are linked within the same trace.
-- **Service Communication**: The Temperature Simulator service uses HTTP clients (`RestTemplate` or `WebClient`) to communicate with the Temperature Calculator, passing necessary information for calculations.
-
-### Benefits of This Approach
-
-- **Scalability**: Separating concerns into distinct services allows each microservice to scale independently based on demand.
-- **Maintainability and Flexibility**: Changes can be made to the calculation logic or simulation algorithm independently, reducing the risk of impacting the other functionality.
-- **Focused Responsibility**: Each service has a clear, focused responsibility, enhancing the cohesion of the service.
-
-### Conclusion
-
-This transformation from a monolithic application to a microservices architecture enables better scalability, flexibility, and maintainability of the services. By leveraging Spring Boot for each microservice and integrating OpenTelemetry for distributed tracing, the solution provides a robust framework for simulating and calculating temperatures while ensuring comprehensive observability across service boundaries.
+- **Context Propagation**: To maintain observability across distributed microservices, the OpenTelemetry framework is used to propagate tracing context between the Temperature Simulator and the Temperature Calculator. This ensures that calls between services are linked within the same trace.
+- **Service Communication**: The Temperature Simulator service uses HTTP clients (`RestTemplate`) to communicate with the Temperature Calculator, passing necessary information for calculations.
 
 
 
+## Directory structure of the project
+
+<pre style="font-size: 12px">
+
+[root@pt-instance-1:~/oteljavalab/section06/activity]$ tree
+.
+├── build.gradle.kts
+├── gradle
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradlew
+├── settings.gradle.kts
+├── startServices.sh
+├── stopServices.sh
+├── temperature-calculator
+│   ├── build.gradle.kts
+│   ├── gradle
+│   │   └── wrapper
+│   │       ├── gradle-wrapper.jar
+│   │       └── gradle-wrapper.properties
+│   ├── gradlew
+│   ├── settings.gradle.kts
+│   └── src
+│       └── main
+│           ├── java
+│           │   └── com
+│           │       └── pej
+│           │           └── otel
+│           │               └── springotellab
+│           │                   ├── CalculatorApplication.java
+│           │                   ├── CalculatorController.java
+│           │                   └── Thermometer.java
+│           └── resources
+│               └── application.properties
+└── temperature-simulator
+    ├── build.gradle.kts
+    ├── gradle
+    │   └── wrapper
+    │       ├── gradle-wrapper.jar
+    │       └── gradle-wrapper.properties
+    ├── gradlew
+    ├── settings.gradle.kts
+    └── src
+        └── main
+            ├── java
+            │   └── com
+            │       └── pej
+            │           └── otel
+            │               └── springotellab
+            │                   ├── TemperatureApplication.java
+            │                   ├── TemperatureController.java
+            │                   └── Thermometer.java
+            └── resources
+                └── application.properties
+
+72 directories, 43 files
+
+</pre>
 
 
+## Instrumenting our services
 
 
+### Adding the SDK to the `temperature simulator` project
 
 
+In order to makes sure that our dependancies are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
 
 
+```java
+configurations.all {
+	resolutionStrategy.eachDependency {
+		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
+			useVersion("1.35.0")
+
+		}
+	}
+}
+```
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-* Using the sdk and adding the necessary dependencies to the project 
-* Gaining access to a `Tracer` instance
-* Create a simple trace
-* Add metadata and tag to our trace
-
-We will use the following basic features of the OpenTelemetry API:
-
-
-* a `Tracer` instance is used to create a span using a span builder via the `spanBuilder()` method.
-* Each `span` is given a **name**
-* The span gets started via the `startSpan()` method.
-* each `span` must be finished by calling its `end()` method and this happens inside a scope.
-* For a basic setup, you might choose the OTLP protocol to send the various observability signals (Traces, logs, metrics). It is a versatile prootocol and supported by many backends.
-
-
-## Adding the sdk to the project
-
-In order to do so, we will simply add the following dependencies to the dependency bloc of the `build.gradle.kts` file
+In order to do so, we will simply add the following dependencies to the dependency bloc of the `build.gradle.kts` file for both services
 
 This should look like
 
@@ -137,24 +165,31 @@ dependencies {
 }
 ```
 
-## Instantiate a tracer
 
-In order to get an instance of our tracer, we leverage Spring's "dependency injection" capability through which the Spring container “injects” objects into other objects or “dependencies”. This tracer object is accessed through an object of type `OpenTelemetry` that needs to be created first.
+Lastly we will give a different name for the artifact that will be produced for each of the two services by adding the following entries
 
-For this we will declare a Bean inside the Application class `TemperatureApplication`. This mainly consists of annotating the following method using the `@Bean` annotation. This bean can later be accessed from the other classes by relying on Spring's dependeny injection mechanisms (this happens by using the `@Autowired` annotation). This annotation allows Spring to resolve and inject collaborating beans into other beans.
-
-We will actually refer to it later in the `TemperatureController` class. 
-
-Simply put we will first declare a bean in the `Application` class to instantiate an OpenTelemetry object
-
-
-Let's first add the following block in the `TemperatureApplication` class *after* the `main()` method:
+In the `temperature simulator` build.gradle.kts file:
 
 ```java
-    @Bean
+tasks {
+	bootJar {
+		archiveFileName.set("springtempsimu-0.0.1-SNAPSHOT.jar")
+	}
+}
+```
+
+
+### Initializing the SDK in the `temperature simulator` project
+
+
+In the TemperatureApplication.java class adding the SDK initialization block
+
+```java
+
+@Bean
     public OpenTelemetry openTelemetry(){
 
-        Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springotel").build();
+        Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springsimul").build();
 
         OtlpGrpcSpanExporter otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder().setTimeout(2, TimeUnit.SECONDS).build();
 
@@ -163,40 +198,71 @@ Let's first add the following block in the `TemperatureApplication` class *after
                 .setResource(resource)
                 .build();
 
-        return OpenTelemetrySdk.builder().setTracerProvider(setTracerProvider).buildAndRegisterGlobal();
+        return OpenTelemetrySdk.builder().setTracerProvider(setTracerProvider).setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance())).buildAndRegisterGlobal();
 
     }
+
 ```
 
-**Note**: At this point, you will also need to consider importing the various classes manually that are needed if you use a Text editor or they will be inferred if you use an IDE (IntelliJ or VSCode).
-If you have to do it manually, add the following to the import section of your `TemperatureApplication` class
+Also making sure that these packages are present or manually adding them in the import section, if not imported automatically by the IDE.
 
 ```java
-
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
+import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
-import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
-
+import io.opentelemetry.semconv.ResourceAttributes;
 ```
+
+
+### Importance of Setting Propagators
+
+
+The line `setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))` in the OpenTelemetry SDK initialization code above is crucial for ensuring that the tracing context can be propagated across service boundaries in a distributed system. In the previous sections, we omitted the propagators configuration as weren't in need of dealing with context propagation. 
+
+This setting configures the OpenTelemetry SDK to use the W3C Trace Context propagation format, which is a standard for transmitting trace context between services.
+
+ 
+1. **Context Propagation**: The primary role of setting propagators in the OpenTelemetry SDK is to enable context propagation. Context propagation is the mechanism that allows trace information to be carried across process, network, and security boundaries. It ensures that traces are continuous across services and that spans from different services can be linked together into a single trace.
+
+2. **Interoperability**: Using `W3CTraceContextPropagator.getInstance()` specifies that the SDK should use the W3C Trace Context standard for propagation. This standard is widely adopted and supported across many tracing systems and languages. By adhering to this standard, you ensure interoperability between different systems and components within your distributed architecture, even if they use different tracing tools or technologies.
+
+3. **Tracing Headers**: The W3C Trace Context standard defines specific HTTP headers (`traceparent` and optionally `tracestate`) that carry the trace context information. When `W3CTraceContextPropagator` is used, the OpenTelemetry SDK automatically handles these headers to extract and inject trace context in HTTP requests and responses.
+
+
+### Consequences of Not Setting Propagators
+
+If you do not specify `setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))`, the OpenTelemetry SDK will not have a default propagator set for handling the context propagation. This means:
+
+- **Failed Context Injection/Extraction**: When attempting to use `GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(...)` or `.extract(...)`, these operations will not perform as expected because there is no propagator configured to handle the context propagation. This results in traces not being linked across service calls, leading to fragmented and incomplete traces.
+
+- **Null or No-Op Behavior**: Without a configured propagator, calls to inject or extract the tracing context will effectively do nothing, leading to missing trace context in inter-service communications. This is why a "null object" behavior in the `Thermometer` class might be observed when attempting to use context propagation functions.
+
+
+Configuring the propagators with `W3CTraceContextPropagator` is essential for distributed tracing to work correctly in applications that use OpenTelemetry for instrumentation. It enables trace context to be passed seamlessly across HTTP requests/responses, ensuring that distributed traces are complete and coherent, providing full visibility into the end-to-end request flow across microservices or distributed components.
+
+
+### Instantiate a tracer
+
 
 Now in `TemperatureController` we will need to get a hold on the `OpenTelemetry` object so that we can create a tracer instance. For this we need to add the following lines immediately after the Logger instance declaration:
 
 ```java
 
-    private final Tracer tracer; // (1)
+    private final Tracer tracer;
 
 
-    @Autowired   // (2)
+    @Autowired
     TemperatureController(OpenTelemetry openTelemetry) {
        tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
     }
 ```
 
-(1) declaring the tracer variable and (2) using constructor injection to initialize the tracer. The OpenTelemetry object provides a getTracer() method that allows this. 
+Declaring the tracer variable and using constructor injection to initialize the tracer. The OpenTelemetry object provides a getTracer() method that allows this. 
 
 
 The corresponding packages to import are:
@@ -207,7 +273,7 @@ import io.opentelemetry.api.trace.Tracer;
 ```
 
 
-## Creating a span
+### Creating a span in the Controller class
 
 It's time now to build and start spans in the `TemperatureController` class. And we can replicate the same steps in anay other classes that contains methods we need to instrument.
 
@@ -275,113 +341,87 @@ import io.opentelemetry.context.Scope;
 ```
 
 
-### Observations
 
-#### Before: Without Instrumentation
-- **Functionality**: This code block performs a temperature simulation operation based on the number of measurements requested. If the `measurements` parameter is missing, it throws an exception. It logs the result of the simulation, which varies depending on whether the `location` is specified.
-- **Observability**: The observability in this snippet is limited to logging. It logs the outcome of the temperature simulation but doesn't provide deeper insights into the operation's execution, such as performance metrics, errors, or the operation's context in a larger transaction.
-
-#### After: With Manual Instrumentation
-- **Instrumentation Introduction**: This snippet introduces manual instrumentation by wrapping the temperature simulation logic within a span. A span represents a single unit of work within a larger trace, allowing for detailed monitoring and analysis of the operation.
-- **Span Creation**: At the beginning of the operation, a new span named `temperatureSimulation` is started. This explicitly marks the start of an operation that you want to monitor.
-- **Scope Management**: The operation is enclosed within a try-with-resources statement that ensures the span's scope is correctly managed. The `scope` ensures that the `span` is considered the current active span within its block, which is crucial for correct tracing in asynchronous or multi-threaded environments.
-- **Error Handling**: The catch block captures any thrown exceptions, allowing the span to record these exceptions. This is valuable for debugging and monitoring, as it directly associates errors with the operation that caused them.
-- **Span Closure**: Finally, the span is ended in the finally block, marking the completion of the operation. Ending a span is crucial for accurate measurement of operation duration and for ensuring resources are correctly freed.
-- **Enhanced Observability**: With the span in place, the operation now contributes to a trace, providing insights into performance, errors, and the operation's relationship to other work units. This enhanced observability is invaluable for troubleshooting, performance tuning, and understanding system behavior.
-
-#### Summary of Differences
-The key difference lies in the enhanced observability provided by manual instrumentation. While the first snippet relies solely on logging for observability, the second snippet uses OpenTelemetry spans to offer detailed insights into the operation's execution, including performance metrics and error tracking. This manual instrumentation allows developers and operators to better understand, monitor, and debug their applications, especially in complex, distributed systems.
+### Context propagation
 
 
-## Creating additonal spans (child span)
+The `temperature simulator` service issues requests to the `temperature calculator` using RestTemplate, we will have to propagate the context by passing it through the call. This can be done as follows in the `Thermometer` class.
 
-Our plan is now to custom instrument the methods that are inside the `Thermometer` class (`simulateTemperature()` and `measureOnce()`). Here is how the change might look like:
-
-#### Before: Without Instrumentation
+We also need to gain access to the Tracer as above by adding these instructions in the Thermometer class
 
 ```java
 
-public List<Integer> simulateTemperature(int measurements) {
-    List<Integer> temperatures = new ArrayList<Integer>();
-    for (int i = 0; i < measurements; i++) {
-        temperatures.add(this.measureOnce());
+    private final Tracer tracer;
+
+
+    @Autowired
+    TemperatureController(OpenTelemetry openTelemetry) {
+       tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
     }
-    return temperatures;
-}
-
-
-private int measureOnce() {
-    return ThreadLocalRandom.current().nextInt(this.minTemp, this.maxTemp + 1);
-}
-
-
-public void setTemp(int minTemp, int maxTemp){
-        this.minTemp = minTemp;
-        this.maxTemp = maxTemp;
-}
-
 ```
 
 
-The initial version of the `Thermometer` class is straightforward: it simulates temperature measurements without any observability into its operations beyond what could be logged or inferred externally. This simplicity is fine for basic operations but lacks the depth needed for troubleshooting, performance monitoring, and understanding the behavior in complex or distributed systems.
-
-- The `simulateTemperature` method generates a list of random temperatures, simulating measurements.
-- The `measureOnce` method generates a single temperature measurement.
-- The `setTemp` method that acts as a setter method to set the temperature bounds
-
-This design is functional but opaque; without external logs, there's no insight into how many measurements were taken, how long they took, or whether any issues occurred during the process.
 
 
-
-#### After: With Manual Instrumentation
+In the `simulateTemperature` method definition. We perform the following changes:
 
 ```java
-private final Tracer tracer;
+    public List<Integer> simulateTemperature(int measurements) {
+        List<Integer> temperatures = new ArrayList<Integer>();
+        Span parentSpan = tracer.spanBuilder("simulateTemperature").startSpan();
 
-@Autowired
-Thermometer(OpenTelemetry openTelemetry) {
-   tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
-}
-
-public List<Integer> simulateTemperature(int measurements) {
-    List<Integer> temperatures = new ArrayList<Integer>();
-    Span parentSpan = tracer.spanBuilder("simulateTemperature").startSpan();
-    try (Scope scope = parentSpan.makeCurrent()){
-        for (int i = 0; i < measurements; i++) {
-            temperatures.add(this.measureOnce());
+        try (Scope scope = parentSpan.makeCurrent()) {
+            for (int i = 0; i < measurements; i++) {
+                HttpHeaders headers = new HttpHeaders();
+                TextMapSetter<HttpHeaders> setter = HttpHeaders::set;
+                GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, setter);
+                HttpEntity<String> entity = new HttpEntity<>(headers);
+                ResponseEntity<Integer> response = restTemplate.exchange(url, HttpMethod.GET, entity, Integer.class);
+                temperatures.add(response.getBody());
+            }
+            return temperatures;
+        } finally {
+            parentSpan.end();
         }
-        return temperatures;
-    } finally {
-        parentSpan.end();
     }
-}
-
-
-private int measureOnce() {
-	Span childSpan = tracer.spanBuilder("measureOnce").startSpan();
-	try {
-       return ThreadLocalRandom.current().nextInt(this.minTemp, this.maxTemp + 1);
-    } finally {
-    	childSpan.end();
-    }
-}
 ```
 
 
-The instrumented version introduces OpenTelemetry spans to provide visibility into the execution of temperature simulations. This change allows developers and operators to trace the execution of temperature measurements, offering insights into the system's behavior, performance characteristics, and potential issues.
+Let's break down what's happening in this method:
 
-- The constructor is extended to accept a `Tracer` object, enabling the creation of spans within the class methods.
-- The `simulateTemperature` method now starts a span before generating temperature measurements, making this operation observable as a discrete unit of work in traces. The span is made the current active span, ensuring that any spans created within this context (such as those in `measureOnce`) are correctly nested as children.
-- The `measureOnce` method also starts a span for each individual temperature measurement. This granular level of instrumentation provides insight into the performance and behavior of the temperature generation process itself, which could be critical for diagnosing issues or optimizing the simulation.
+1. **Method Definition**:
+   - The method `simulateTemperature(int measurements)` takes an integer `measurements` as its parameter, which specifies how many temperature measurements to simulate.
 
-### Key Benefits and Differences
+2. **Initialize Temperature List**:
+   - A `List<Integer>` named `temperatures` is initialized to store the temperature values retrieved from the remote service.
 
-- **Visibility and Debuggability**: The addition of spans makes the temperature simulation process transparent and observable. It's now possible to trace each operation, see how long it takes, and monitor for errors or anomalies.
-- **Context Propagation**: By making spans the current context, the changes ensure that the trace context is propagated correctly through the operations. This means that `measureOnce` operations are correctly recognized as part of the larger `simulateTemperature` operation, allowing for accurate representation of operation hierarchy in traces.
-- **Performance Monitoring**: With spans, you can now monitor the performance of both the overall temperature simulation and individual measurements. This can help identify bottlenecks or inefficiencies in the simulation logic.
-- **Error Detection**: Span error recording allows for immediate visibility into exceptions or issues within the simulated operations, facilitating quicker diagnosis and resolution.
+3. **Start a New Span**:
+   - A new tracing span is started using the OpenTelemetry API, named "simulateTemperature". This span represents the operation of simulating temperature measurements in the application's trace data.
 
-In summary, the instrumentation of the `Thermometer` class with OpenTelemetry spans transforms it from a black box into a transparent, observable component of your application. This enhances the ability to monitor, debug, and optimize your application, providing crucial insights into its behavior and performance.
+4. **Span Scope**:
+   - The span is made the current active span with `try (Scope scope = parentSpan.makeCurrent())`. This allows the OpenTelemetry SDK to recognize any nested operations or child spans as part of this parent span's trace.
+
+5. **Simulate Measurements**:
+   - A for loop iterates `measurements` times, simulating multiple temperature measurements.
+   - For each iteration, it prepares an `HttpHeaders` object to carry the tracing context as HTTP headers. This is crucial for distributed tracing, allowing the trace to span across multiple services by propagating trace context through HTTP requests.
+   - The `TextMapSetter` is a functional interface used by OpenTelemetry to inject the current tracing context into the HTTP headers.
+   - The `GlobalOpenTelemetry.getPropagators().getTextMapPropagator().inject(Context.current(), headers, setter)` call injects the current trace context into the `headers`, enabling downstream services to continue the trace.
+   - An `HttpEntity` is created with these headers, which will be used to make the HTTP GET request.
+   - The `restTemplate.exchange` method is called with the service URL, HTTP method (`GET`), the `HttpEntity` containing headers with trace context, and the response type (`Integer.class`). This executes the HTTP request to the remote service that calculates a temperature measurement.
+   - The response body, presumably a temperature measurement, is added to the `temperatures` list.
+
+6. **Return Temperatures**:
+   - Once all measurements are simulated, the list of temperatures is returned.
+
+7. **End Span**:
+   - Finally, outside the try block but within the finally block, the parent span is ended with `parentSpan.end()`. This marks the completion of the "simulateTemperature" operation in the trace.
+
+
+
+
+
+
+
 
 ## Build, run and test the application
 
