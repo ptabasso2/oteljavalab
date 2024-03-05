@@ -535,100 +535,21 @@ The `measure` method annotated with `@GetMapping("/measureTemperature")` is a RE
    - Ending the span ensures that it gets reported to your tracing backend, where it can be visualized and analyzed along with other spans in the trace.
 
 
-## End
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## Build, run and test the application
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section03/activity]$ gradle build
+[root@pt-instance-1:~/oteljavalab/section06/solution]$ gradle build
 
-BUILD SUCCESSFUL in 4s
-4 actionable tasks: 4 executed
+> Task :temperature-calculator:compileJava
 
-[root@pt-instance-1:~/oteljavalab/section03/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar &
-2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section03/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section03/activity)
-2024-03-02T12:11:25.484Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
-2024-03-02T12:11:27.116Z  INFO 30923 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2024-03-02T12:11:27.133Z  INFO 30923 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2024-03-02T12:11:27.134Z  INFO 30923 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
-2024-03-02T12:11:27.189Z  INFO 30923 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2024-03-02T12:11:27.193Z  INFO 30923 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1561 ms
-2024-03-02T12:11:28.023Z  INFO 30923 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
-2024-03-02T12:11:28.051Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Started TemperatureApplication in 3.372 seconds (process running for 4.028)
+BUILD SUCCESSFUL in 6s
+8 actionable tasks: 8 executed
+
+[root@pt-instance-1:~/oteljavalab/section06/solution]$ ./startServices.sh
+Starting temperature-calculator service...
+Starting temperature-simulator service...
+Services are starting in the background. Logs are available in temperature-calculator.log and temperature-simulator.log
 
 </pre>
 
@@ -645,17 +566,15 @@ Generate a request from another terminal using curl (or from a browser or postma
 ## Check the results in the Datadog UI (APM traces)
 
 <p align="left">
-  <img src="img/springotel3.png" width="850" />
+  <img src="img/springotel62.png" width="850" />
 </p>
+
+
+The generated flamegraph depicts the behavior we were aiming at obtaining. We can now see our two services stitched together inside the same trace. This results from the context propagation that was implemented throughout this section.       
 
 
 To view the generated traces: https://app.datadoghq.com/apm/traces
 
-## Final remark
 
-At this stage, the objective is well achieved, we managed to instrument our application 
-using the instrumentation api and the spans and traces are sent to the backend after 
-having been processed by the Datadog Agent.
-But we have not detailed the points related to the dependency of the spans between them. 
-
+## End
 
