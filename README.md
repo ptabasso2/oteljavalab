@@ -17,7 +17,7 @@ The structure is as follows:
 * **Section02**: Automatic instrumentation using the Otel java agent
 * **Section03**: Manual tracing: Span creation and management using the Otel SDK
 * **Section04**: Manual tracing: How to set span attributes.
-* **Section05**: Manual tracing: How to use Baggage item
+* **Section05**: Manual tracing: Automatic configuration of the SDK
 * **Section06**: Manual tracing: How to propagate context across services.
 * **Section07**: Manual tracing: Otel API and the Otel java agent
 * **Section08**: Manual tracing: Otel API and the Datadog java agent.
