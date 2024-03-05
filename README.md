@@ -21,17 +21,6 @@ The structure is as follows:
 * section06: Manual tracing covering inter-process communication using the tracer.inject()/extract() methods for context propagation
 * section07: Manual tracing using the Otel API and the Otel java agent (use of the tracer loaded by the Otel java agent)
 * section08: Manual tracing using the Otel API and the DD java agent (use of the tracer loaded by the DD java agent)
-* section09: Sending other Otel telemetry signals (logs and metrics)
-* section10: Manual tracing using annotations
-* section11: Using peer.service
-* section12: Configuring the AutoConfigureSDK introducing the env variables and system properties.
-
-Misc
-* sectionxx: Using Jaeger alongside DD
-* sectionxx: Using the Otel gateway deployment
-* sectionxx: Configuring http to send traces to the Otel collector instead of Otlp
-* sectionxx: Asynchronous activities examples and tracing across thread boundaries (Using an example based on Scala and Akka)
-* sectionxx: Docker and Kubernetes integration
 
 
 
