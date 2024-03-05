@@ -16,13 +16,11 @@ The structure is as follows:
 * section01: Overview of the java application that will be used troughout this tutorial (Spring Boot application that exposes a single endpoint)
 * section02: Automatic instrumentation using of the Otel java agent
 * section03: Manual tracing: Span creation and management using the Otel SDK
-* section04: Manual tracing and how to use attributes to change the span type, service names etc...
-* section05: Manual tracing to use Baggage item
-* section06: Manual tracing covering inter-process communication using the tracer.inject()/extract() methods for context propagation
-* section07: Manual tracing using the Otel API and the Otel java agent (use of the tracer loaded by the Otel java agent)
-* section08: Manual tracing using the Otel API and the DD java agent (use of the tracer loaded by the DD java agent)
-
-
+* section04: Manual tracing: How to set span attributes.
+* section05: Manual tracing: How to use Baggage item
+* section06: Manual tracing: How to propagate context across services.
+* section07: Manual tracing: Otel API and the Otel java agent
+* section08: Manual tracing: Otel API and the Datadog java agent.
 
 In each section, we'll describe the required steps to take in order to reach the goal.
 The activities in this lab follow a logical order so that we can get to the more advanced concepts smoothly.
