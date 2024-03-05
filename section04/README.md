@@ -1,4 +1,4 @@
-# Manual tracing: How to use attributes to change the span type, service names
+# Manual tracing: How to set span attributes.
 
 
 

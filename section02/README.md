@@ -1,5 +1,5 @@
 
-# Automatic instrumentation using of the Otel java agent
+# Automatic instrumentation using the Otel java agent
 
 
 ## Goal of this activity
