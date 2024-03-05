@@ -1,4 +1,9 @@
 
+![GitHub License](https://img.shields.io/github/license/ptabasso2/oteljavalab)
+![GitHub Release](https://img.shields.io/github/v/release/ptabasso2/oteljavalab)
+![GitHub last commit](https://img.shields.io/github/last-commit/ptabasso2/oteljavalab)
+
+
 # OpenTelemetry java lab - Various techniques to trace a Java application
 
 
