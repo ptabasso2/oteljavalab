@@ -126,63 +126,17 @@ The transformation involves splitting the original monolithic application into t
 
 ## Instrumenting our services
 
+Before going into the details of setting up context propagation, you will want to first follow the steps described in section03 to add the OpenTelemetry SDK and initialize it. Then create spans in the Controller classes `TemperatureController` (for the `index()`) method and also the `simulateTemperature()` method in the `Temperature` class. You will consider the same steps for the `measure` method in the  `CalculatorController` class of the second service.
 
-### Adding the SDK to the `temperature simulator` project
 
+### Importance of setting Propagators
 
-In order to makes sure that our dependancies are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
+Setting propagators can be achieved by changing slightly the way the OpenTelemetry SDK is initialized.
 
 
 ```java
-configurations.all {
-	resolutionStrategy.eachDependency {
-		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
-			useVersion("1.35.0")
 
-		}
-	}
-}
-```
-
-
-In order to do so, we will simply add the following dependencies to the dependency bloc of the `build.gradle.kts` file for both services
-
-This should look like
-
-```java
-dependencies {
-        compile("org.springframework.boot:spring-boot-starter-web")
-        implementation("io.opentelemetry:opentelemetry-api")
-	    implementation("io.opentelemetry:opentelemetry-sdk")
-	    implementation("io.opentelemetry:opentelemetry-exporter-logging")
-	    implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
-	    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
-
-}
-```
-
-
-Lastly we will give a different name for the artifact that will be produced for each of the two services by adding the following entries
-
-In the `temperature simulator` build.gradle.kts file:
-
-```java
-tasks {
-	bootJar {
-		archiveFileName.set("springtempsimu-0.0.1-SNAPSHOT.jar")
-	}
-}
-```
-
-
-### Initializing the SDK in the `temperature simulator` project
-
-
-In the TemperatureApplication.java class adding the SDK initialization block
-
-```java
-
-@Bean
+    @Bean
     public OpenTelemetry openTelemetry(){
 
         Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springsimul").build();
@@ -200,25 +154,7 @@ In the TemperatureApplication.java class adding the SDK initialization block
 
 ```
 
-Also making sure that these packages are present or manually adding them in the import section, if not imported automatically by the IDE.
-
-```java
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
-import io.opentelemetry.context.propagation.ContextPropagators;
-import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
-import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.resources.Resource;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
-import io.opentelemetry.semconv.ResourceAttributes;
-```
-
-
-### Importance of setting Propagators
-
-
-The line `setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))` in the OpenTelemetry SDK initialization code above is crucial for ensuring that the tracing context can be propagated across service boundaries in a distributed system. In the previous sections, we omitted the propagators configuration as weren't in need of dealing with context propagation. 
+The line `setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))` in the OpenTelemetry SDK initialization code above is key for ensuring that the tracing context can be propagated across service boundaries in a distributed system. In the previous sections, we omitted the propagators configuration as weren't in need of dealing with context propagation. 
 
 This setting configures the OpenTelemetry SDK to use the W3C Trace Context propagation format, which is a standard for transmitting trace context between services.
 
@@ -242,121 +178,10 @@ If you do not specify `setPropagators(ContextPropagators.create(W3CTraceContextP
 Configuring the propagators with `W3CTraceContextPropagator` is essential for distributed tracing to work correctly in applications that use OpenTelemetry for instrumentation. It enables trace context to be passed seamlessly across HTTP requests/responses, ensuring that distributed traces are complete and coherent, providing full visibility into the end-to-end request flow across microservices or distributed components.
 
 
-### Instantiate a tracer
-
-
-Now in `TemperatureController` we will need to get a hold on the `OpenTelemetry` object so that we can create a tracer instance. For this we need to add the following lines immediately after the Logger instance declaration:
-
-```java
-
-    private final Tracer tracer;
-
-
-    @Autowired
-    TemperatureController(OpenTelemetry openTelemetry) {
-       tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
-    }
-```
-
-Declaring the tracer variable and using constructor injection to initialize the tracer. The OpenTelemetry object provides a getTracer() method that allows this. 
-
-
-The corresponding packages to import are:
-
-```java
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.trace.Tracer;
-```
-
-
-### Creating a span in the Controller class
-
-It's time now to build and start spans in the `TemperatureController` class. And we can replicate the same steps in anay other classes that contains methods we need to instrument.
-
-
-Now that we can access the `Tracer` instance, let's add the tracing idioms in our code:
-We will change the method implementation as follows:
-
-Example with the `index()` method:
-
-**_Before_**
-
-```java
-        if (measurements.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
-        }
-
-        thermometer.setTemp(20, 35);
-        List<Integer> result = thermometer.simulateTemperature(measurements.get());
-
-        if (location.isPresent()) {
-            logger.info("Temperature simulation for {}: {}", location.get(), result);
-        } else {
-            logger.info("Temperature simulation for an unspecified location: {}", result);
-        }
-        return result;
-```
-
-**_After_**
-
-```java
-        Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
-        try (Scope scope = span.makeCurrent()) {
-
-            if (measurements.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
-            }
-
-            thermometer.setTemp(20, 35);
-            List<Integer> result = thermometer.simulateTemperature(measurements.get());
-
-            if (location.isPresent()) {
-                logger.info("Temperature simulation for {}: {}", location.get(), result);
-            } else {
-                logger.info("Temperature simulation for an unspecified location: {}", result);
-            }
-            return result;
-        } catch(Throwable t) {
-            span.recordException(t);
-            throw t;
-        } finally {
-            span.end();
-        }
-    
-```
-
-**Note**: At this point, you will also need to consider importing the various classes manually that are needed if you use a Text editor.
-This is generally handled _automatically_ by IDEs (IntelliJ or Eclipse).
-If you have to do it manually, add the following to the import section of your `TemperatureController` class
-
-```java
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.context.Scope;
-```
-
-
-
 ### Context propagation
 
 
 The `temperature simulator` service issues requests to the `temperature calculator` using RestTemplate, we will have to propagate the context by passing it through the call. This can be done as follows in the `Thermometer` class.
-
-We also need to gain access to the Tracer as above by adding these instructions in the Thermometer class
-
-```java
-
-    private final Tracer tracer;
-
-
-    @Autowired
-    TemperatureController(OpenTelemetry openTelemetry) {
-       tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
-    }
-```
-
-
 
 
 In the `simulateTemperature` method definition. We perform the following changes:
@@ -414,9 +239,9 @@ Let's break down what's happening in this method:
 
 
 
-### Adding the SDK to the `temperature calculator` project
+### Modifications in the `temperature calculator` project
 
-The first steps of the instrumentation will be similar to what we have done so far with the `temperature simulator` service:
+The first steps of the instrumentation will be similar to what is done with the `temperature simulator` service:
 
 1. Updating the `build.gradle.sdk` file. We will simply name the artifact differently 
 
