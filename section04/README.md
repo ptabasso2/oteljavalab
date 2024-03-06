@@ -4,7 +4,7 @@
 
 ## Goal of this activity
 
-In this section of the OpenTelemetry tutorial, we will explore how to programmatically set or modify span attributes using the Java SDK. You'll learn to enrich your telemetry data by adding key-value pairs to spans, which can provide more context about the operation being traced. We'll cover how to use the `setAttribute` method to dynamically adjust span information, such as adding custom attributes or updating existing ones, enhancing the observability of your applications. This hands-on activity is designed to give you practical experience in manipulating span data to better understand the behavior of your software in a distributed system.
+In this section of the OpenTelemetry tutorial, we will explore how to programmatically set or modify span attributes using the Java SDK. You'll learn to enrich your telemetry data by adding key-value pairs to spans, which can provide more context about the operation being traced. We'll cover how to use the `setAttribute` method to dynamically adjust span information, such as adding custom attributes or updating existing ones, enhancing the observability of your applications.
 
 ## Main steps
 
@@ -22,7 +22,7 @@ To achieve the goal of setting or changing span attributes programmatically usin
 
 6. **Exporting the Data**: Ensure that your telemetry data, including the enriched spans, is exported to a backend or analysis tool where you can visualize and investigate the traces.
 
-By following these steps, you'll be able to programmatically enrich your spans with custom attributes, enhancing the observability and debuggability of your Java applications using OpenTelemetry.
+By following these steps, you'll be able to programmatically enrich your spans with custom attributes, enhancing the observability and debuggability of Java applications using OpenTelemetry.
 
 
 
@@ -43,6 +43,22 @@ dependencies {
 
 }
 ```
+
+
+In order to makes sure that our dependancies are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
+
+
+```java
+configurations.all {
+	resolutionStrategy.eachDependency {
+		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
+			useVersion("1.35.0")
+
+		}
+	}
+}
+```
+
 
 ## Instantiate a tracer
 
@@ -167,9 +183,9 @@ Example with the `index()` method:
     
 ```
 
-**Note**: At this point, you will also need to consider importing the various classes manually that are needed if you use a Text editor.
-This is generally handled _automatically_ by IDEs (IntelliJ or Eclipse).
-If you have to do it manually, add the following to the import section of your `TemperatureController` class
+
+Also making sure that these packages are present or manually adding them in the import section, if not imported automatically by the IDE.
+
 
 ```java
 import io.opentelemetry.api.trace.Span;

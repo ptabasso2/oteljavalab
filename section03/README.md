@@ -42,6 +42,23 @@ dependencies {
 }
 ```
 
+
+In order to makes sure that our dependancies are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
+
+
+```java
+configurations.all {
+	resolutionStrategy.eachDependency {
+		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
+			useVersion("1.35.0")
+
+		}
+	}
+}
+```
+
+
+
 ## Instantiate a tracer
 
 In order to get an instance of our tracer, we leverage Spring's "dependency injection" capability through which the Spring container “injects” objects into other objects or “dependencies”. This tracer object is accessed through an object of type `OpenTelemetry` that needs to be created first.
@@ -168,8 +185,7 @@ Example with the `index()` method:
     
 ```
 
-**Note**: At this point, you will also need to consider importing the various classes manually that are needed if you use a Text editor.
-This is generally handled _automatically_ by IDEs (IntelliJ or Eclipse).
+Also making sure that these packages are present or manually adding them in the import section, if not imported automatically by the IDE.
 If you have to do it manually, add the following to the import section of your `TemperatureController` class
 
 ```java
@@ -333,6 +349,4 @@ To view the generated traces: https://app.datadoghq.com/apm/traces
 At this stage, the objective is well achieved, we managed to instrument our application 
 using the instrumentation api and the spans and traces are sent to the backend after 
 having been processed by the Datadog Agent.
-But we have not detailed the points related to the dependency of the spans between them. 
-
 

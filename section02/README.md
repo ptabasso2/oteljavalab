@@ -4,7 +4,7 @@
 
 ## Goal of this activity
 
-In the previous sections we went through the set up the Otel collector and an overview of the java application will be using.
+In the previous sections we went through the set up the Otel collector and an overview of the java application we will be using.
 In this chapter we will see how to use the opentelemetry java agent to perform automatic instrumentation of our service
 
 
@@ -12,7 +12,7 @@ In this chapter we will see how to use the opentelemetry java agent to perform a
 
 1. Build the application
 2. Download the java agent
-3. Add `-javaagent:path/to/opentelemetry-javaagent.jar` and other config to your JVM startup arguments and launch your app
+3. Add `-javaagent:path/to/opentelemetry-javaagent.jar` and other config to the JVM startup arguments and launch the app
 
 
 ## Environment set-up
