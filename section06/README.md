@@ -21,10 +21,6 @@ We will cover the following key areas:
 
 5. **Example Implementation**: Offer a concise example implementation of two microservices interacting over HTTP, where service A calls service B. Include code snippets showing how to instrument the REST client in service A and the server in service B using OpenTelemetry Java SDK.
 
-6. **Best Practices for Context Propagation**: Conclude with a discussion on best practices to ensure robust and efficient context propagation. Highlight the importance of consistent propagation techniques across services and the potential pitfalls to avoid.
-
-By the end of this section, readers will have a solid understanding of how to implement context propagation using the OpenTelemetry Java SDK for services communicating over REST calls. This knowledge will enable them to trace requests seamlessly across service boundaries, improving observability and aiding in debugging and monitoring distributed systems.
-
 
 ## Overview of the set-up
 
