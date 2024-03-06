@@ -3,6 +3,10 @@ package com.pej.otel.springotellab;
 import java.util.List;
 import java.util.Optional;
 
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,23 +23,40 @@ public class TemperatureController {
     @Autowired
     Thermometer thermometer;
 
+    private final Tracer tracer;
+
+
+    @Autowired
+    TemperatureController(OpenTelemetry openTelemetry) {
+        tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
+    }
+
     @GetMapping("/simulateTemperature")
     public List<Integer> index(@RequestParam("location") Optional<String> location,
                                @RequestParam("measurements") Optional<Integer> measurements) {
 
-        if (measurements.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
-        }
+        Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
+        try (Scope scope = span.makeCurrent()) {
 
-        thermometer.setTemp(20, 35);
-        List<Integer> result = thermometer.simulateTemperature(measurements.get());
+            if (measurements.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
+            }
 
-        if (location.isPresent()) {
-            logger.info("Temperature simulation for {}: {}", location.get(), result);
-        } else {
-            logger.info("Temperature simulation for an unspecified location: {}", result);
+            thermometer.setTemp(20, 35);
+            List<Integer> result = thermometer.simulateTemperature(measurements.get());
+
+            if (location.isPresent()) {
+                logger.info("Temperature simulation for {}: {}", location.get(), result);
+            } else {
+                logger.info("Temperature simulation for an unspecified location: {}", result);
+            }
+            return result;
+        } catch(Throwable t) {
+            span.recordException(t);
+            throw t;
+        } finally {
+            span.end();
         }
-        return result;
 
     }
 }
