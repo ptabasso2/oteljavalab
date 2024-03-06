@@ -11,11 +11,9 @@ The `AutoConfiguredOpenTelemetrySdk` is a feature provided by the OpenTelemetry 
 
 1. **Automatic Discovery and Configuration**: `AutoConfiguredOpenTelemetrySdk` automatically discovers and configures SDK components like Span Exporters, Propagators, and Resource Providers. This means it can pick up configuration from environment variables, system properties, or configuration files without requiring explicit code to set these up.
 
-2. **Integration with Common Frameworks and Libraries**: It provides out-of-the-box integration with popular frameworks and libraries, automatically instrumenting them to generate telemetry data. This includes web frameworks, gRPC, database connectors, and more, ensuring that applications can start emitting traces and metrics with minimal manual intervention.
+2. **Flexible Configuration**: While it provides sensible defaults and automatic configuration, `AutoConfiguredOpenTelemetrySdk` also offers hooks for customization. Developers can override the default settings through environment variables, system properties, or programmatically, allowing for detailed control over the behavior of the SDK.
 
-3. **Flexible Configuration**: While it provides sensible defaults and automatic configuration, `AutoConfiguredOpenTelemetrySdk` also offers hooks for customization. Developers can override the default settings through environment variables, system properties, or programmatically, allowing for detailed control over the behavior of the SDK.
-
-4. **Simplifies SDK Updates**: As OpenTelemetry evolves, new features and improvements are introduced. The automatic configuration mechanism abstracts away some of the complexities associated with upgrading the SDK, as it can automatically adapt to changes in available exporters, propagators, and other components.
+3. **Simplifies SDK Updates**: As OpenTelemetry evolves, new features and improvements are introduced. The automatic configuration mechanism abstracts away some of the complexities associated with upgrading the SDK, as it can automatically adapt to changes in available exporters, propagators, and other components.
 
 
 ### How It Works
@@ -29,45 +27,32 @@ The `AutoConfiguredOpenTelemetrySdk` is a feature provided by the OpenTelemetry 
 
 
 
+## Modifying the way the OpenTelemetry SDK is initialized
 
-## Adding the sdk to the project
 
-In order to do so, we will simply add the following dependencies to the dependency bloc of the `build.gradle.kts` file
-
-This should look like
-
-```java
-dependencies {
-        compile("org.springframework.boot:spring-boot-starter-web")
-        implementation("io.opentelemetry:opentelemetry-api")
-	    implementation("io.opentelemetry:opentelemetry-sdk")
-	    implementation("io.opentelemetry:opentelemetry-exporter-logging")
-	    implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
-	    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
-        implementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure");
-
-}
-```
-
-In order to make sure that our dependancies are all aligned on the same version we will also add that snippet right after the `plugin` block of the `build.gradle.kts` file
-
+Unlike what we have done in the previous section, the way we initialize the SDK will differ.
+We will change block in our `TemperatureApplication` class from:
 
 ```java
-configurations.all {
-	resolutionStrategy.eachDependency {
-		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
-			useVersion("1.35.0")
+    @Bean
+    public OpenTelemetry openTelemetry(){
 
-		}
-	}
-}
+        Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springotel").build();
+
+        OtlpGrpcSpanExporter otlpGrpcSpanExporter = OtlpGrpcSpanExporter.builder().setTimeout(2, TimeUnit.SECONDS).build();
+
+        SdkTracerProvider setTracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(BatchSpanProcessor.builder(otlpGrpcSpanExporter).setScheduleDelay(100, TimeUnit.MILLISECONDS).build())
+                .setResource(resource)
+                .build();
+
+        return OpenTelemetrySdk.builder().setTracerProvider(setTracerProvider).buildAndRegisterGlobal();
+
+    }
 ```
 
+to 
 
-## Initializing the OpenTelemetry SDK
-
-Unlike what we have done in the previous sections, the way we initialize the SDK will differ.
-We will simply add this block in our `TemperatureApplication` class:
 
 ```java
     @Bean
@@ -77,7 +62,7 @@ We will simply add this block in our `TemperatureApplication` class:
 ```
 
 
-Previously we had to add a much more detailed block specifying `Resource`, `SpanExporter`, `BatchSpanProcessor`, and `TracerProvider`
+Previously we had to add a much more detailed block specifying `Resource`, `SpanExporter`, `BatchSpanProcessor`, and `TracerProvider`. You can observe that it is a lot simpler.
 
 
 Both use cases show different approaches to configuring and initializing the OpenTelemetry SDK within a Spring Boot application, each with its own set of advantages and considerations.
@@ -102,73 +87,6 @@ Both use cases show different approaches to configuring and initializing the Ope
 
 - The **first approach** is recommended for applications that can work well with standard configurations or when you prefer simplicity and are willing to adhere to the configurations that can be automatically determined by OpenTelemetry's auto-configuration capabilities.
 - The **second approach** is better suited for applications that require precise control over the telemetry data, such as custom resource attributes, specific exporter settings, or when integrating with systems that need specific customizations not supported by auto-configuration.
-
-
-
-## Creating and starting a span
-
-It's time now to build and start spans in the `TemperatureController` class. And we can replicate the same steps in any other classes that contains methods we need to instrument.
-
-
-Now that we can access the `Tracer` instance, let's add the tracing idioms in our code:
-We will change the method implementation as follows:
-
-Example with the `index()` method:
-
-**_Before_**
-
-```java
-        if (measurements.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
-        }
-
-        thermometer.setTemp(20, 35);
-        List<Integer> result = thermometer.simulateTemperature(measurements.get());
-
-        if (location.isPresent()) {
-            logger.info("Temperature simulation for {}: {}", location.get(), result);
-        } else {
-            logger.info("Temperature simulation for an unspecified location: {}", result);
-        }
-        return result;
-```
-
-**_After_**
-
-```java
-        Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
-        try (Scope scope = span.makeCurrent()) {
-
-            if (measurements.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
-            }
-
-            thermometer.setTemp(20, 35);
-            List<Integer> result = thermometer.simulateTemperature(measurements.get());
-
-            if (location.isPresent()) {
-                logger.info("Temperature simulation for {}: {}", location.get(), result);
-            } else {
-                logger.info("Temperature simulation for an unspecified location: {}", result);
-            }
-            return result;
-        } catch(Throwable t) {
-            span.recordException(t);
-            throw t;
-        } finally {
-            span.end();
-        }
-    
-```
-
-**Note**: At this point, you will also need to consider importing the various classes manually that are needed if you use a Text editor.
-This is generally handled _automatically_ by IDEs (IntelliJ or Eclipse).
-If you have to do it manually, add the following to the import section of your `TemperatureController` class
-
-```java
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.context.Scope;
-```
 
 
 ## Build, run and test the application

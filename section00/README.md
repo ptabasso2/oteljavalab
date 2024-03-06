@@ -66,9 +66,12 @@ receivers:
 processors:
   batch:
     timeout: 10s
+connectors:
+    datadog/connector:
 exporters:
   datadog:
     api:
+      site: <your datadog api site (default is datadoghq.com)>
       key: <your datadog api key>
 service:
   telemetry:
@@ -84,6 +87,8 @@ service:
       processors: [batch]
       exporters: [datadog]
 ```
+
+**Note**: By default the datadog site will be set to datadoghq.com. If you wish to target any other backend (ex for EU or US3, US4 etc...), you will want to set the site to the corresponding value. Ex for Europe, `site: datadoghq.eu` 
 
 ### Step 7: Start the Collector
 Run the Collector with the configuration.

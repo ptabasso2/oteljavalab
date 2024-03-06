@@ -91,7 +91,7 @@ OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader clas
 
 The service will start and will run our application that listens to connections on port 8080.
 
-Note: cf https://opentelemetry.io/docs/languages/java/automatic/#configuring-the-agent for more details about how to configure the java agent
+Note: https://opentelemetry.io/docs/languages/java/automatic/#configuring-the-agent for more details about how to configure the java agent
 
 ## Test the application
 

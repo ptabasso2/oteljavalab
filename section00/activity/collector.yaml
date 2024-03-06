@@ -31,7 +31,8 @@ processors:
   batch:
     # The 10s timeout is necessary for the traces stats to work properly.
     timeout: 10s
-
+connectors:
+    datadog/connector:
 # `exporters` are how data gets out of the Collector.
 exporters:
   # The datadog exporter is necessary for exporting telemetry signals to Datadog.

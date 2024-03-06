@@ -131,7 +131,7 @@ import io.opentelemetry.api.trace.Tracer;
 
 ## Creating a span
 
-It's time now to build and start spans in the `TemperatureController` class. And we can replicate the same steps in anay other classes that contains methods we need to instrument.
+It's time now to build and start spans in the `TemperatureController` class. And we can replicate the same steps in any other classes that contain methods we need to instrument.
 
 
 Now that we can access the `Tracer` instance, let's add the tracing idioms in our code:
