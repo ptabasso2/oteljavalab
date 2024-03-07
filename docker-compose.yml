@@ -1,0 +1,22 @@
+version: '3.9'
+services:
+  otel-collector:
+    container_name: otel-collector
+    hostname: pt-instance-1
+    image: otel/opentelemetry-collector-contrib
+    volumes:
+      - $PWD/section00/activity/collector.yaml:/etc/otelcol-contrib/config.yaml
+    network_mode: host
+
+  springotel:
+    container_name: springotel
+    hostname: pt-instance-1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    command: "sleep infinity"
+    network_mode: host
+
+

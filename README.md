@@ -4,7 +4,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/ptabasso2/oteljavalab)
 
 
-# OpenTelemetry java lab - Various techniques to trace a Java application
+# <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> OpenTelemetry java lab - Various techniques to trace a Java application
 
 
 ## Introduction
