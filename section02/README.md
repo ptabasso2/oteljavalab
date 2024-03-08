@@ -101,6 +101,39 @@ The service will start and run our application that listens to connections on po
 
 Note: https://opentelemetry.io/docs/languages/java/automatic/#configuring-the-agent for more details about how to configure the java agent
 
+
+### Command Breakdown
+
+```shell
+java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.logs.exporter=none -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar
+```
+
+- `java`: The Java command used to run java applications.
+- `-javaagent:./opentelemetry-javaagent.jar`: This option specifies the Java agent to use with the JVM. The OpenTelemetry Java agent (`opentelemetry-javaagent.jar`) is used for automatic instrumentation of the application, injecting bytecode to capture telemetry data without modifying the application code.
+- `-Dotel.service.name=springotel`: This system property sets the service name to `springotel`. The service name is a critical identifier that groups all instances of the same service together in observability backends.
+- `-Dotel.logs.exporter=none`: Disables log exporting by setting the log exporter to `none`. This is useful if you only want to capture metrics and traces but not logs.
+- `-jar build/libs/springotellab-0.0.1-SNAPSHOT.jar`: Specifies the JAR file to run, which is the application's executable JAR.
+
+
+### Additional System Properties for OpenTelemetry
+
+1. **otel.metrics.exporter**: Specifies the metrics exporter to use. Similar to `otel.logs.exporter`, it can be set to various backends like `prometheus`, `otlp`, `logging` (for debugging purposes), or `none` if you want to disable metric exporting.
+   - Example: `-Dotel.metrics.exporter=otlp` would configure the agent to export metrics using the OTLP (OpenTelemetry Protocol) exporter.
+
+2. **otel.traces.exporter**: Specifies the trace exporter. This determines how and where traces are sent. Common values include `otlp`, `jaeger`, `zipkin`, `logging`, or `none`.
+   - Example: `-Dotel.traces.exporter=jaeger` configures the agent to export traces to Jaeger.
+
+3. **otel.propagators**: Defines the context propagation format. This is important for distributed tracing as it determines how trace context is propagated across service boundaries. Common values are `tracecontext`, `b3`, `jaeger`, `ottrace`, `xray`, or a combination thereof.
+   - Example: `-Dotel.propagators=b3multi` would configure the agent to use B3 multi-header propagation for distributing tracing context.
+
+4. **otel.exporter.otlp.endpoint**: Sets the endpoint for OTLP exporters (both traces and metrics). This is crucial when using the `otlp` exporter to specify where the telemetry data should be sent.
+   - Example: `-Dotel.exporter.otlp.endpoint=http://localhost:4317` would direct the OTLP exporter to send data to an OpenTelemetry Collector running on `localhost` at port `4317`.
+
+5. **otel.resource.attributes**: Used to add additional attributes to the resource that represents this application instance. This is useful for adding descriptive metadata such as environment, version, or custom attributes.
+   - Example: `-Dotel.resource.attributes=environment=production,version=1.0.0` would tag telemetry data with `environment=production` and `version=1.0.0`.
+
+
+
 ## Test the application
 
 In another terminal run the following command either locally on your host or from the docker container, you should see the following output `[23, 33, 35, 33, 35]`
