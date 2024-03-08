@@ -19,19 +19,28 @@ In this chapter we will see how to use the opentelemetry java agent to perform a
 
 Download `opentelemetry-javaagent.jar` from Releases of the opentelemetry-java-instrumentation repository. The JAR file contains the agent and instrumentation libraries.
 
+Accessing the container first
+
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/]$ cd oteljavalab/section02/activity
-[root@pt-instance-1:~/oteljavalab/section02/activity]$ wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
+[root@pt-instance-1:/oteljavalab]$ 
+</pre>
+
+
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:/oteljavalab]$ cd section02/activity
+[root@pt-instance-1:/oteljavalab/section02/activity]$ wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
 </pre>
 
 
 ## Directory structure of the project
 
-The example below is the structure after having built the app.
+The example below is the structure before having built the app.
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section02/activity]$ tree
+[root@pt-instance-1:/oteljavalab/section02/activity]$ tree
 .
 ├── build.gradle.kts
 ├── gradle
@@ -62,7 +71,7 @@ The example below is the structure after having built the app.
 ## Build the application
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section02/activity]$ gradle assemble
+[root@pt-instance-1:/oteljavalab/section02/activity]$ gradle build
 Starting a Gradle Daemon (subsequent builds will be faster)
 
 BUILD SUCCESSFUL in 12s
@@ -75,7 +84,7 @@ BUILD SUCCESSFUL in 12s
 Running the application is fairly simple:
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section02/activity]$ java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.logs.exporter=none -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar
+[root@pt-instance-1:/oteljavalab/section02/activity]$ java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.logs.exporter=none -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar
 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
 [otel.javaagent 2024-03-01 23:48:35:776 +0000] [main] INFO io.opentelemetry.javaagent.tooling.VersionLogger - opentelemetry-javaagent - version: 2.1.0
 2024-03-01T23:48:39.817Z  INFO 3960341 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 3960341 (/root/oteljavalab/section02/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section02/activity)
@@ -95,10 +104,10 @@ Note: https://opentelemetry.io/docs/languages/java/automatic/#configuring-the-ag
 
 ## Test the application
 
-In another terminal run the following command, you should see the following output `[23, 33, 35, 33, 35]`
+In another terminal run the following command either locally on your host or from the docker container, you should see the following output `[23, 33, 35, 33, 35]`
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section02/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
+[root@pt-instance-1:/oteljavalab/section02/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
 [23, 33, 35, 33, 35]
 </pre>
 

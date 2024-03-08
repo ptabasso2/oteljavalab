@@ -40,6 +40,7 @@ The `activity` directory will contain the initial state of the project and the p
 + Git client
 + A Datadog account with a valid API key
 + Your favorite text editor or IDE (Ex Sublime Text, Atom, vscode...)
++ Docker (In which case Java and gradle won't be necessary)
 
 
 ## Clone the repository
@@ -51,3 +52,7 @@ The `activity` directory will contain the initial state of the project and the p
 [root@pt-instance-1:~/oteljavalab]$ 
 </pre>
 
+
+## Next steps
+
+The next section of this tutorial covers the opentelemetry controller configuration and set up details. 

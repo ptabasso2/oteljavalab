@@ -29,9 +29,23 @@ The `AutoConfiguredOpenTelemetrySdk` is a feature provided by the OpenTelemetry 
 
 ## Modifying the way the OpenTelemetry SDK is initialized
 
+Accessing the container first
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
+[root@pt-instance-1:/oteljavalab]$ 
+</pre>
+
+
+Going to the directory containing our project
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:/oteljavalab]$ cd section05/activity
+[root@pt-instance-1:/oteljavalab/section05/activity]$
+</pre>
 
 Unlike what we have done in the previous section, the way we initialize the SDK will differ.
-We will change block in our `TemperatureApplication` class from:
+We will change the block in our `TemperatureApplication` class from:
 
 ```java
     @Bean
@@ -62,7 +76,7 @@ to
 ```
 
 
-Previously we had to add a much more detailed block specifying `Resource`, `SpanExporter`, `BatchSpanProcessor`, and `TracerProvider`. You can observe that it is a lot simpler.
+Previously we had to add much more details in that block by specifying `Resource`, `SpanExporter`, `BatchSpanProcessor`, and `TracerProvider`. You can observe that it is now a lot simpler.
 
 
 Both use cases show different approaches to configuring and initializing the OpenTelemetry SDK within a Spring Boot application, each with its own set of advantages and considerations.
@@ -96,7 +110,7 @@ We will also take advantage of the AutoConfigureSDK capabilities that allows for
 
 
 ```java
-[root@pt-instance-1:~/oteljavalab/section05]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar activity/build/libs/springtotel-0.0.1-SNAPSHOT.jar
+[root@pt-instance-1:/oteljavalab/section05/activity]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
 ```
 
 In this example we can give a service name to our application or specify the type of exporters we would like to use.
@@ -122,7 +136,7 @@ The below output shows the result of the requests made against the endpoint expo
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section05]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=logging OTEL_METRICS_EXPORTER=logging OTEL_LOGS_EXPORTER=logging java -jar activity/build/libs/springtotel-0.0.1-SNAPSHOT.jar 
+[root@pt-instance-1:~/oteljavalab/section05/activity]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=logging OTEL_METRICS_EXPORTER=logging OTEL_LOGS_EXPORTER=logging java -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar 
 2024-03-06T10:42:23.376Z  INFO 2274086 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 2274086 (/root/oteljavalab/section05/activity/build/libs/springtotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section05)
 2024-03-06T10:42:23.396Z  INFO 2274086 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-06T10:42:24.830Z  INFO 2274086 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
@@ -172,8 +186,8 @@ This log entry gives a comprehensive overview of a single span, including when i
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section05]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar activity/build/libs/springtotel-0.0.1-SNAPSHOT.jar 
-2024-03-06T11:00:33.335Z  INFO 2284901 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 2284901 (/root/oteljavalab/section05/activity/build/libs/springtotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section05)
+[root@pt-instance-1:~/oteljavalab/section05/activity]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar 
+2024-03-06T11:00:33.335Z  INFO 2284901 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 2284901 (/root/oteljavalab/section05/activity/build/libs/springtotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section05/activity)
 2024-03-06T11:00:33.344Z  INFO 2284901 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-06T11:00:34.817Z  INFO 2284901 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
 2024-03-06T11:00:34.834Z  INFO 2284901 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
@@ -192,7 +206,7 @@ Executing the request:
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section05]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
+[root@pt-instance-1:~/oteljavalab/section05/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
 [35,24,28,29,25]
 </pre>
 

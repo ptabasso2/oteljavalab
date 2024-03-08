@@ -178,7 +178,7 @@ If you do not specify `setPropagators(ContextPropagators.create(W3CTraceContextP
 Configuring the propagators with `W3CTraceContextPropagator` is essential for distributed tracing to work correctly in applications that use OpenTelemetry for instrumentation. It enables trace context to be passed seamlessly across HTTP requests/responses, ensuring that distributed traces are complete and coherent, providing full visibility into the end-to-end request flow across microservices or distributed components.
 
 
-### Context propagation
+### Context propagation and modifications in the `temperature simulation` project
 
 
 The `temperature simulator` service issues requests to the `temperature calculator` using RestTemplate, we will have to propagate the context by passing it through the call. This can be done as follows in the `Thermometer` class.
@@ -238,8 +238,7 @@ Let's break down what's happening in this method:
    - Finally, outside the try block but within the finally block, the parent span is ended with `parentSpan.end()`. This marks the completion of the "simulateTemperature" operation in the trace.
 
 
-
-### Modifications in the `temperature calculator` project
+### Context propagation and modifications in the `temperature calculator` project
 
 The first steps of the instrumentation will be similar to what is done with the `temperature simulator` service:
 

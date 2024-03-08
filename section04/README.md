@@ -13,10 +13,42 @@ In the previous section we explored how to perform basic tasks related to manual
 
 ## Setting span attributes
 
-Using the `setAttribute` method is done as follows:
-In this example we will define a span type as "web" so that it will get rendered in the Datadog UI as a web component and specify the resource name which happens to be the name of the endpoint exposed by the spring controller (`/simulateTemperature`)
+Accessing the container first
 
-Here is how we do it
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
+[root@pt-instance-1:/oteljavalab]$ 
+</pre>
+
+Going to the directory containing our project
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:/oteljavalab]$ cd section04/activity
+[root@pt-instance-1:/oteljavalab/section04/activity]$
+</pre>
+
+<pre style="font-size: 12px">
+
+[root@pt-instance-1:~/oteljavalab/section04/activity]$ ll src/main/java/com/pej/otel/springotellab/
+total 20
+drwxr-xr-x 2 root root 4096 Mar  6 15:42 ./
+drwxr-xr-x 3 root root 4096 Mar  3 10:09 ../
+-rw-r--r-- 1 root root 1617 Mar  3 12:53 TemperatureApplication.java
+-rw-r--r-- 1 root root 2151 Mar  3 12:55 TemperatureController.java
+-rw-r--r-- 1 root root 1687 Mar  3 13:04 Thermometer.java
+</pre>
+
+
+
+Using the `setAttribute` method is done as follows:
+In this example we will define a span type as `web` so that it will get rendered in the Datadog UI as a web component and specify the resource name which happens to be the name of the endpoint exposed by the spring controller (`/simulateTemperature`).
+
+
+Here is how we do it practically:
+
+We need to edit the `TemperatureController.java` file and adapt the line where we create the span by chaining and appending the `setAttribute` method calls:
+
+`setAttribute("span.type", "web").setAttribute("resource.name", "GET /simulateTemperature")`
 
 ```java
         Span span = tracer.spanBuilder("temperatureSimulation").setAttribute("span.type", "web").setAttribute("resource.name", "GET /simulateTemperature").startSpan();

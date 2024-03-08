@@ -26,7 +26,22 @@ We will use the following basic features of the OpenTelemetry API:
 
 ## Adding the sdk to the project
 
-In order to do so, we will simply add the following dependencies to the dependency bloc of the `build.gradle.kts` file
+Accessing the container first
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
+[root@pt-instance-1:/oteljavalab]$ 
+</pre>
+
+
+Going to the directory containing our project
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:/oteljavalab]$ cd section03/activity
+[root@pt-instance-1:/oteljavalab/section03/activity]$
+</pre>
+
+In order to add the sdk, we will simply add the following dependencies to the dependency bloc of the `build.gradle.kts` file
 
 This should look like
 
@@ -43,7 +58,7 @@ dependencies {
 ```
 
 
-In order to makes sure that our dependancies are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
+And to make sure that our dependencies are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
 
 
 ```java
@@ -58,12 +73,11 @@ configurations.all {
 ```
 
 
-
 ## Instantiate a tracer
 
 In order to get an instance of our tracer, we leverage Spring's "dependency injection" capability through which the Spring container “injects” objects into other objects or “dependencies”. This tracer object is accessed through an object of type `OpenTelemetry` that needs to be created first.
 
-For this we will declare a Bean inside the Application class `TemperatureApplication`. This mainly consists of annotating the following method using the `@Bean` annotation. This bean can later be accessed from the other classes by relying on Spring's dependeny injection mechanisms (this happens by using the `@Autowired` annotation). This annotation allows Spring to resolve and inject collaborating beans into other beans.
+For this we will declare a Bean inside the Application class `TemperatureApplication`. This mainly consists of annotating the following method using the `@Bean` annotation. This bean can later be accessed from the other classes by relying on Spring's dependency injection mechanisms (this happens by using the `@Autowired` annotation). This annotation allows Spring to resolve and inject collaborating beans into other beans.
 
 We will actually refer to it later in the `TemperatureController` class. 
 
@@ -307,12 +321,12 @@ In summary, the instrumentation of the `Thermometer` class with OpenTelemetry sp
 ## Build, run and test the application
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section03/activity]$ gradle build
+[root@pt-instance-1:/oteljavalab/section03/activity]$ gradle build
 
 BUILD SUCCESSFUL in 4s
 4 actionable tasks: 4 executed
 
-[root@pt-instance-1:~/oteljavalab/section03/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar &
+[root@pt-instance-1:/oteljavalab/section03/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar &
 2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section03/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section03/activity)
 2024-03-02T12:11:25.484Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-02T12:11:27.116Z  INFO 30923 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
@@ -325,11 +339,11 @@ BUILD SUCCESSFUL in 4s
 
 </pre>
 
-Generate a request from another terminal using curl (or from a browser or postman)
+Generate a request from another terminal using curl either locally or from the container (or from a browser or postman)
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section03/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
+[root@pt-instance-1:/oteljavalab/section03/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
 
 [21,28,29,35,27]
 </pre>

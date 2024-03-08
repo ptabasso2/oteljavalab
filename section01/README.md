@@ -46,13 +46,24 @@ This request would simulate five temperature measurements for Paris, returning a
 4. Access the API through your preferred HTTP client or browser to start simulating temperatures.
 
 
+In the following we will assume that docker is being used as per the descriptions in the previous chapter. But if you wish to build, run and test locally this will work just fine as the project has the same structure inside or outside the docker container.
+
 ## Directory structure of the project
 
-The example below is the structure after having built the app.
+Let's first ssh into the container:
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
+[root@pt-instance-1:/oteljavalab]$ 
+</pre>
+
+
+And then let's view the content of the `activity` directory in `section01`
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section01/activity]$ tree
+[root@pt-instance-1:/oteljavalab]$ cd section01/activity
+[root@pt-instance-1:/oteljavalab/section01/activity]$ tree
 .
 ├── build.gradle.kts
 ├── gradle
@@ -81,7 +92,8 @@ The example below is the structure after having built the app.
 
 ## Build the application
 
-First make sure that your environment is correctly set up by checking the gradle and jdk versions 
+
+If you're not using docker, first make sure that your environment is correctly set up by checking the gradle and jdk versions 
 
 Gradle
 <pre style="font-size: 12px">
@@ -113,7 +125,7 @@ OpenJDK 64-Bit Server VM Zulu17.46+19-CA (build 17.0.9+8-LTS, mixed mode, sharin
 Now we will simply run the command to build gradle task to build the project. This will generate an additional `build` directory that will contain the artifact that will be used to run our service.
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section01/activity]$ gradle assemble
+[root@pt-instance-1:/oteljavalab/section01/activity]$ gradle build
 
 BUILD SUCCESSFUL in 22s
 4 actionable tasks: 4 executed
@@ -129,7 +141,7 @@ At this stage, the artifact that will be produced (`springotellab-0.0.1-SNAPSHOT
 Running the application is fairly simple:
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section01/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar
+[root@pt-instance-1:/oteljavalab/section01/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar
 2024-03-01T20:53:54.849Z  INFO 3899506 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 3899506 (/root/oteljavalab/section01/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section01/activity)
 2024-03-01T20:53:54.854Z  INFO 3899506 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-01T20:53:56.380Z  INFO 3899506 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
@@ -147,7 +159,7 @@ The application will start a Tomcat server that will load our application that w
 
 ## Test the application
 
-In another terminal run the following command, you should receive something like `[29,34,35,21,24]`
+In another terminal run the following command either locally on your host or from within the container, you should receive something like `[29,34,35,21,24]`
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab/section01/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"

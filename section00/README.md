@@ -4,12 +4,82 @@
 This guide provides detailed steps to install the OpenTelemetry Collector Contrib on an Ubuntu host.
 
 ## Prerequisites
-- Ubuntu system with sudo privileges.
+- Ubuntu system with sudo privileges or Docker 
 - Internet connection.
 
-Note: In the remaining instructions, all steps will be performed as the root user. 
 
-## Installation Steps
+## Installation Steps if using Docker
+
+Once you have cloned the repository, copy or rename the file named `collector-template.yaml` to `collector.yaml`
+
+```bash
+[root@pt-instance-1:~/otelcollector]$ cp section00/activity/collector-template.yaml section00/activity/collector.yaml
+```
+
+
+Edit it and add the required configuration details (`datadog.api.site`, `datadog.api.key`) 
+
+
+```ìni
+receivers:
+  otlp:
+    protocols:
+      http:
+      grpc:
+processors:
+  batch:
+    timeout: 10s
+connectors:
+    datadog/connector:
+exporters:
+  datadog:
+    api:
+      site: <your datadog api site (default is datadoghq.com)>
+      key: <your datadog api key>
+service:
+  telemetry:
+    logs:
+      level: info
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [datadog]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [datadog]
+```
+
+**Note**: By default the datadog site will be set to datadoghq.com. If you wish to target any other backend (ex for EU or US3, US4 etc...), you will want to set the site to the corresponding value. Ex for Europe, `site: datadoghq.eu` 
+
+
+Save the file and spin up the containers
+
+You would only need to run the following command that starts two containers one running the collector, the other one running the application container.
+
+```bash
+[root@pt-instance-1:~/oteljavalab]$ docker-compose up -d
+Creating otel-collector ... done
+Creating springotel     ... done
+```
+
+
+You should be able to see the two containers up and running
+
+```bash
+[root@pt-instance-1:~/oteljavalab]$ docker-compose ps
+     Name                   Command               State   Ports
+---------------------------------------------------------------
+otel-collector   /otelcol-contrib --config  ...   Up           
+springotel       /__cacert_entrypoint.sh sl ...   Up           
+```
+
+You may go to the next section about the application details.
+
+## Installation Steps if running locally
+
+Note: In the remaining instructions, all steps will be performed as the root user. 
 
 ### Step 1: Update the System
 Update your system packages.
@@ -122,15 +192,12 @@ You should get a similar output
 ```
 
 
-
-
 ### Step 8: Verify the Installation
 Check if the Collector is running.
 
 ```bash
 [root@pt-instance-1:~/otelcollector]$ ps -ef | grep otelcol-contrib
 ```
-
 
 
 ### Step 9: Setting up as a System Service (Optional)
@@ -173,6 +240,8 @@ Set up the collector as a system service.
 
 ### Step 10: Confirm Functionality
 In the following sections, we will confirm this after generating some traces and metrics.
+
+
 
 ## Conclusion
 Follow these steps to install and configure the OpenTelemetry Collector Contrib on your Ubuntu host.
