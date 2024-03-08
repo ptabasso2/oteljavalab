@@ -46,9 +46,9 @@ In this example we will define a span type as `web` so that it will get rendered
 
 Here is how we do it practically:
 
-We need to edit the `TemperatureController.java` file and adapt the line where we create the span by chaining and appending the `setAttribute` method calls:
+We need to edit the `TemperatureController.java` file and adapt the line where we create the span by appending the `setAttribute` method calls:
 
-`setAttribute("span.type", "web").setAttribute("resource.name", "GET /simulateTemperature")`
+`setAttribute("span.type", "web")` and `setAttribute("resource.name", "GET /simulateTemperature")`
 
 ```java
         Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
@@ -77,10 +77,6 @@ We need to edit the `TemperatureController.java` file and adapt the line where w
         }
     
 ```
-
-Certainly! Below is a structured explanation similar to your tutorial format, this time focusing on demonstrating the usage of semantic attributes with the OpenTelemetry Java SDK in the context of a Spring Boot application.
-
----
 
 ## Setting Semantic Attributes in Spans
 
