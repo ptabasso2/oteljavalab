@@ -124,6 +124,50 @@ The transformation involves splitting the original monolithic application into t
 </pre>
 
 
+For this section we've slightly changed our docker configuration to take into account the implementation change for our service.
+
+
+First let's stop the previous containers by running the following command on the docker host. 
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker-compose down
+Stopping springotel     ... done
+Stopping otel-collector ... done
+Removing springotel     ... done
+Removing otel-collector ... done
+</pre>
+
+
+Now we will load the new configuration by using the corresponding docker-compose file `docker-compose-section06.yml`
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker-compose -f docker-compose-section06.yml up -d
+Creating temperature-calculator ... done
+Creating temperature-simulator  ... done
+Creating otel-collector         ... done
+</pre>
+
+
+From now on, we will be able to interact with two containers representing our two services.
+Let's first connect to the `temperature-simulator` container and start instrumenting the corresponding service
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it temperature-simulator bash
+[root@pt-instance-1:/oteljavalab]$ cd section06/activity/temperature-simulator
+
+[root@pt-instance-1:/oteljavalab/section06/activity/temperature-simulator]$ ll
+total 32
+drwxr-xr-x 3 root root 4096 Feb 10 12:34 src
+drwxr-xr-x 3 root root 4096 Mar  1 20:48 gradle
+-rwxr-xr-x 1 root root 8692 Mar  1 20:48 gradlew
+-rw-r--r-- 1 root root   36 Mar  2 21:31 settings.gradle.kts
+-rw-r--r-- 1 root root  474 Mar  2 23:11 build.gradle.kts
+drwxr-xr-x 7 root root 4096 Mar  3 01:06 build
+
+</pre>
+
+
+
 ## Instrumenting our services
 
 Before going into the details of setting up context propagation, you will want to first follow the steps described in section03 to add the OpenTelemetry SDK and initialize it. Then create spans in the Controller classes `TemperatureController` (for the `index()`) method and also the `simulateTemperature()` method in the `Temperature` class. You will consider the same steps for the `measure` method in the  `CalculatorController` class of the second service.
@@ -240,7 +284,24 @@ Let's break down what's happening in this method:
 
 ### Context propagation and modifications in the `temperature calculator` project
 
-The first steps of the instrumentation will be similar to what is done with the `temperature simulator` service:
+The first steps of the instrumentation will be similar to what is done with the `temperature simulator` service.
+
+Let's connect to the `temperature-calculator` container and start instrumenting the corresponding service
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it temperature-calculator bash
+[root@pt-instance-1:/oteljavalab]$ cd section06/activity/temperature-calculator
+
+[root@pt-instance-1:/oteljavalab/section06/activity/temperature-calculator]$ ll
+total 32
+drwxr-xr-x 3 root root 4096 Feb 10 12:34 src
+drwxr-xr-x 3 root root 4096 Mar  1 20:48 gradle
+-rwxr-xr-x 1 root root 8692 Mar  1 20:48 gradlew
+-rw-r--r-- 1 root root   35 Mar  2 21:31 settings.gradle.kts
+-rw-r--r-- 1 root root  473 Mar  2 23:11 build.gradle.kts
+drwxr-xr-x 7 root root 4096 Mar  3 01:06 build
+</pre>
+
 
 1. Updating the `build.gradle.sdk` file. We will simply name the artifact differently 
 
@@ -251,7 +312,6 @@ tasks {
 	}
 }
 ```
-
 
 2. Initializing the OpenTelemetry SDK with the propagator as we did above
 3. Modifying the `CalculatorController` class by injecting the OpenTelemetry object and acquiring a Tracer instance
@@ -358,20 +418,85 @@ The `measure` method annotated with `@GetMapping("/measureTemperature")` is a RE
 
 ## Build, run and test the application
 
+
+To build the application, you will want to run the build inside each container or you could simply run the following commands from the host:
+
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section06/solution]$ gradle build
+[root@pt-instance-1:~/oteljavalab]$ docker exec temperature-simulator bash -c "gradle -p section06/activity/temperature-simulator build"
 
-> Task :temperature-calculator:compileJava
+Welcome to Gradle 8.4!
 
-BUILD SUCCESSFUL in 6s
-8 actionable tasks: 8 executed
+Here are the highlights of this release:
+ - Compiling and testing with Java 21
+ - Faster Java compilation on Windows
+ - Role focused dependency configurations creation
 
-[root@pt-instance-1:~/oteljavalab/section06/solution]$ ./startServices.sh
-Starting temperature-calculator service...
-Starting temperature-simulator service...
-Services are starting in the background. Logs are available in temperature-calculator.log and temperature-simulator.log
+For more details see https://docs.gradle.org/8.4/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :resolveMainClassName
+> Task :bootJar
+> Task :jar SKIPPED
+> Task :assemble
+> Task :compileTestJava NO-SOURCE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+> Task :test NO-SOURCE
+> Task :check UP-TO-DATE
+> Task :build
+
+BUILD SUCCESSFUL in 1m 1s
+4 actionable tasks: 4 executed
+</pre>
+
+
+Same thing for the second service (`temperature-calculator`)
+
+<pre style="font-size: 12px">
+
+[root@pt-instance-1:~/oteljavalab]$ docker exec temperature-calculator bash -c "gradle -p section06/activity/temperature-calculator build"
+...
+BUILD SUCCESSFUL in 1m 1s
+4 actionable tasks: 4 executed
 
 </pre>
+
+
+
+Now we can start the services:
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec temperature-simulator bash -c "java -jar section06/activity/temperature-simulator/build/libs/springtempsimu-0.0.1-SNAPSHOT.jar"
+2024-03-08T16:09:28.806Z  INFO 412 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 412 (/oteljavalab/section06/activity/temperature-simulator/build/libs/springtempsimu-0.0.1-SNAPSHOT.jar started by root in /oteljavalab)
+2024-03-08T16:09:28.813Z  INFO 412 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
+2024-03-08T16:09:30.332Z  INFO 412 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2024-03-08T16:09:30.348Z  INFO 412 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-03-08T16:09:30.348Z  INFO 412 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-03-08T16:09:30.408Z  INFO 412 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-03-08T16:09:30.413Z  INFO 412 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1463 ms
+2024-03-08T16:09:30.910Z  INFO 412 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2024-03-08T16:09:30.932Z  INFO 412 --- [           main] c.p.o.s.TemperatureApplication           : Started TemperatureApplication in 2.803 seconds (process running for 3.445)
+
+</pre>
+
+You can hit `Ctrl + C` and run the second service
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec temperature-calculator bash -c "java -jar section06/activity/temperature-calculator/build/libs/springtempcalc-0.0.1-SNAPSHOT.jar"
+2024-03-08T16:14:53.180Z  INFO 368 --- [           main] c.p.o.s.CalculatorApplication            : Starting CalculatorApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 368 (/oteljavalab/section06/activity/temperature-calculator/build/libs/springtempcalc-0.0.1-SNAPSHOT.jar started by root in /oteljavalab)
+2024-03-08T16:14:53.191Z  INFO 368 --- [           main] c.p.o.s.CalculatorApplication            : No active profile set, falling back to 1 default profile: "default"
+2024-03-08T16:14:54.618Z  INFO 368 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8088 (http)
+2024-03-08T16:14:54.634Z  INFO 368 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-03-08T16:14:54.634Z  INFO 368 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2024-03-08T16:14:54.696Z  INFO 368 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2024-03-08T16:14:54.699Z  INFO 368 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1367 ms
+2024-03-08T16:14:55.167Z  INFO 368 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8088 (http) with context path ''
+2024-03-08T16:14:55.186Z  INFO 368 --- [           main] c.p.o.s.CalculatorApplication            : Started CalculatorApplication in 2.683 seconds (process running for 3.339)
+
+</pre>
+
 
 Generate a request from another terminal using curl (or from a browser or postman)
 
