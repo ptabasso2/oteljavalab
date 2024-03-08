@@ -51,7 +51,9 @@ We need to edit the `TemperatureController.java` file and adapt the line where w
 `setAttribute("span.type", "web").setAttribute("resource.name", "GET /simulateTemperature")`
 
 ```java
-        Span span = tracer.spanBuilder("temperatureSimulation").setAttribute("span.type", "web").setAttribute("resource.name", "GET /simulateTemperature").startSpan();
+        Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
+        span.setAttribute("span.type", "web");
+        span.setAttribute("resource.name", "GET /simulateTemperature");
         try (Scope scope = span.makeCurrent()) {
 
             if (measurements.isEmpty()) {
@@ -121,11 +123,11 @@ Let's add semantic attributes to a span in the `TemperatureController.java` to i
 ```java
 
 // Inside the TemperatureController's method where the span is created
-Span span = tracer.spanBuilder("temperatureSimulation")
-        .setAttribute(SemanticAttributes.HTTP_METHOD, "GET")
-        .setAttribute(SemanticAttributes.HTTP_URL, "http://example.com/simulateTemperature")
-        .setAttribute(SemanticAttributes.HTTP_STATUS_CODE, 200)
-        .startSpan();
+Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
+span.setAttribute(SemanticAttributes.HTTP_METHOD, "GET /simulateTemperature");
+span.setAttribute(SemanticAttributes.HTTP_URL, "http://example.com/simulateTemperature");
+span.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, 200);
+
 try (Scope scope = span.makeCurrent()) {
 
     if (measurements.isEmpty()) {
@@ -151,7 +153,7 @@ try (Scope scope = span.makeCurrent()) {
 
 This requires importing the following package:
 
-`import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;`
+`import io.opentelemetry.semconv.SemanticAttributes;`
 
 
 **Key Points**
@@ -188,8 +190,8 @@ In essence, coupling span attributes with semantic conventions enhances the obse
 BUILD SUCCESSFUL in 4s
 4 actionable tasks: 4 executed
 
-[root@pt-instance-1:~/oteljavalab/section03/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar &
-2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section03/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section03/activity)
+[root@pt-instance-1:/oteljavalab/section04/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar &
+2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section04/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section04/activity)
 2024-03-02T12:11:25.484Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-02T12:11:27.116Z  INFO 30923 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
 2024-03-02T12:11:27.133Z  INFO 30923 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
@@ -213,12 +215,20 @@ Generate a request from another terminal using curl (or from a browser or postma
 
 ## Check the results in the Datadog UI (APM traces)
 
-Visually you would be able to notice that across the tests (before and after the span attributes were set) the service widget was replaced from custom to web. And that the resource name has been changed from `temperatureSimulation` to `GET /simulateTemperature` 
+Visually you would be able to notice that across the tests (before and after the span attributes were set) the service widget was replaced from custom to web. And that the resource name has been changed from `temperatureSimulation` to `GET /simulateTemperature` when setting the attribute **manually**
 
 
 <p align="left">
   <img src="img/springotel41.png" width="850" />
 </p>
+
+
+This example shows the attribute set using semantic conventions
+
+<p align="left">
+  <img src="img/springotel42.png" width="850" />
+</p>
+
 
 
 To view the generated traces: https://app.datadoghq.com/apm/traces
