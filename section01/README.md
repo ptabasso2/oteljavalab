@@ -50,7 +50,7 @@ In the following we will assume that docker is being used as per the description
 
 ## Directory structure of the project
 
-Let's first ssh into the container:
+Let's first connect to the container:
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash

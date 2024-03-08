@@ -10,10 +10,10 @@ This guide provides detailed steps to install the OpenTelemetry Collector Contri
 
 ## Installation Steps if using Docker
 
-Once you have cloned the repository, copy or rename the file named `collector-template.yaml` to `collector.yaml`
+Once you have cloned the repository, copy or rename the file named `collector-template.yaml` to `collector.yaml` located under the `./oteljavalab/section00/activity` directory.
 
 ```bash
-[root@pt-instance-1:~/otelcollector]$ cp section00/activity/collector-template.yaml section00/activity/collector.yaml
+[root@pt-instance-1:~/oteljavalab]$ cp section00/activity/collector-template.yaml section00/activity/collector.yaml
 ```
 
 
@@ -51,7 +51,7 @@ service:
       exporters: [datadog]
 ```
 
-**Note**: By default the datadog site will be set to datadoghq.com. If you wish to target any other backend (ex for EU or US3, US4 etc...), you will want to set the site to the corresponding value. Ex for Europe, `site: datadoghq.eu` 
+**Note**: By default the datadog site will be set to `datadoghq.com`. If you wish to target any other backend (ex for EU or US3, US4 etc...), you will want to set the site to the corresponding value. Ex for Europe, `site: datadoghq.eu` 
 
 
 Save the file and spin up the containers
@@ -75,7 +75,7 @@ otel-collector   /otelcol-contrib --config  ...   Up
 springotel       /__cacert_entrypoint.sh sl ...   Up           
 ```
 
-You may go to the next section about the application details.
+You may go to the next section (`section01`) about the application details.
 
 ## Installation Steps if running locally
 
