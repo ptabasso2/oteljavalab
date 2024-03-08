@@ -4,7 +4,7 @@
 
 ## Goal of this activity
 
-This section provides a practical example of manual tracing where spans are generated using the Otel Java SDK. After familiarizing ourselves with automatic instrumentation using the Java agent, we'll now modify our code to control how spans and traces are generated.
+This section provides a practical example of manual tracing where spans are generated using the Otel Java SDK. After familiarizing ourselves with automatic instrumentation using the java agent, we'll now modify our code to control how spans and traces are generated.
 
 
 ## Main steps
@@ -21,7 +21,7 @@ We will use the following basic features of the OpenTelemetry API:
 * Each `span` is given a **name**
 * The span gets started via the `startSpan()` method.
 * each `span` must be finished by calling its `end()` method and this happens inside a scope.
-* For a basic setup, you might choose the OTLP protocol to send the various observability signals (Traces, logs, metrics). It is a versatile prootocol and supported by many backends.
+* For a basic setup, you might choose the OTLP protocol to send the various observability signals (Traces, logs, metrics). It is a versatile protocol and supported by many backends.
 
 
 ## Adding the sdk to the project
@@ -41,7 +41,7 @@ Going to the directory containing our project
 [root@pt-instance-1:/oteljavalab/section03/activity]$
 </pre>
 
-In order to add the sdk, we will simply add the following dependencies to the dependency bloc of the `build.gradle.kts` file
+In order to add the sdk, we will simply add the following dependencies to the dependency block of the `build.gradle.kts` file
 
 This should look like
 

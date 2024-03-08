@@ -11,13 +11,12 @@ In this chapter we will see how to use the opentelemetry java agent to perform a
 ## Steps
 
 1. Build the application
-2. Download the java agent
+2. Download the java agent `opentelemetry-javaagent.jar` from releases of the opentelemetry-java-instrumentation repository. The JAR file contains the agent and instrumentation libraries.
 3. Add `-javaagent:path/to/opentelemetry-javaagent.jar` and other config to the JVM startup arguments and launch the app
 
 
 ## Environment set-up
 
-Download `opentelemetry-javaagent.jar` from Releases of the opentelemetry-java-instrumentation repository. The JAR file contains the agent and instrumentation libraries.
 
 Accessing the container first
 
@@ -98,7 +97,7 @@ OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader clas
 2024-03-01T23:48:42.102Z  INFO 3960341 --- [           main] c.p.o.s.TemperatureApplication           : Started TemperatureApplication in 3.092 seconds (process running for 6.552)
 </pre>
 
-The service will start and will run our application that listens to connections on port 8080.
+The service will start and run our application that listens to connections on port 8080.
 
 Note: https://opentelemetry.io/docs/languages/java/automatic/#configuring-the-agent for more details about how to configure the java agent
 

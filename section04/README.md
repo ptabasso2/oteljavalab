@@ -13,14 +13,14 @@ In the previous section we explored how to perform basic tasks related to manual
 
 ## Setting span attributes
 
-Accessing the container first
+**Accessing the container first**
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
 [root@pt-instance-1:/oteljavalab]$ 
 </pre>
 
-Going to the directory containing our project
+**Navigate to the project directory**
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:/oteljavalab]$ cd section04/activity
@@ -75,6 +75,92 @@ We need to edit the `TemperatureController.java` file and adapt the line where w
         }
     
 ```
+
+Certainly! Below is a structured explanation similar to your tutorial format, this time focusing on demonstrating the usage of semantic attributes with the OpenTelemetry Java SDK in the context of a Spring Boot application.
+
+---
+
+## Setting Semantic Attributes in Spans
+
+Before accessing the application container, ensure you're in the correct working directory.
+
+```bash
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
+[root@pt-instance-1:/oteljavalab]$ 
+```
+
+**Navigate to the Project Directory**
+
+First, change into the directory containing your Spring Boot project:
+
+```bash
+[root@pt-instance-1:/oteljavalab]$ cd section04/activity
+[root@pt-instance-1:/oteljavalab/section04/activity]$
+```
+
+**Examine the Project's Java Source Files**
+
+Review the existing Java source files in your project:
+
+```bash
+[root@pt-instance-1:~/oteljavalab/section04/activity]$ ll src/main/java/com/pej/otel/springotellab/
+total 20
+drwxr-xr-x 2 root root 4096 Mar  6 15:42 ./
+drwxr-xr-x 3 root root 4096 Mar  3 10:09 ../
+-rw-r--r-- 1 root root 1617 Mar  3 12:53 TemperatureApplication.java
+-rw-r--r-- 1 root root 2151 Mar  3 12:55 TemperatureController.java
+-rw-r--r-- 1 root root 1687 Mar  3 13:04 Thermometer.java
+```
+
+**Adding Semantic Attributes to Spans**
+
+Semantic attributes allow you to annotate spans with a standardized set of attributes that provide context about the nature of the operation being traced. For instance, when tracing web requests, you might want to include attributes like HTTP method, URL path, and status code. These attributes make it easier to filter and analyze trace data in observability platforms like Datadog.
+
+Let's add semantic attributes to a span in the `TemperatureController.java` to include details about an HTTP request:
+
+```java
+
+// Inside the TemperatureController's method where the span is created
+Span span = tracer.spanBuilder("temperatureSimulation")
+        .setAttribute(SemanticAttributes.HTTP_METHOD, "GET")
+        .setAttribute(SemanticAttributes.HTTP_URL, "http://example.com/simulateTemperature")
+        .setAttribute(SemanticAttributes.HTTP_STATUS_CODE, 200)
+        .startSpan();
+try (Scope scope = span.makeCurrent()) {
+
+    if (measurements.isEmpty()) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
+    }
+
+    thermometer.setTemp(20, 35);
+    List<Integer> result = thermometer.simulateTemperature(measurements.get());
+
+    if (location.isPresent()) {
+        logger.info("Temperature simulation for {}: {}", location.get(), result);
+    } else {
+        logger.info("Temperature simulation for an unspecified location: {}", result);
+    }
+    return result;
+} catch(Throwable t) {
+    span.recordException(t);
+    throw t;
+} finally {
+    span.end();
+}
+```
+
+This requires importing the following package:
+
+`import io.opentelemetry.semconv.trace.attributes.SemanticAttributes;`
+
+
+**Key Points**
+
+- `SemanticAttributes.HTTP_METHOD`, `SemanticAttributes.HTTP_URL`, and `SemanticAttributes.HTTP_STATUS_CODE` are examples of semantic attributes provided by OpenTelemetry to standardize the way common details about operations (like HTTP requests) are described.
+- By annotating spans with semantic attributes, you can enhance the observability of your application, making it easier to query and understand trace data.
+- Ensure that you import the `SemanticAttributes` class from the OpenTelemetry API to use these predefined attribute keys.
+
+By following this example, you integrate semantic attributes into your application's spans, thereby enriching the telemetry data collected during the execution of HTTP requests.
 
 
 ## Observations
