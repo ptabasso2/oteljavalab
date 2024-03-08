@@ -80,7 +80,7 @@ We need to edit the `TemperatureController.java` file and adapt the line where w
 
 ## Setting Semantic Attributes in Spans
 
-Before accessing the application container, ensure you're in the correct working directory.
+Let's connect to the application container, ensure you're in the correct working directory.
 
 ```bash
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash

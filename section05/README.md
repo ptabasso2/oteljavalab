@@ -44,7 +44,7 @@ Going to the directory containing our project
 [root@pt-instance-1:/oteljavalab/section05/activity]$
 </pre>
 
-Unlike what we have done in the previous section, the way we initialize the SDK will differ.
+Unlike what we did in the previous section, the way we initialize the SDK will differ.
 We will change the block in our `TemperatureApplication` class from:
 
 ```java

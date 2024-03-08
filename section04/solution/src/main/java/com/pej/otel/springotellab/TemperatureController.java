@@ -32,7 +32,9 @@ public class TemperatureController {
     public List<Integer> index(@RequestParam("location") Optional<String> location,
                                @RequestParam("measurements") Optional<Integer> measurements) {
 
-        Span span = tracer.spanBuilder("temperatureSimulation").setAttribute("span.type", "web").setAttribute("resource.name", "GET /simulateTemperature").startSpan();
+        Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
+	span.setAttribute("span.type", "web");
+	span.setAttribute("resource.name", "GET /simulateTemperature");
         try (Scope scope = span.makeCurrent()) {
 
             if (measurements.isEmpty()) {
