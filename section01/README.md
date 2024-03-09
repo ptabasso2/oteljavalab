@@ -19,7 +19,7 @@ The Temperature Simulation Application is a Spring Boot-based service designed t
 - **Optional Location Specification:** While primarily focused on temperature generation, the application allows for an optional location parameter to contextualize the simulated data.
 - **Logging and Monitoring:** Logs temperature simulation details, including the specified location (if provided) and the generated temperature readings, facilitating debugging and monitoring.
 
-## How It Works
+## How it Works
 
 The application consists of three main components:
 

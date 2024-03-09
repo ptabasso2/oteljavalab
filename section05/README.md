@@ -7,22 +7,22 @@
 The `AutoConfiguredOpenTelemetrySdk` is a feature provided by the OpenTelemetry Java SDK that simplifies the process of configuring the OpenTelemetry SDK in an application. It aims to automate the setup of various components of the SDK based on the environment, system properties, and the presence of certain dependencies, making it easier to get started with OpenTelemetry without deep diving into manual configuration details. Here's an overview of its key aspects and benefits:
 
 
-### Key Features
+### Key features
 
-1. **Automatic Discovery and Configuration**: `AutoConfiguredOpenTelemetrySdk` automatically discovers and configures SDK components like Span Exporters, Propagators, and Resource Providers. This means it can pick up configuration from environment variables, system properties, or configuration files without requiring explicit code to set these up.
+1. **Automatic discovery and configuration**: `AutoConfiguredOpenTelemetrySdk` automatically discovers and configures SDK components like Span Exporters, Propagators, and Resource Providers. This means it can pick up configuration from environment variables, system properties, or configuration files without requiring explicit code to set these up.
 
-2. **Flexible Configuration**: While it provides sensible defaults and automatic configuration, `AutoConfiguredOpenTelemetrySdk` also offers hooks for customization. Developers can override the default settings through environment variables, system properties, or programmatically, allowing for detailed control over the behavior of the SDK.
+2. **Flexible configuration**: While it provides sensible defaults and automatic configuration, `AutoConfiguredOpenTelemetrySdk` also offers hooks for customization. Developers can override the default settings through environment variables, system properties, or programmatically, allowing for detailed control over the behavior of the SDK.
 
-3. **Simplifies SDK Updates**: As OpenTelemetry evolves, new features and improvements are introduced. The automatic configuration mechanism abstracts away some of the complexities associated with upgrading the SDK, as it can automatically adapt to changes in available exporters, propagators, and other components.
+3. **Simplifies SDK updates**: As OpenTelemetry evolves, new features and improvements are introduced. The automatic configuration mechanism abstracts away some of the complexities associated with upgrading the SDK, as it can automatically adapt to changes in available exporters, propagators, and other components.
 
 
-### How It Works
+### How it Works
 
 - When an application starts, `AutoConfiguredOpenTelemetrySdk` initializes the OpenTelemetry SDK by scanning for available components and configurations. It sets up the SDK based on found configurations, falling back to default settings when specific configurations are not provided.
 - It configures the `TracerProvider`, metric `MeterProvider`, and the global `Propagators` based on this auto-discovered configuration.
 - Developers can influence the auto-configuration process through various means, including:
-  - **Environment Variables**: Such as `OTEL_TRACES_EXPORTER` to specify which exporter to use for traces.
-  - **System Properties**: Parallel to environment variables, offering another way to configure the SDK.
+  - **Environment variables**: Such as `OTEL_TRACES_EXPORTER` to specify which exporter to use for traces.
+  - **System properties**: Parallel to environment variables, offering another way to configure the SDK.
   - **otel.javaagent.configuration-file**: A property pointing to a configuration file that provides detailed settings, useful for complex configurations that cannot be fully expressed through environment variables or system properties.
 
 
@@ -84,16 +84,16 @@ Both use cases show different approaches to configuring and initializing the Ope
 
 ### Automatic configuration of the SDK
 
-**Key Characteristics**:
-- **Automatic Configuration**: This approach leverages `AutoConfiguredOpenTelemetrySdk`, which automatically configures the OpenTelemetry SDK based on the environment, system properties, and possibly configuration files. It simplifies setup by automatically detecting and configuring exporters, propagators, resource attributes, and more.
-- **Ease of Use**: Ideal for getting started quickly or when you want to minimize manual configuration. It's particularly useful when the default configuration and automatic discovery mechanisms align well with your application's needs.
-- **Flexibility and Extensibility**: While it provides a simple setup, it might be less flexible if specific custom configurations are required that cannot be easily achieved through the environment or system properties.
+**Key characteristics**:
+- **Automatic configuration**: This approach leverages `AutoConfiguredOpenTelemetrySdk`, which automatically configures the OpenTelemetry SDK based on the environment, system properties, and possibly configuration files. It simplifies setup by automatically detecting and configuring exporters, propagators, resource attributes, and more.
+- **Ease of use**: Ideal for getting started quickly or when you want to minimize manual configuration. It's particularly useful when the default configuration and automatic discovery mechanisms align well with your application's needs.
+- **Flexibility and extensibility**: While it provides a simple setup, it might be less flexible if specific custom configurations are required that cannot be easily achieved through the environment or system properties.
 
 
 ### Manual configuration of the SDK
 
-**Key Characteristics**:
-- **Manual Configuration**: This approach involves manually configuring each component of the OpenTelemetry SDK, such as the `Resource`, `SpanExporter`, `BatchSpanProcessor`, and `TracerProvider`. It offers precise control over the SDK's configuration.
+**Key characteristics**:
+- **Manual configuration**: This approach involves manually configuring each component of the OpenTelemetry SDK, such as the `Resource`, `SpanExporter`, `BatchSpanProcessor`, and `TracerProvider`. It offers precise control over the SDK's configuration.
 - **Customizability**: It's suitable for applications with specific requirements that cannot be met through automatic configuration alone. For example, setting specific attributes, customizing the exporter timeout, or using a particular batch processing strategy.
 - **Complexity**: This method requires a deeper understanding of OpenTelemetry's configuration options and might result in more boilerplate code. It's more appropriate for applications with specific observability needs that justify the additional configuration effort.
 

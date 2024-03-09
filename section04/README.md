@@ -78,7 +78,7 @@ We need to edit the `TemperatureController.java` file and adapt the line where w
     
 ```
 
-## Setting Semantic Attributes in Spans
+## Setting semantic attributes in spans
 
 Let's connect to the application container, ensure you're in the correct working directory.
 
@@ -87,7 +87,7 @@ Let's connect to the application container, ensure you're in the correct working
 [root@pt-instance-1:/oteljavalab]$ 
 ```
 
-**Navigate to the Project Directory**
+**Navigate to the project directory**
 
 First, change into the directory containing your Spring Boot project:
 
@@ -96,7 +96,7 @@ First, change into the directory containing your Spring Boot project:
 [root@pt-instance-1:/oteljavalab/section04/activity]$
 ```
 
-**Examine the Project's Java Source Files**
+**Examine the project's java source files**
 
 Review the existing Java source files in your project:
 
@@ -110,7 +110,7 @@ drwxr-xr-x 3 root root 4096 Mar  3 10:09 ../
 -rw-r--r-- 1 root root 1687 Mar  3 13:04 Thermometer.java
 ```
 
-**Adding Semantic Attributes to Spans**
+**Adding semantic attributes to spans**
 
 Semantic attributes allow you to annotate spans with a standardized set of attributes that provide context about the nature of the operation being traced. For instance, when tracing web requests, you might want to include attributes like HTTP method, URL path, and status code. These attributes make it easier to filter and analyze trace data in observability platforms like Datadog.
 
@@ -152,7 +152,7 @@ This requires importing the following package:
 `import io.opentelemetry.semconv.SemanticAttributes;`
 
 
-**Key Points**
+**Key points**
 
 - `SemanticAttributes.HTTP_METHOD`, `SemanticAttributes.HTTP_URL`, and `SemanticAttributes.HTTP_STATUS_CODE` are examples of semantic attributes provided by OpenTelemetry to standardize the way common details about operations (like HTTP requests) are described.
 - By annotating spans with semantic attributes, you can enhance the observability of your application, making it easier to query and understand trace data.

@@ -1,5 +1,5 @@
 
-# OpenTelemetry Collector Contrib Installation Guide
+# OpenTelemetry collector contrib installation guide
 
 This guide provides detailed steps to install the OpenTelemetry Collector Contrib on an Ubuntu host.
 
@@ -8,7 +8,7 @@ This guide provides detailed steps to install the OpenTelemetry Collector Contri
 - Internet connection.
 
 
-## Installation Steps if using Docker
+## Installation steps if using Docker
 
 Once you have cloned the repository, copy or rename the file named `collector-template.yaml` to `collector.yaml` located under the `./oteljavalab/section00/activity` directory.
 
@@ -77,11 +77,11 @@ springotel       /__cacert_entrypoint.sh sl ...   Up
 
 You may go to the next section (`section01`) about the application details.
 
-## Installation Steps if running locally
+## Installation steps if running locally
 
 Note: In the remaining instructions, all steps will be performed as the root user. 
 
-### Step 1: Update the System
+### Step 1: Update the system
 Update your system packages.
 
 ```bash
@@ -89,21 +89,21 @@ Update your system packages.
 [root@pt-instance-1:~]$ apt upgrade
 ```
 
-### Step 2: Install Required Dependencies
+### Step 2: Install required dependencies
 Install necessary dependencies.
 
 ```bash
 [root@pt-instance-1:~]$ apt install wget tar
 ```
 
-### Step 3: Create Installation Directory
+### Step 3: Create installation directory
 Create the directory for the OpenTelemetry Collector.
 
 ```bash
 [root@pt-instance-1:~]$ mkdir -p /root/otelcollector
 ```
 
-### Step 4: Download OpenTelemetry Collector Contrib
+### Step 4: Download OpenTelemetry collector contrib
 Download the OpenTelemetry Collector Contrib.
 
 ```bash
@@ -111,14 +111,14 @@ Download the OpenTelemetry Collector Contrib.
 [root@pt-instance-1:~/otelcollector]$ wget https://github.com/open-telemetry/opentelemetry-collector-contrib/releases/download/<version>/otelcol-contrib_<version>_linux_amd64.tar.gz
 ```
 
-### Step 5: Extract the Collector
+### Step 5: Extract the collector
 Extract the downloaded file.
 
 ```bash
 [root@pt-instance-1:~/otelcollector]$ tar -xvzf otelcol-contrib_<version>_linux_amd64.tar.gz
 ```
 
-### Step 6: Configure the Collector
+### Step 6: Configure the collector
 Create a configuration file.
 
 ```bash
@@ -160,7 +160,7 @@ service:
 
 **Note**: By default the datadog site will be set to datadoghq.com. If you wish to target any other backend (ex for EU or US3, US4 etc...), you will want to set the site to the corresponding value. Ex for Europe, `site: datadoghq.eu` 
 
-### Step 7: Start the Collector
+### Step 7: Start the collector
 Run the Collector with the configuration.
 
 ```bash
@@ -192,7 +192,7 @@ You should get a similar output
 ```
 
 
-### Step 8: Verify the Installation
+### Step 8: Verify the installation
 Check if the Collector is running.
 
 ```bash
@@ -200,7 +200,7 @@ Check if the Collector is running.
 ```
 
 
-### Step 9: Setting up as a System Service (Optional)
+### Step 9: Setting up as a system service (Optional)
 Set up the collector as a system service.
 
 1. Create a systemd service file.
@@ -238,7 +238,7 @@ Set up the collector as a system service.
     [root@pt-instance-1:~/otelcollector]$ systemctl status otelcol-contrib
     ```
 
-### Step 10: Confirm Functionality
+### Step 10: Confirm functionality
 In the following sections, we will confirm this after generating some traces and metrics.
 
 

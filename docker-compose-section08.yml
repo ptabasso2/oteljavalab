@@ -1,0 +1,34 @@
+version: '3.9'
+services:
+  dd-agent-dogfood-jmx:
+    container_name: dd-agent-dogfood-jmx
+    image: gcr.io/datadoghq/agent:latest-jmx
+    environment:
+      - DD_CONTAINER_EXCLUDE_LOGS="name:datadog-agent"
+      - SD_JMX_ENABLE=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_PROCESS_AGENT_ENABLED=true
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC="true" 
+      - DD_LOG_LEVEL=debug
+      - DD_LOGS_ENABLED=true
+      - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
+      - DD_HOSTNAME=datadog
+      - DD_APM_ENABLED=true
+      - DD_API_KEY
+    volumes:
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    network_mode: host
+
+  springotel:
+    container_name: springotel
+    hostname: pt-instance-1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    command: "sleep infinity"
+    network_mode: host
+

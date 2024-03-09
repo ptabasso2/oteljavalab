@@ -102,7 +102,7 @@ The service will start and run our application that listens to connections on po
 Note: https://opentelemetry.io/docs/languages/java/automatic/#configuring-the-agent for more details about how to configure the java agent
 
 
-### Command Breakdown
+### Command breakdown
 
 ```shell
 java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.logs.exporter=none -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar
@@ -115,7 +115,7 @@ java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Do
 - `-jar build/libs/springotellab-0.0.1-SNAPSHOT.jar`: Specifies the JAR file to run, which is the application's executable JAR.
 
 
-### Additional System Properties for OpenTelemetry
+### Additional system properties for OpenTelemetry
 
 1. **otel.metrics.exporter**: Specifies the metrics exporter to use. Similar to `otel.logs.exporter`, it can be set to various backends like `prometheus`, `otlp`, `logging` (for debugging purposes), or `none` if you want to disable metric exporting.
    - Example: `-Dotel.metrics.exporter=otlp` would configure the agent to export metrics using the OTLP (OpenTelemetry Protocol) exporter.

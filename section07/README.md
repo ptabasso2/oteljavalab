@@ -162,7 +162,7 @@ As we can now access the `Tracer` instance, we will change the method implementa
 
 We are custom instrumenting the methods that are inside the `Thermometer` class (`simulateTemperature()` and `measureOnce()`). Exactly like what we did in the previous section when using the sdk
 
-#### Before: Without Instrumentation
+#### Before: without instrumentation
 
 ```java
 
@@ -188,7 +188,7 @@ public void setTemp(int minTemp, int maxTemp){
 ```
 
 
-#### After: With Manual Instrumentation
+#### After: with manual instrumentation
 
 ```java
 private final Tracer tracer;
@@ -284,10 +284,10 @@ java -javaagent:opentelemetry-javaagent.jar -jar build/libs/springtotel-0.0.1-SN
 Here's a breakdown of what happens when you run this command:
 
 1. **JVM Initialization**: The JVM starts and reads the command-line options.
-2. **Java Agent Loading**: Before the main application starts, the JVM loads the OpenTelemetry java agent specified by the `-javaagent` option. The agent initializes and sets up the necessary instrumentation to monitor the application's behavior.
-3. **Application Startup**: The JVM loads the main class from the specified JAR file and starts the application. Thanks to the instrumentation added by the java agent, the application's operations (e.g., HTTP requests, database queries) are monitored automatically, and telemetry data is collected.
-4. **Telemetry Collection**: As the application runs, the OpenTelemetry java agent collects data about its performance and operations. This data can include metrics about JVM performance, traces of application requests, and more.
-5. **Data Export**: The collected telemetry data is exported to a telemetry backend or observability platform (such as Datadog, Prometheus, Jaeger, or Zipkin) if configured. This allows developers and operators to monitor the application's health and performance in real-time.
+2. **Java agent loading**: Before the main application starts, the JVM loads the OpenTelemetry java agent specified by the `-javaagent` option. The agent initializes and sets up the necessary instrumentation to monitor the application's behavior.
+3. **Application startup**: The JVM loads the main class from the specified JAR file and starts the application. Thanks to the instrumentation added by the java agent, the application's operations (e.g., HTTP requests, database queries) are monitored automatically, and telemetry data is collected.
+4. **Telemetry collection**: As the application runs, the OpenTelemetry java agent collects data about its performance and operations. This data can include metrics about JVM performance, traces of application requests, and more.
+5. **Data export**: The collected telemetry data is exported to a telemetry backend or observability platform (such as Datadog, Prometheus, Jaeger, or Zipkin) if configured. This allows developers and operators to monitor the application's health and performance in real-time.
 
 This setup is particularly useful for gaining insights into application performance and troubleshooting issues without needing to modify the application's source code for basic telemetry collection.
 
@@ -339,7 +339,7 @@ Additionally, here are a few more examples of system properties you might find u
 
     This sets the OTLP exporter to send data to `http://my-collector:4317`.
 
-2. **Resource Attributes**: You can specify additional resource attributes, such as environment, to be attached to all spans and metrics:
+2. **Resource attributes**: You can specify additional resource attributes, such as environment, to be attached to all spans and metrics:
 
     ```java
     -Dotel.resource.attributes=environment=production
@@ -347,7 +347,7 @@ Additionally, here are a few more examples of system properties you might find u
 
     This adds a resource attribute indicating that the telemetry is coming from a production environment.
 
-3. **Sampling Rate**: To control the amount of telemetry data collected, you can adjust the sampling rate. For example, to sample 50% of traces:
+3. **Sampling rate**: To control the amount of telemetry data collected, you can adjust the sampling rate. For example, to sample 50% of traces:
 
     ```java
     -Dotel.traces.sampler=traceidratio -Dotel.traces.sampler.arg=0.5

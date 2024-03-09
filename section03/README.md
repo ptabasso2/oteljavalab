@@ -232,7 +232,7 @@ The key difference lies in the enhanced observability provided by manual instrum
 
 Our plan is now to custom instrument the methods that are inside the `Thermometer` class (`simulateTemperature()` and `measureOnce()`). Here is how the change might look like:
 
-#### Before: Without Instrumentation
+#### Before: Without instrumentation
 
 ```java
 
@@ -268,7 +268,7 @@ This design is functional but opaque; without external logs, there's no insight 
 
 
 
-#### After: With Manual Instrumentation
+#### After: With manual instrumentation
 
 ```java
 private final Tracer tracer;
@@ -309,7 +309,7 @@ The instrumented version introduces OpenTelemetry spans to provide visibility in
 - The `simulateTemperature` method now starts a span before generating temperature measurements, making this operation observable as a discrete unit of work in traces. The span is made the current active span, ensuring that any spans created within this context (such as those in `measureOnce`) are correctly nested as children.
 - The `measureOnce` method also starts a span for each individual temperature measurement. This granular level of instrumentation provides insight into the performance and behavior of the temperature generation process itself, which could be critical for diagnosing issues or optimizing the simulation.
 
-### Key Benefits and Differences
+### Key benefits and differences
 
 - **Visibility and Debuggability**: The addition of spans makes the temperature simulation process transparent and observable. It's now possible to trace each operation, see how long it takes, and monitor for errors or anomalies.
 - **Context Propagation**: By making spans the current context, the changes ensure that the trace context is propagated correctly through the operations. This means that `measureOnce` operations are correctly recognized as part of the larger `simulateTemperature` operation, allowing for accurate representation of operation hierarchy in traces.
