@@ -3,7 +3,9 @@
 
 ## Goal of this activity
 
-This section will demonstrate how you can achieve the same objectives as the previous section, but this time by using the Datadog java agent. The main difference lies in the goals we aim to achieve. The benefit of using the Datadog agent is the ability to take advantage of features not yet available in the OpenTelemetry ecosystem, such as continuous profiling, application security, and dynamic instrumentation. These can be leveraged while still adding custom instrumentation using OpenTelemetry. The instructions regarding code modification remain unchanged; therefore, we won't repeat them here. Instead, we will focus on the specifics of enabling these capabilities with the Datadog agent. 
+This section will demonstrate how you can achieve the same objectives as the previous section, but this time by using the Datadog java agent. The main difference lies in the goals we aim to achieve. The benefit of using the Datadog agent is the ability to take advantage of features not yet available in the OpenTelemetry ecosystem, such as **continuous profiling**, **application security**, and **dynamic instrumentation**. 
+
+These can be leveraged while still adding custom instrumentation using OpenTelemetry. The instructions regarding code modification remain unchanged; therefore, we won't repeat them here. Instead, we will focus on the specifics of enabling these capabilities with the Datadog agent. 
 
 
 ## Main steps
@@ -32,7 +34,7 @@ Removing springotel     ... done
 Removing otel-collector ... done
 </pre>
 
-2. Set the environment variable DD_API_KEY with the value of your API key
+2. Set the environment variable **DD_API_KEY** with the value of your API key
 
 3. Loading the new configuration by using the corresponding docker-compose file `docker-compose-section08.yml`
 
@@ -94,7 +96,7 @@ And then we can send a request and observe the result
 </p>
 
 
-What we get is fairly comparable to the result obtained when using the OpenTelemetry java agent except that in the case of the Datadog agent we get two spans (One for servlet.request operation and the second for the controller handler method `index()`). 
+What we get is fairly comparable to the result obtained when using the OpenTelemetry java agent except that in the case of the Datadog agent we get two spans (One for the `servlet.request` operation and the second for the controller handler method `index()`). 
 
 But like the Otel java agent, the Datadog java agent doesn't capture either the details associated to the `Thermometer` methods `simulateTemperature()` and `measureOnce()`.   
 
@@ -131,11 +133,11 @@ OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader clas
 
 - `java`: This invokes the JVM to start the java application.
 
-- `-javaagent:dd-java-agent.jar`: This option specifies the Datadog Java Agent (`dd-java-agent.jar`) that should be attached to the JVM. The Datadog java agent provides automatic instrumentation for a wide range of java frameworks and libraries, enabling the collection of traces and metrics without modifying the application code.
+- `-javaagent:dd-java-agent.jar`: This option specifies the Datadog java agent (`dd-java-agent.jar`) that should be attached to the JVM. The Datadog java agent provides automatic instrumentation for a wide range of java frameworks and libraries, enabling the collection of traces and metrics without modifying the application code.
 
 - `-Ddd.service=springotel`: This system property (`-D`) sets the name of the service as `springotel`. In Datadog, service names are used to group related traces, logs and metrics, making it easier to navigate and monitor the application's performance.
 
-- `-Ddd.trace.otel.enabled=true`: This option enables the OpenTelemetry interoperability within the Datadog Java Agent. By setting this property to `true`, we are allowing the Datadog agent to consume telemetry data (traces, metrics) using the OpenTelemetry protocol. This is particularly useful if transitioning from OpenTelemetry to Datadog or if using tools and libraries that are instrumented with OpenTelemetry.
+- `-Ddd.trace.otel.enabled=true`: This option enables the OpenTelemetry interoperability within the Datadog java agent. By setting this property to `true`, we are allowing the Datadog agent to consume telemetry data (traces, metrics) using the OpenTelemetry protocol. This is particularly useful if transitioning from OpenTelemetry to Datadog or if using tools and libraries that are instrumented with OpenTelemetry.
 
 - `-jar build/libs/springtotel-0.0.1-SNAPSHOT.jar`: This part of the command specifies that the JVM should run the application packaged in the JAR file `build/libs/springtotel-0.0.1-SNAPSHOT.jar`. This is the application's JAR, tied to our Spring Boot application.
 
@@ -158,7 +160,7 @@ This will produce the following trace
   <img src="img/springotel82.png" width="850" />
 </p>
 
-
+This demonstrates that the previously missing spans are now visible and correctly correlated with those generated by the automatic instrumentation.
 
 To view the generated traces: https://app.datadoghq.com/apm/traces
 
