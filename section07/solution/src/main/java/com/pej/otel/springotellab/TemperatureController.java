@@ -3,6 +3,8 @@ package com.pej.otel.springotellab;
 import java.util.List;
 import java.util.Optional;
 
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
