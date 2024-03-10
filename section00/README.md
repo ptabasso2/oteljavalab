@@ -284,6 +284,4 @@ Set up the collector as a system service.
 In the following sections, we will confirm this after generating some traces and metrics.
 
 
-
-## Conclusion
-Follow these steps to install and configure the OpenTelemetry Collector Contrib on your Ubuntu host.
+## End

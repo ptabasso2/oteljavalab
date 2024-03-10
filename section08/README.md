@@ -18,6 +18,11 @@ These can be leveraged while still adding custom instrumentation using OpenTelem
 
 ## Architecture overview
 
+<p align="left">
+  <img src="img/springotel83.png" width="650" />
+</p>
+
+
 ## Setting up the Datadog Agent
 
 A specific docker-compose file (`docker-compose-section08.yml`) is provided and contains the necessary settings to spin up the Datadog agent container configured to receive traces. And another service to start the application container containing our Spring application.  

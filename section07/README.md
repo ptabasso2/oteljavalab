@@ -6,6 +6,13 @@
 Combining the OpenTelemetry (Otel) java agent with the Otel API enables automatic instrumentation of java applications for distributed tracing, while also offering the flexibility to manually enrich traces with additional information. The Otel Java agent automatically instruments well-known frameworks and libraries to capture traces and metrics without the need for code modification. However, there may be instances where automatic instrumentation does not sufficiently detect or identify specific areas of the application code. In such cases, using the Otel API in conjunction with the java agent can help overcome these instrumentation limitations by allowing the addition of custom spans, attributes, or events.
 
 
+## Architecture overview
+
+<p align="left">
+  <img src="img/springotel73.png" width="650" />
+</p>
+
+
 ## Main steps
 
 * Using the API and adding the necessary dependency to the project 
