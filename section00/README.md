@@ -1,7 +1,7 @@
 
 # OpenTelemetry collector contrib installation guide
 
-This guide provides detailed steps to install the OpenTelemetry Collector Contrib on an Ubuntu host.
+This guide provides detailed steps to install the OpenTelemetry collector contrib.
 
 The OpenTelemetry collector is a core component of the OpenTelemetry observability framework, designed to collect, process, and export telemetry data such as metrics, traces, and logs. 
 
@@ -15,7 +15,7 @@ It's a vendor-agnostic, high-performance application that can run as a standalon
 The collector can receive telemetry data from various sources. It supports receiving data over multiple protocols and formats, capable of serving as a central aggregation point for data from applications instrumented with different observability tools.
 
 ### Processing
-Once telemetry data is collected, the Collector can process this data before exporting. Processing capabilities include:
+Once telemetry data is collected, the collector can process this data before exporting. Processing capabilities include:
 - **Transformation**: Modifying data attributes or structure, such as renaming attributes or transforming metric data points.
 - **Batching**: Combining multiple data points into batches to improve export efficiency.
 - **Filtering**: Dropping or selecting specific data points based on defined criteria.
@@ -24,7 +24,7 @@ Once telemetry data is collected, the Collector can process this data before exp
 These processing capabilities allow for significant flexibility in managing telemetry data, enabling optimizations for performance and cost, or tailoring the data for specific backend requirements.
 
 ### Exporting
-The Collector can export processed data to one or more observability backends or other analysis tools. It supports a wide range of exporters for popular monitoring, tracing, and logging platforms, including but not limited to:
+The collector can export processed data to one or more observability backends or other analysis tools. It supports a wide range of exporters for popular monitoring, tracing, and logging platforms, including but not limited to:
 - Cloud-native observability platforms (e.g., AWS CloudWatch, Google Cloud Monitoring, Azure Monitor)
 - Open-source monitoring and tracing tools (e.g., Prometheus, Jaeger, Grafana)
 - Third-party observability services (e.g., Datadog, New Relic, Splunk)
@@ -32,13 +32,13 @@ The Collector can export processed data to one or more observability backends or
 This export functionality is configurable, allowing data to be sent to multiple destinations simultaneously, which is useful for routing data to different systems for different purposes (e.g., real-time monitoring, long-term storage, detailed trace analysis).
 
 ### Deployment flexibility
-The Collector can be deployed in several modes to fit various architecture needs:
+The collector can be deployed in several modes to fit various architecture needs:
 - **Agent**: Running alongside each host or in each container to collect data locally.
 - **Gateway**: Running as a standalone service to aggregate and process data from multiple sources before exporting to backend systems.
 
 ### Benefits
 - **Simplification of instrumentation**: By acting as a unified receiver for telemetry data, it simplifies the instrumentation required within applications and services.
-- **Vendor agnosticity**: Its ability to receive and export data in multiple formats to various backends allows for a flexible observability strategy that is not locked into any specific vendor.
+- **Vendor agnostic**: Its ability to receive and export data in multiple formats to various backends allows for a flexible observability strategy that is not locked into any specific vendor.
 - **Scalability and reliability**: Designed for high-volume and high-availability deployments, it can be scaled out and configured for redundancy.
 
 Overall, the Otel collector plays a critical role in the observability ecosystem by providing a centralized, efficient, and flexible solution for telemetry data collection, processing, and exporting. Its design addresses the challenges of managing observability data at scale, making it easier for organizations to implement comprehensive monitoring and tracing strategies.

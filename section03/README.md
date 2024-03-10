@@ -21,7 +21,7 @@ We will use the following basic features of the OpenTelemetry API:
 * Each `span` is given a **name**
 * The span gets started via the `startSpan()` method.
 * each `span` must be finished by calling its `end()` method and this happens inside a scope.
-* For a basic setup, you might choose the OTLP protocol to send the various observability signals (Traces, logs, metrics). It is a versatile protocol and supported by many backends.
+* For a basic setup, you might choose the OTLP protocol to send the various observability signals (Traces, logs, metrics). It is an adaptable protocol and supported by many backends.
 
 
 ## Adding the sdk to the project
@@ -49,10 +49,10 @@ This should look like
 dependencies {
         compile("org.springframework.boot:spring-boot-starter-web")
         implementation("io.opentelemetry:opentelemetry-api")
-	    implementation("io.opentelemetry:opentelemetry-sdk")
-	    implementation("io.opentelemetry:opentelemetry-exporter-logging")
-	    implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
-	    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
+        implementation("io.opentelemetry:opentelemetry-sdk")
+        implementation("io.opentelemetry:opentelemetry-exporter-logging")
+        implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
+        implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
 
 }
 ```
@@ -123,16 +123,16 @@ Now in `TemperatureController` we will need to get a hold on the `OpenTelemetry`
 
 ```java
 
-    private final Tracer tracer; // (1)
+    private final Tracer tracer;
 
 
-    @Autowired   // (2)
+    @Autowired
     TemperatureController(OpenTelemetry openTelemetry) {
        tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
     }
 ```
 
-(1) declaring the tracer variable and (2) using constructor injection to initialize the tracer. The OpenTelemetry object provides a getTracer() method that allows this. 
+Declaring the tracer variable and using constructor injection to initialize the tracer. The OpenTelemetry object provides a getTracer() method that allows this. 
 
 
 The corresponding packages to import are:
@@ -212,19 +212,19 @@ import io.opentelemetry.context.Scope;
 
 ### Observations
 
-#### Before: Without Instrumentation
+#### Before: Without instrumentation
 - **Functionality**: This code block performs a temperature simulation operation based on the number of measurements requested. If the `measurements` parameter is missing, it throws an exception. It logs the result of the simulation, which varies depending on whether the `location` is specified.
 - **Observability**: The observability in this snippet is limited to logging. It logs the outcome of the temperature simulation but doesn't provide deeper insights into the operation's execution, such as performance metrics, errors, or the operation's context in a larger transaction.
 
-#### After: With Manual Instrumentation
-- **Instrumentation Introduction**: This snippet introduces manual instrumentation by wrapping the temperature simulation logic within a span. A span represents a single unit of work within a larger trace, allowing for detailed monitoring and analysis of the operation.
-- **Span Creation**: At the beginning of the operation, a new span named `temperatureSimulation` is started. This explicitly marks the start of an operation that you want to monitor.
-- **Scope Management**: The operation is enclosed within a try-with-resources statement that ensures the span's scope is correctly managed. The `scope` ensures that the `span` is considered the current active span within its block, which is crucial for correct tracing in asynchronous or multi-threaded environments.
-- **Error Handling**: The catch block captures any thrown exceptions, allowing the span to record these exceptions. This is valuable for debugging and monitoring, as it directly associates errors with the operation that caused them.
-- **Span Closure**: Finally, the span is ended in the finally block, marking the completion of the operation. Ending a span is crucial for accurate measurement of operation duration and for ensuring resources are correctly freed.
-- **Enhanced Observability**: With the span in place, the operation now contributes to a trace, providing insights into performance, errors, and the operation's relationship to other work units. This enhanced observability is invaluable for troubleshooting, performance tuning, and understanding system behavior.
+#### After: With manual instrumentation
+- **Instrumentation introduction**: This snippet introduces manual instrumentation by wrapping the temperature simulation logic within a span. A span represents a single unit of work within a larger trace, allowing for detailed monitoring and analysis of the operation.
+- **Span creation**: At the beginning of the operation, a new span named `temperatureSimulation` is started. This explicitly marks the start of an operation that you want to monitor.
+- **Scope management**: The operation is enclosed within a try-with-resources statement that ensures the span's scope is correctly managed. The `scope` ensures that the `span` is considered the current active span within its block, which is crucial for correct tracing in asynchronous or multi-threaded environments.
+- **Error handling**: The catch block captures any thrown exceptions, allowing the span to record these exceptions. This is valuable for debugging and monitoring, as it directly associates errors with the operation that caused them.
+- **Span closure**: Finally, the span is ended in the finally block, marking the completion of the operation. Ending a span is crucial for accurate measurement of operation duration and for ensuring resources are correctly freed.
+- **Enhanced observability**: With the span in place, the operation now contributes to a trace, providing insights into performance, errors, and the operation's relationship to other work units. This enhanced observability is invaluable for troubleshooting, performance tuning, and understanding system behavior.
 
-#### Summary of Differences
+#### Summary of differences
 The key difference lies in the enhanced observability provided by manual instrumentation. While the first snippet relies solely on logging for observability, the second snippet uses OpenTelemetry spans to offer detailed insights into the operation's execution, including performance metrics and error tracking. This manual instrumentation allows developers and operators to better understand, monitor, and debug their applications, especially in complex, distributed systems.
 
 
@@ -311,10 +311,10 @@ The instrumented version introduces OpenTelemetry spans to provide visibility in
 
 ### Key benefits and differences
 
-- **Visibility and Debuggability**: The addition of spans makes the temperature simulation process transparent and observable. It's now possible to trace each operation, see how long it takes, and monitor for errors or anomalies.
-- **Context Propagation**: By making spans the current context, the changes ensure that the trace context is propagated correctly through the operations. This means that `measureOnce` operations are correctly recognized as part of the larger `simulateTemperature` operation, allowing for accurate representation of operation hierarchy in traces.
-- **Performance Monitoring**: With spans, you can now monitor the performance of both the overall temperature simulation and individual measurements. This can help identify bottlenecks or inefficiencies in the simulation logic.
-- **Error Detection**: Span error recording allows for immediate visibility into exceptions or issues within the simulated operations, facilitating quicker diagnosis and resolution.
+- **Visibility and debuggability**: The addition of spans makes the temperature simulation process transparent and observable. It's now possible to trace each operation, see how long it takes, and monitor for errors or anomalies.
+- **Context propagation**: By making spans the current context, the changes ensure that the trace context is propagated correctly through the operations. This means that `measureOnce` operations are correctly recognized as part of the larger `simulateTemperature` operation, allowing for accurate representation of operation hierarchy in traces.
+- **Performance monitoring**: With spans, you can now monitor the performance of both the overall temperature simulation and individual measurements. This can help identify bottlenecks or inefficiencies in the simulation logic.
+- **Error detection**: Span error recording allows for immediate visibility into exceptions or issues within the simulated operations, facilitating quicker diagnosis and resolution.
 
 In summary, the instrumentation of the `Thermometer` class with OpenTelemetry spans transforms it from a black box into a transparent, observable component of your application. This enhances the ability to monitor, debug, and optimize your application, providing crucial insights into its behavior and performance.
 
@@ -326,8 +326,8 @@ In summary, the instrumentation of the `Thermometer` class with OpenTelemetry sp
 BUILD SUCCESSFUL in 4s
 4 actionable tasks: 4 executed
 
-[root@pt-instance-1:/oteljavalab/section03/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar &
-2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section03/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section03/activity)
+[root@pt-instance-1:/oteljavalab/section03/activity]$ java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar &
+2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section03/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section03/activity)
 2024-03-02T12:11:25.484Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-02T12:11:27.116Z  INFO 30923 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
 2024-03-02T12:11:27.133Z  INFO 30923 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]

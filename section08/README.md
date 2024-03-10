@@ -136,6 +136,10 @@ OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader clas
 
 ### Observations about the command executed
 
+```sh
+java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
+```
+
 - `java`: This invokes the JVM to start the java application.
 
 - `-javaagent:dd-java-agent.jar`: This option specifies the Datadog java agent (`dd-java-agent.jar`) that should be attached to the JVM. The Datadog java agent provides automatic instrumentation for a wide range of java frameworks and libraries, enabling the collection of traces and metrics without modifying the application code.

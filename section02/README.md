@@ -83,10 +83,10 @@ BUILD SUCCESSFUL in 12s
 Running the application is fairly simple:
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab/section02/activity]$ java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.logs.exporter=none -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar
+[root@pt-instance-1:/oteljavalab/section02/activity]$ java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.logs.exporter=none -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
 [otel.javaagent 2024-03-01 23:48:35:776 +0000] [main] INFO io.opentelemetry.javaagent.tooling.VersionLogger - opentelemetry-javaagent - version: 2.1.0
-2024-03-01T23:48:39.817Z  INFO 3960341 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 3960341 (/root/oteljavalab/section02/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section02/activity)
+2024-03-01T23:48:39.817Z  INFO 3960341 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 3960341 (/root/oteljavalab/section02/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section02/activity)
 2024-03-01T23:48:39.865Z  INFO 3960341 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-01T23:48:41.419Z  INFO 3960341 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
 2024-03-01T23:48:41.452Z  INFO 3960341 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
@@ -105,14 +105,14 @@ Note: https://opentelemetry.io/docs/languages/java/automatic/#configuring-the-ag
 ### Command breakdown
 
 ```shell
-java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.logs.exporter=none -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar
+java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Dotel.logs.exporter=none -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 
 - `java`: The Java command used to run java applications.
 - `-javaagent:./opentelemetry-javaagent.jar`: This option specifies the Java agent to use with the JVM. The OpenTelemetry Java agent (`opentelemetry-javaagent.jar`) is used for automatic instrumentation of the application, injecting bytecode to capture telemetry data without modifying the application code.
 - `-Dotel.service.name=springotel`: This system property sets the service name to `springotel`. The service name is a critical identifier that groups all instances of the same service together in observability backends.
 - `-Dotel.logs.exporter=none`: Disables log exporting by setting the log exporter to `none`. This is useful if you only want to capture metrics and traces but not logs.
-- `-jar build/libs/springotellab-0.0.1-SNAPSHOT.jar`: Specifies the JAR file to run, which is the application's executable JAR.
+- `-jar build/libs/springotel-0.0.1-SNAPSHOT.jar`: Specifies the JAR file to run, which is the application's executable JAR.
 
 
 ### Additional system properties for OpenTelemetry

@@ -14,12 +14,12 @@ The Temperature Simulation Application is a Spring Boot-based service designed t
 
 ## Features
 
-- **Simulate Temperature Readings:** Generate a series of temperature measurements within a specified range, simulating real-world temperature variations.
-- **Customizable Measurements:** Users can specify the number of temperature readings they wish to generate, allowing for flexibility in data simulation.
-- **Optional Location Specification:** While primarily focused on temperature generation, the application allows for an optional location parameter to contextualize the simulated data.
-- **Logging and Monitoring:** Logs temperature simulation details, including the specified location (if provided) and the generated temperature readings, facilitating debugging and monitoring.
+- **Simulate temperature readings:** Generate a series of temperature measurements within a specified range, simulating real-world temperature variations.
+- **Customizable measurements:** Users can specify the number of temperature readings they wish to generate, allowing for flexibility in data simulation.
+- **Optional location specification:** While primarily focused on temperature generation, the application allows for an optional location parameter to contextualize the simulated data.
+- **Logging and monitoring:** Logs temperature simulation details, including the specified location (if provided) and the generated temperature readings, facilitating debugging and monitoring.
 
-## How it Works
+## How it works
 
 The application consists of three main components:
 
@@ -38,7 +38,7 @@ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
 
 This request would simulate five temperature measurements for Paris, returning a list of integers representing the temperatures.
 
-## Installation and Running
+## Installation and running
 
 1. Clone the repository to your local machine.
 2. Build the project using Maven or Gradle (depending on your preference).
@@ -133,7 +133,7 @@ BUILD SUCCESSFUL in 22s
 </pre>
 
 
-At this stage, the artifact that will be produced (`springotellab-0.0.1-SNAPSHOT.jar`) will be placed under the `./build/libs` directory that gets created during the build process.
+At this stage, the artifact that will be produced (`springotel-0.0.1-SNAPSHOT.jar`) will be placed under the `./build/libs` directory that gets created during the build process.
 
 
 ## Run the application
@@ -141,8 +141,8 @@ At this stage, the artifact that will be produced (`springotellab-0.0.1-SNAPSHOT
 Running the application is fairly simple:
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab/section01/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar
-2024-03-01T20:53:54.849Z  INFO 3899506 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 3899506 (/root/oteljavalab/section01/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section01/activity)
+[root@pt-instance-1:/oteljavalab/section01/activity]$ java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
+2024-03-01T20:53:54.849Z  INFO 3899506 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 3899506 (/root/oteljavalab/section01/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section01/activity)
 2024-03-01T20:53:54.854Z  INFO 3899506 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-01T20:53:56.380Z  INFO 3899506 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
 2024-03-01T20:53:56.395Z  INFO 3899506 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
@@ -180,7 +180,7 @@ If you check the output of the first terminal, you should see those new log entr
 
 ## Conclusion
 
-The Temperature Simulation Application offers a versatile tool for generating simulated temperature data. Its easy-to-use API and customizable parameters make it suitable for a wide range of applications, from development and testing environments to educational settings.
+The Temperature simulation application offers a flexible tool for generating simulated temperature data. Its easy-to-use API and customizable parameters make it suitable for a wide range of applications, from development and testing environments to educational settings.
 
 
 

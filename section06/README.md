@@ -1,4 +1,4 @@
-# Manual tracing: How to propagate context across services.
+# Manual tracing: How to propagate context across services
 
 
 ## Goal of this activity
@@ -173,7 +173,7 @@ drwxr-xr-x 7 root root 4096 Mar  3 01:06 build
 Before going into the details of setting up context propagation, you will want to first follow the steps described in section03 to add the OpenTelemetry SDK and initialize it. Then create spans in the Controller classes `TemperatureController` (for the `index()`) method and also the `simulateTemperature()` method in the `Temperature` class. You will consider the same steps for the `measure` method in the  `CalculatorController` class of the second service.
 
 
-### Importance of setting Propagators
+### Importance of setting propagators
 
 Setting propagators can be achieved by changing slightly the way the OpenTelemetry SDK is initialized.
 

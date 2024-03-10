@@ -16,7 +16,7 @@ The `AutoConfiguredOpenTelemetrySdk` is a feature provided by the OpenTelemetry 
 3. **Simplifies SDK updates**: As OpenTelemetry evolves, new features and improvements are introduced. The automatic configuration mechanism abstracts away some of the complexities associated with upgrading the SDK, as it can automatically adapt to changes in available exporters, propagators, and other components.
 
 
-### How it Works
+### How it works
 
 - When an application starts, `AutoConfiguredOpenTelemetrySdk` initializes the OpenTelemetry SDK by scanning for available components and configurations. It sets up the SDK based on found configurations, falling back to default settings when specific configurations are not provided.
 - It configures the `TracerProvider`, metric `MeterProvider`, and the global `Propagators` based on this auto-discovered configuration.
@@ -94,7 +94,7 @@ Both use cases show different approaches to configuring and initializing the Ope
 
 **Key characteristics**:
 - **Manual configuration**: This approach involves manually configuring each component of the OpenTelemetry SDK, such as the `Resource`, `SpanExporter`, `BatchSpanProcessor`, and `TracerProvider`. It offers precise control over the SDK's configuration.
-- **Customizability**: It's suitable for applications with specific requirements that cannot be met through automatic configuration alone. For example, setting specific attributes, customizing the exporter timeout, or using a particular batch processing strategy.
+- **Customizable**: It's suitable for applications with specific requirements that cannot be met through automatic configuration alone. For example, setting specific attributes, customizing the exporter timeout, or using a particular batch processing strategy.
 - **Complexity**: This method requires a deeper understanding of OpenTelemetry's configuration options and might result in more boilerplate code. It's more appropriate for applications with specific observability needs that justify the additional configuration effort.
 
 ### Comparison summary

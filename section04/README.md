@@ -1,4 +1,4 @@
-# Manual tracing: How to set span attributes.
+# Manual tracing: How to set span attributes
 
 
 
@@ -186,8 +186,8 @@ In essence, coupling span attributes with semantic conventions enhances the obse
 BUILD SUCCESSFUL in 4s
 4 actionable tasks: 4 executed
 
-[root@pt-instance-1:/oteljavalab/section04/activity]$ java -jar build/libs/springotellab-0.0.1-SNAPSHOT.jar &
-2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section04/activity/build/libs/springotellab-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section04/activity)
+[root@pt-instance-1:/oteljavalab/section04/activity]$ java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar &
+2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section04/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section04/activity)
 2024-03-02T12:11:25.484Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-02T12:11:27.116Z  INFO 30923 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
 2024-03-02T12:11:27.133Z  INFO 30923 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
