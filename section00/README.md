@@ -6,7 +6,7 @@ This guide provides detailed steps to install the OpenTelemetry Collector Contri
 The OpenTelemetry collector is a core component of the OpenTelemetry observability framework, designed to collect, process, and export telemetry data such as metrics, traces, and logs. 
 
 <p align="left">
-  <img src="img/springotel01.png" width="720" />
+  <img src="img/springotel01.png" width="650" />
 </p>
 
 It's a vendor-agnostic, high-performance application that can run as a standalone service or be embedded into other applications. Its primary purpose is to simplify the collection and management of observability data, especially in complex, distributed systems. Here's a breakdown of its key functions and features:
