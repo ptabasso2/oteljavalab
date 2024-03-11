@@ -11,7 +11,7 @@ The OpenTelemetry collector is a core component of the OpenTelemetry observabili
 
 It's a vendor-agnostic, high-performance application that can run as a standalone service or be embedded into other applications. Its primary purpose is to simplify the collection and management of observability data, especially in complex, distributed systems. Here's a breakdown of its key functions and features:
 
-### Collection
+### Collector
 The collector can receive telemetry data from various sources. It supports receiving data over multiple protocols and formats, capable of serving as a central aggregation point for data from applications instrumented with different observability tools.
 
 ### Processing

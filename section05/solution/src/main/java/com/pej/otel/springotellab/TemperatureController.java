@@ -19,23 +19,23 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 public class TemperatureController {
     private static final Logger logger = LoggerFactory.getLogger(TemperatureController.class);
-
-    @Autowired
-    Thermometer thermometer;
-
     private final Tracer tracer;
-
 
     @Autowired
     TemperatureController(OpenTelemetry openTelemetry) {
-        tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
+        this.tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
     }
+
+    @Autowired
+    Thermometer thermometer;
 
     @GetMapping("/simulateTemperature")
     public List<Integer> index(@RequestParam("location") Optional<String> location,
                                @RequestParam("measurements") Optional<Integer> measurements) {
 
         Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
+        span.setAttribute("span.type", "web");
+        span.setAttribute("resource.name", "GET /simulateTemperature");
         try (Scope scope = span.makeCurrent()) {
 
             if (measurements.isEmpty()) {
@@ -57,6 +57,5 @@ public class TemperatureController {
         } finally {
             span.end();
         }
-
     }
 }

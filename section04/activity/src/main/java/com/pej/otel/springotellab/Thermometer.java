@@ -18,7 +18,7 @@ public class Thermometer {
     private int minTemp;
     private int maxTemp;
 
-    private final Tracer tracer; //= GlobalOpenTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
+    private final Tracer tracer;
 
     @Autowired
     Thermometer(OpenTelemetry openTelemetry) {

@@ -1,6 +1,5 @@
 package com.pej.otel.springotellab;
 
-import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
@@ -18,8 +17,13 @@ public class Thermometer {
     private int minTemp;
     private int maxTemp;
 
-    private final Tracer tracer = GlobalOpenTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
+    private final Tracer tracer;
 
+
+    @Autowired
+    Thermometer(OpenTelemetry openTelemetry) {
+        tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
+    }
 
     public List<Integer> simulateTemperature(int measurements) {
         List<Integer> temperatures = new ArrayList<Integer>();

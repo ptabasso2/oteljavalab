@@ -14,6 +14,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - $PWD/:/root/oteljavalab/
     stdin_open: true
     tty: true
     command: "sleep infinity"
@@ -25,6 +27,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - $PWD/:/root/oteljavalab/
     stdin_open: true
     tty: true
     command: "sleep infinity"

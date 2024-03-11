@@ -33,15 +33,15 @@ Accessing the container first
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
-[root@pt-instance-1:/oteljavalab]$ 
+[root@pt-instance-1:~/oteljavalab]$ 
 </pre>
 
 
 Going to the directory containing our project
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab]$ cd section05/activity
-[root@pt-instance-1:/oteljavalab/section05/activity]$
+[root@pt-instance-1:~/oteljavalab]$ cd section05/activity
+[root@pt-instance-1:~/oteljavalab/section05/activity]$
 </pre>
 
 Unlike what we did in the previous section, the way we initialize the SDK will differ.
@@ -110,7 +110,7 @@ We will also take advantage of the AutoConfigureSDK capabilities that allows for
 
 
 ```java
-[root@pt-instance-1:/oteljavalab/section05/activity]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
+[root@pt-instance-1:~/oteljavalab/section05/activity]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
 ```
 
 In this example we can give a service name to our application or specify the type of exporters we would like to use.

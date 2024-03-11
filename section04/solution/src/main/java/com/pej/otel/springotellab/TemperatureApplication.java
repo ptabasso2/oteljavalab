@@ -1,6 +1,6 @@
 package com.pej.otel.springotellab;
 
-import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
@@ -25,7 +25,7 @@ public class TemperatureApplication {
 
 
     @Bean
-    public Tracer tracer(){
+    public OpenTelemetry openTelemetry(){
 
         Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springotel").build();
 
@@ -36,7 +36,7 @@ public class TemperatureApplication {
                 .setResource(resource)
                 .build();
 
-        return OpenTelemetrySdk.builder().setTracerProvider(setTracerProvider).buildAndRegisterGlobal().getTracer(TemperatureApplication.class.getName(), "0.1.0");
+        return OpenTelemetrySdk.builder().setTracerProvider(setTracerProvider).buildAndRegisterGlobal();
 
     }
 }

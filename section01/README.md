@@ -54,7 +54,7 @@ Let's first connect to the container:
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
-[root@pt-instance-1:/oteljavalab]$ 
+[root@pt-instance-1:~/oteljavalab]$ 
 </pre>
 
 
@@ -62,8 +62,8 @@ And then let's view the content of the `activity` directory in `section01`
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:/oteljavalab]$ cd section01/activity
-[root@pt-instance-1:/oteljavalab/section01/activity]$ tree
+[root@pt-instance-1:~/oteljavalab]$ cd section01/activity
+[root@pt-instance-1:~/oteljavalab/section01/activity]$ tree
 .
 ├── build.gradle.kts
 ├── gradle
@@ -125,7 +125,7 @@ OpenJDK 64-Bit Server VM Zulu17.46+19-CA (build 17.0.9+8-LTS, mixed mode, sharin
 Now we will simply run the command to build gradle task to build the project. This will generate an additional `build` directory that will contain the artifact that will be used to run our service.
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab/section01/activity]$ gradle build
+[root@pt-instance-1:~/oteljavalab/section01/activity]$ gradle build
 
 BUILD SUCCESSFUL in 22s
 4 actionable tasks: 4 executed
@@ -141,7 +141,7 @@ At this stage, the artifact that will be produced (`springotel-0.0.1-SNAPSHOT.ja
 Running the application is fairly simple:
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab/section01/activity]$ java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
+[root@pt-instance-1:~/oteljavalab/section01/activity]$ java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 2024-03-01T20:53:54.849Z  INFO 3899506 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 3899506 (/root/oteljavalab/section01/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section01/activity)
 2024-03-01T20:53:54.854Z  INFO 3899506 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-01T20:53:56.380Z  INFO 3899506 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)

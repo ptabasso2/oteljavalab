@@ -26,23 +26,23 @@ Combining the OpenTelemetry (Otel) java agent with the Otel API enables automati
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
-[root@pt-instance-1:/oteljavalab]$ 
+[root@pt-instance-1:~/oteljavalab]$ 
 </pre>
 
 
 2. Navigating to the project directory.
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab]$ cd section07/activity
-[root@pt-instance-1:/oteljavalab/section07/activity]$
+[root@pt-instance-1:~/oteljavalab]$ cd section07/activity
+[root@pt-instance-1:~/oteljavalab/section07/activity]$
 </pre>
 
 
 3. Download the Otel java agent
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab]$ cd section07/activity
-[root@pt-instance-1:/oteljavalab/section07/activity]$ wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
+[root@pt-instance-1:~/oteljavalab]$ cd section07/activity
+[root@pt-instance-1:~/oteljavalab/section07/activity]$ wget https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
 </pre>
 
 
@@ -51,7 +51,7 @@ Combining the OpenTelemetry (Otel) java agent with the Otel API enables automati
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:/oteljavalab/section07/activity]$ tree
+[root@pt-instance-1:~/oteljavalab/section07/activity]$ tree
 .
 ├── build.gradle.kts
 ├── gradle
@@ -242,8 +242,8 @@ import io.opentelemetry.context.Scope;
 
 From within the container, change to the `section07/activity` directory and run the build task 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab$ cd section07/activity
-[root@pt-instance-1:/oteljavalab/section07/activity]$ gradle build
+[root@pt-instance-1:~/oteljavalab$ cd section07/activity
+[root@pt-instance-1:~/oteljavalab/section07/activity]$ gradle build
 
 BUILD SUCCESSFUL in 4s
 4 actionable tasks: 4 executed
@@ -305,7 +305,7 @@ Generate a request from another terminal using curl (or from a browser or postma
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:/oteljavalab/section07/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
+[root@pt-instance-1:~/oteljavalab/section07/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
 
 [21,28,29,35,27]
 </pre>

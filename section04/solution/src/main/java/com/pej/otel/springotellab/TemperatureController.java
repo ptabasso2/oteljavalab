@@ -3,6 +3,7 @@ package com.pej.otel.springotellab;
 import java.util.List;
 import java.util.Optional;
 
+import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
@@ -21,8 +22,8 @@ public class TemperatureController {
     private final Tracer tracer;
 
     @Autowired
-    TemperatureController(Tracer tracer) {
-        this.tracer = tracer;
+    TemperatureController(OpenTelemetry openTelemetry) {
+        this.tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
     }
 
     @Autowired
@@ -33,8 +34,8 @@ public class TemperatureController {
                                @RequestParam("measurements") Optional<Integer> measurements) {
 
         Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
-	span.setAttribute("span.type", "web");
-	span.setAttribute("resource.name", "GET /simulateTemperature");
+	    span.setAttribute("span.type", "web");
+	    span.setAttribute("resource.name", "GET /simulateTemperature");
         try (Scope scope = span.makeCurrent()) {
 
             if (measurements.isEmpty()) {

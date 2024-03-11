@@ -153,9 +153,9 @@ Let's first connect to the `temperature-simulator` container and start instrumen
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it temperature-simulator bash
-[root@pt-instance-1:/oteljavalab]$ cd section06/activity/temperature-simulator
+[root@pt-instance-1:~/oteljavalab]$ cd section06/activity/temperature-simulator
 
-[root@pt-instance-1:/oteljavalab/section06/activity/temperature-simulator]$ ll
+[root@pt-instance-1:~/oteljavalab/section06/activity/temperature-simulator]$ ll
 total 32
 drwxr-xr-x 3 root root 4096 Feb 10 12:34 src
 drwxr-xr-x 3 root root 4096 Mar  1 20:48 gradle
@@ -290,9 +290,9 @@ Let's connect to the `temperature-calculator` container and start instrumenting 
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it temperature-calculator bash
-[root@pt-instance-1:/oteljavalab]$ cd section06/activity/temperature-calculator
+[root@pt-instance-1:~/oteljavalab]$ cd section06/activity/temperature-calculator
 
-[root@pt-instance-1:/oteljavalab/section06/activity/temperature-calculator]$ ll
+[root@pt-instance-1:~/oteljavalab/section06/activity/temperature-calculator]$ ll
 total 32
 drwxr-xr-x 3 root root 4096 Feb 10 12:34 src
 drwxr-xr-x 3 root root 4096 Mar  1 20:48 gradle

@@ -30,15 +30,15 @@ Accessing the container first
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
-[root@pt-instance-1:/oteljavalab]$ 
+[root@pt-instance-1:~/oteljavalab]$ 
 </pre>
 
 
 Going to the directory containing our project
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab]$ cd section03/activity
-[root@pt-instance-1:/oteljavalab/section03/activity]$
+[root@pt-instance-1:~/oteljavalab]$ cd section03/activity
+[root@pt-instance-1:~/oteljavalab/section03/activity]$
 </pre>
 
 In order to add the sdk, we will simply add the following dependencies to the dependency block of the `build.gradle.kts` file
@@ -321,12 +321,12 @@ In summary, the instrumentation of the `Thermometer` class with OpenTelemetry sp
 ## Build, run and test the application
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:/oteljavalab/section03/activity]$ gradle build
+[root@pt-instance-1:~/oteljavalab/section03/activity]$ gradle build
 
 BUILD SUCCESSFUL in 4s
 4 actionable tasks: 4 executed
 
-[root@pt-instance-1:/oteljavalab/section03/activity]$ java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar &
+[root@pt-instance-1:~/oteljavalab/section03/activity]$ java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar &
 2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section03/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section03/activity)
 2024-03-02T12:11:25.484Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-02T12:11:27.116Z  INFO 30923 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
@@ -343,7 +343,7 @@ Generate a request from another terminal using curl either locally or from the c
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:/oteljavalab/section03/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
+[root@pt-instance-1:~/oteljavalab/section03/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
 
 [21,28,29,35,27]
 </pre>
