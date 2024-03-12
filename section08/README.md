@@ -173,5 +173,133 @@ This demonstrates that the previously missing spans are now visible and correctl
 
 To view the generated traces: https://app.datadoghq.com/apm/traces
 
+
+## Why using the Datadog agent together with the Otel API?
+
+As mentioned in the introduction of this section, the benefit of using the Datadog agent is the ability to take advantage of features not yet available in the OpenTelemetry ecosystem, such as **continuous profiling**, **application security**, and **dynamic instrumentation**. 
+
+
+Here are a few examples of how this looks like:
+
+### Continous profiling
+
+Datadog continuous profiling is a feature part of Datadog's observability platform designed to help developers and operations teams understand and optimize the performance of their applications. It provides detailed insights into how code executes in production environments, enabling teams to identify and troubleshoot performance bottlenecks, reduce latency, and improve efficiency. Here are some key aspects and offerings of Datadog Continuous Profiling:
+
+1. **Real-Time Performance Insights**: Datadog continuous profiling collects real-time performance data from applications, including CPU usage, memory allocation, socket I/O and other critical metrics. This data is collected continuously, providing an up-to-date view of application performance and helping teams quickly identify any anomalies or inefficiencies.
+
+2. **Low overhead profiling**: One of the key benefits of continuous profiling is its low impact on application performance. Datadog's profiling tools are designed to gather detailed performance data with minimal overhead, ensuring that the profiling process does not adversely affect the application's speed or user experience.
+
+3. **Code-level visibility**: Continuous profiling provides insights down to the code level, allowing teams to see exactly which lines of code, methods, threads, classes or services are consuming the most resources. This granular view makes it easier to pinpoint the root causes of performance issues and understand the impact of specific code paths on overall application health.
+
+4. **Cross-language support**: Datadog continuous profiling supports a range of programming languages, making it ideal for use in diverse application environments. This includes popular languages such as Java, Go, Python, Node.js, and .NET, among others. Cross-language support ensures that teams can maintain a consistent profiling approach across their entire technology stack.
+
+5. **Integration with APM and Logs**: Continuous profiling is integrated with Datadog APM, Infrastructure and log monitoring suite. This integration enables teams to correlate profiling data with metrics, traces and logs, providing a comprehensive view of application performance and behavior. By linking profiling data with specific requests or transactions, teams can more effectively diagnose issues and understand their impact on users.
+
+6. **Actionable recommendations**: Beyond simply collecting and presenting data, Datadog Continuous Profiling offers actionable recommendations to improve performance. The platform can suggest optimizations, highlight potential inefficiencies, and help teams prioritize performance improvements based on their potential impact.
+
+7. **Cost optimization**: By identifying inefficient use of resources, continuous profiling can also help organizations optimize their cloud or infrastructure costs. Reducing unnecessary CPU or memory usage not only improves application performance but can also lead to significant cost savings.
+
+
+Continuous profiling is not enabled by default. In order to do so you would need to set this system properties or environment variable equivalent:
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section08/activity]$ java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -Ddd.profiling.enabled=true -XX:FlightRecorderOptions=stackdepth=256 -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
+</pre>
+
+
+
+1. **`-Ddd.profiling.enabled=true`**: This option enables Datadog's continuous profiling feature. By setting this to `true`, the Datadog Agent will collect profiling data such as CPU usage, memory allocation, and more, which helps in identifying performance bottlenecks and optimizing application performance.
+
+2. **`-XX:FlightRecorderOptions=stackdepth=256`**: This option configures the Java filght recorder (JFR) or the async profiler, that are tools for collecting diagnostic and profiling data and events from a running java application. `stackdepth=256` sets the maximum stack depth for stack traces collected by JFR to 256. This is useful for detailed profiling information, especially when diagnosing performance issues.
+
+
+When enabled, and if you let the system process requests, after a few minutes you should be able to get several profiles that gives a perspective of all the frames displayed when the application is running
+
+<p align="left">
+  <img src="img/springotel83.png" width="850" />
+</p>
+
+Here's how to interpret the given profile:
+
+**Flame Graph Interpretation:**
+
+- ***Color Coding***: Each color on the flame graph represents a different package or class, helping you quickly identify where CPU time is being spent by package.
+- ***Width of Bars***: The width of each bar on the flame graph corresponds to the amount of CPU time consumed. Wider bars indicate more CPU time.
+- ***Call Stack***: The vertical axis represents the call stack at each moment during the profiling session, with the bottom being the end of the call stack and the top being the root method call (e.g., the `Thread.run()` method)
+- ***Specific Method***: In this case, you have a `Thermometer` class's `fibonacci` method consuming a significant amount of CPU time, indicated by the width of the yellow bar labeled `Thermometer.fibonacci(int)`.
+- ***Top Consumers***: The `Thermometer` class's methods appears to be the top CPU consumer for the `/simulateTemperature` endpoint, taking up 410ms, which is 28% of the profiled CPU time.
+- ***Endpoint Performance***: The `/simulateTemperature` endpoint has a CPU Time of 620ms, which represents the aggregate time across all invocations of this endpoint during the profiling period. This is an indication of the endpoint's performance impact.
+- ***Other Activity***: Besides the `simulateTemperature` endpoint, there's "Other activity" taking up 1.61s of CPU time, which may be indicative of other operations happening within the application outside the specific endpoint.
+
+### Application security and vulnerability assessment
+
+Application Security Monitoring (ASM) and Vulnerability Assessment features are part of their larger suite of Datadog's security tools designed to provide real-time threat detection and visibility into the security posture of applications.
+
+### Application Security Monitoring (ASM)
+
+Datadog ASM is designed to protect applications against runtime threats. It integrates with the Datadog Agent and provides the following capabilities:
+
+- **Real-time threat detection**: ASM monitors live application traffic to detect and alert on various threats, such as web attacks (SQL injection, cross-site scripting), security misconfigurations, and known bad actors. 
+- **Runtime security**: It tracks the runtime behavior of applications, providing insights into potentially malicious activity such as command injections or unauthorized access attempts.
+- **Monitoring and alerting**: Provides real-time alerts and detailed information about security events, allowing teams to investigate and respond quickly to incidents.
+
+### Vulnerability Assessment
+
+Datadog's Vulnerability Assessment feature focuses on identifying and managing software vulnerabilities within any application stack:
+
+- **Dependency scanning**: It automatically scans applications and their dependencies for known vulnerabilities using package managers and software composition analysis (SCA) techniques.
+- **Continuous monitoring**: Regularly checks for new vulnerabilities that may affect your application stack and alerts about any newly discovered issues.
+- **Risk prioritization**: Helps prioritize remediation efforts by assessing the severity of detected vulnerabilities and their potential impact on the underlying environment.
+- **Reporting and compliance**: Offers reports and dashboards that help track vulnerability management efforts and support compliance with various security standards.
+
+Application security and vulnerability assessment are not enabled by default. In order to do so you would need to use the following system properties or equivalent environment variables:
+
+re style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section08/activity]$ java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -Ddd.appsec.enabled=true -Ddd.iast.enabled=true -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
+</pre>
+
+
+The command you've provided is for running a Java application with the Datadog Agent attached as a Java agent to collect various telemetry data, including traces and security-related events. Here’s what each part of the command does:
+
+
+1. `-Ddd.appsec.enabled=true`: Enables Application security monitoring. This means that the agent will collect data about the security context of the application and detect security-related events such as attempted attacks.
+
+2. `-Ddd.iast.enabled=true`: Enables interactive application security testing (IAST), allowing the agent to analyze code for security vulnerabilities in real-time as the application is running.
+
+When enabled, and if you let the system process requests, after a few minutes you should be able to get several security events that gives a perspective of all the potential threats/attacks or vulnerability patterns tied to the application
+
+<p align="left">
+  <img src="img/springotel84.png" width="850" />
+</p>
+
+
+This screenshot from Datadog's vulnerability assessment interface displays a security warning for a web application, specifically highlighting a vulnerability in the Spring Web framework.
+
+Here's how that can be interpreted:
+
+1. **Vulnerability Title**: "Spring Web vulnerable to Open Redirect or Server Side Request Forgery (SSRF)"
+   - This indicates that the application is using a version of the Spring web framework with known vulnerabilities that could allow open redirect and SSRF attacks.
+
+2. **Affected Library**: `org.springframework:spring-web` Version: `6.1.3`
+   - The application is using version `6.1.3` of the `spring-web` library, which is known to contain the vulnerability.
+
+3. **CVE Reference**: `CVE-2024-22243`
+   - The given CVE number associated with this specific security issue.
+
+4. **Detection Timeline**:
+   - **First detected**: 2 days ago, indicating when the issue was initially discovered.
+   - **Last detected**: 2 days ago, which is the same as the first detection in this case.
+   - **Window of exposure**: less than 15 minutes, suggesting that the period during which the application was vulnerable was brief.
+
+5. **Datadog severity breakdown**:
+   - **Severity**: Medium, with a score of 5.9. This is Datadog's severity rating based on their risk analysis.
+   - **Base Score**: High 8.1, according to the CVSS v3, indicating a more serious level of risk.
+   - **In Production**: The service is running in at least one production environment, maintaining the risk score.
+   - **Not Under Attack**: No attacks have been detected recently for this service, which may be a factor in lowering the overall risk score.
+
+6. **Next Steps**: An upgrade to `spring-web` library version `6.1.4` is recommended to mitigate this vulnerability. This newer version presumably does not include the reported vulnerabilities.
+
+
+
 ## End
 
