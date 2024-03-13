@@ -183,19 +183,19 @@ Here are a few examples of how this looks like:
 
 ### Continous profiling
 
-Datadog continuous profiling is a feature part of Datadog's observability platform designed to help developers and operations teams understand and optimize the performance of their applications. It provides detailed insights into how code executes in production environments, enabling teams to identify and troubleshoot performance bottlenecks, reduce latency, and improve efficiency. Here are some key aspects and offerings of Datadog Continuous Profiling:
+Datadog continuous profiling is a feature part of Datadog's observability platform designed to help developers and operations teams understand and optimize the performance of their applications. It provides detailed insights into how code executes in production environments, enabling teams to identify and troubleshoot performance bottlenecks, reduce latency, and improve efficiency.
 
-1. **Real-Time Performance Insights**: Datadog continuous profiling collects real-time performance data from applications, including CPU usage, memory allocation, socket I/O and other critical metrics. This data is collected continuously, providing an up-to-date view of application performance and helping teams quickly identify any anomalies or inefficiencies.
+1. **Real-Time performance insights**: Datadog continuous profiling collects real-time performance data from applications, including CPU usage, memory allocation, socket I/O and other critical metrics. This data is collected continuously, providing an up-to-date view of application performance and helping teams quickly identify any anomalies or inefficiencies.
 
-2. **Low overhead profiling**: One of the key benefits of continuous profiling is its low impact on application performance. Datadog's profiling tools are designed to gather detailed performance data with minimal overhead, ensuring that the profiling process does not adversely affect the application's speed or user experience.
+2. **Low overhead profiling**: One of the key benefits of continuous profiling is its low impact on application performance. Datadog profiling is designed to gather detailed performance data with minimal overhead, ensuring that the profiling process does not adversely affect the application's speed or user experience.
 
 3. **Code-level visibility**: Continuous profiling provides insights down to the code level, allowing teams to see exactly which lines of code, methods, threads, classes or services are consuming the most resources. This granular view makes it easier to pinpoint the root causes of performance issues and understand the impact of specific code paths on overall application health.
 
-4. **Cross-language support**: Datadog continuous profiling supports a range of programming languages, making it ideal for use in diverse application environments. This includes popular languages such as Java, Go, Python, Node.js, and .NET, among others. Cross-language support ensures that teams can maintain a consistent profiling approach across their entire technology stack.
+4. **Cross-language support**: Continuous profiling supports a range of programming languages, making it ideal for use in diverse application environments. This includes popular languages such as Java, Go, Python, Node.js, and .NET, among others. Cross-language support ensures that teams can maintain a consistent profiling approach across their entire technology stack.
 
-5. **Integration with APM and Logs**: Continuous profiling is integrated with Datadog APM, Infrastructure and log monitoring suite. This integration enables teams to correlate profiling data with metrics, traces and logs, providing a comprehensive view of application performance and behavior. By linking profiling data with specific requests or transactions, teams can more effectively diagnose issues and understand their impact on users.
+5. **Integration with APM and Logs**: Continuous profiling is integrated with Datadog APM, Infrastructure and log monitoring. This integration enables teams to correlate profiling data with metrics, traces and logs, providing a comprehensive view of application performance and behavior. By linking profiling data with specific requests or transactions, teams can more effectively diagnose issues and understand their impact on users.
 
-6. **Actionable recommendations**: Beyond simply collecting and presenting data, Datadog Continuous Profiling offers actionable recommendations to improve performance. The platform can suggest optimizations, highlight potential inefficiencies, and help teams prioritize performance improvements based on their potential impact.
+6. **Actionable recommendations**: Beyond simply collecting and presenting data, Continuous profiling offers actionable recommendations to improve performance. The platform can suggest optimizations, highlight potential inefficiencies, and help teams prioritize performance improvements based on their potential impact.
 
 7. **Cost optimization**: By identifying inefficient use of resources, continuous profiling can also help organizations optimize their cloud or infrastructure costs. Reducing unnecessary CPU or memory usage not only improves application performance but can also lead to significant cost savings.
 
@@ -208,9 +208,9 @@ Continuous profiling is not enabled by default. In order to do so you would need
 
 
 
-1. **`-Ddd.profiling.enabled=true`**: This option enables Datadog's continuous profiling feature. By setting this to `true`, the Datadog Agent will collect profiling data such as CPU usage, memory allocation, and more, which helps in identifying performance bottlenecks and optimizing application performance.
+1. **`-Ddd.profiling.enabled=true`**: This option enables continuous profiling. By setting this to `true`, the Datadog java agent will collect profiling data such as CPU usage, memory allocation, and more, which helps in identifying performance bottlenecks and optimizing application performance.
 
-2. **`-XX:FlightRecorderOptions=stackdepth=256`**: This option configures the Java filght recorder (JFR) or the async profiler, that are tools for collecting diagnostic and profiling data and events from a running java application. `stackdepth=256` sets the maximum stack depth for stack traces collected by JFR to 256. This is useful for detailed profiling information, especially when diagnosing performance issues.
+2. **`-XX:FlightRecorderOptions=stackdepth=256`**: This option configures the java filght recorder (JFR) or the async profiler, that are tools for collecting diagnostic and profiling data and events from a running java application. `stackdepth=256` sets the maximum stack depth for stack traces collected by JFR to 256. This is useful for detailed profiling information, especially when diagnosing performance issues.
 
 
 When enabled, and if you let the system process requests, after a few minutes you should be able to get several profiles that gives a perspective of all the frames displayed when the application is running
@@ -221,7 +221,7 @@ When enabled, and if you let the system process requests, after a few minutes yo
 
 Here's how to interpret the given profile:
 
-**Flame Graph Interpretation:**
+**Flamegraph Interpretation:**
 
 - ***Color Coding***: Each color on the flame graph represents a different package or class, helping you quickly identify where CPU time is being spent by package.
 - ***Width of Bars***: The width of each bar on the flame graph corresponds to the amount of CPU time consumed. Wider bars indicate more CPU time.
@@ -236,7 +236,7 @@ Application Security Monitoring (ASM) and Vulnerability Assessment features are 
 
 ***Application Security Monitoring (ASM)***
 
-Datadog ASM is designed to protect applications against runtime threats. It integrates with the Datadog Agent and provides the following capabilities:
+Datadog ASM is designed to protect applications against runtime threats. It integrates with the tracing library and provides the following capabilities:
 
 - **Real-time threat detection**: ASM monitors live application traffic to detect and alert on various threats, such as web attacks (SQL injection, cross-site scripting), security misconfigurations, and known bad actors. 
 - **Runtime security**: It tracks the runtime behavior of applications, providing insights into potentially malicious activity such as command injections or unauthorized access attempts.
@@ -244,7 +244,7 @@ Datadog ASM is designed to protect applications against runtime threats. It inte
 
 ***Vulnerability Assessment***
 
-Datadog's Vulnerability Assessment feature focuses on identifying and managing software vulnerabilities within any application stack:
+Vulnerability Assessment focuses on identifying and managing software vulnerabilities within any application stack:
 
 - **Dependency scanning**: It automatically scans applications and their dependencies for known vulnerabilities using package managers and software composition analysis (SCA) techniques.
 - **Continuous monitoring**: Regularly checks for new vulnerabilities that may affect your application stack and alerts about any newly discovered issues.
@@ -259,7 +259,7 @@ Application security and vulnerability assessment are not enabled by default. In
 
 
 
-1. `-Ddd.appsec.enabled=true`: Enables Application security monitoring. This means that the agent will collect data about the security context of the application and detect security-related events such as attempted attacks.
+1. `-Ddd.appsec.enabled=true`: Enables application security monitoring. This means that the agent will collect data about the security context of the application and detect security-related events such as attempted attacks.
 
 2. `-Ddd.iast.enabled=true`: Enables interactive application security testing (IAST), allowing the agent to analyze code for security vulnerabilities in real-time as the application is running.
 
@@ -270,7 +270,7 @@ When enabled, and if you let the system process requests, after a few minutes yo
 </p>
 
 
-This screenshot from Datadog's vulnerability assessment interface displays a security warning for a web application, specifically highlighting a vulnerability in the Spring Web framework.
+This screenshot from the vulnerability assessment interface displays a security warning for a web application, specifically highlighting a vulnerability in the Spring Web framework.
 
 Here's how that can be interpreted:
 
