@@ -14,6 +14,11 @@ OpenTelemetry provides a robust set of tools to capture everything from simple c
 
 In section 4, we explored how to set attributes through manual instrumentation. In this section we will start from where we were at the end of that chapter and focus on following the steps using the Java SDK to create and send metrics. 
 
+- Configure the SDK
+- Create the metric in the Thermometer class
+- Build, run, test
+- Visualize the metric in the Metrics Explorer 
+
 
 ## Configure the SDK to send metrics
 
@@ -61,6 +66,7 @@ dependencies {
         implementation("io.opentelemetry:opentelemetry-exporter-logging")
         implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
         implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
+        implementation("io.opentelemetry:opentelemetry-sdk-metrics:1.35.0")
 
 
 }
@@ -68,7 +74,7 @@ dependencies {
 
 ***Initial Tracing-Only Configuration***
 
-Then we will can focus on the configuration block of the SDK which is located in the `ThermometerApplication` class. 
+Then we will focus on the configuration block of the SDK which is located in the `ThermometerApplication` class. 
 
 
 ```java
@@ -257,7 +263,7 @@ temperatureMeasurementsCounter.add(1);
 
 This line of code effectively counts the number of temperature readings by incrementing the counter each time the `measureOnce` method is called.
 
-The metric creation steps are straightforward and easy to replicate. This requires following the process of instantiate a meter, create a counter from that meter, and then use that counter within the application to record data. In the context of the `Thermometer` class, every call to `simulateTemperature` will result in incrementing the counter, providing a running total of all temperature measurements made during the application's lifetime. This data can then be exported and visualized through the configured metrics backend to monitor the application's behavior over time.
+The metric creation steps are straightforward and easy to replicate. This requires following the process of instantiate a meter, create a counter from that meter, and then use that counter within the application to record data. In the context of the `Thermometer` class, every call to `simulateTemperature` will result in incrementing the counter, providing a running total of all temperature measurements made during the application's lifetime. 
 
 
 ## Build, run and test the application
