@@ -226,7 +226,6 @@ Here's how to interpret the given profile:
 - ***Color Coding***: Each color on the flame graph represents a different package or class, helping you quickly identify where CPU time is being spent by package.
 - ***Width of Bars***: The width of each bar on the flame graph corresponds to the amount of CPU time consumed. Wider bars indicate more CPU time.
 - ***Call Stack***: The vertical axis represents the call stack at each moment during the profiling session, with the bottom being the end of the call stack and the top being the root method call (e.g., the `Thread.run()` method)
-- ***Specific Method***: In this case, you have a `Thermometer` class's `fibonacci` method consuming a significant amount of CPU time, indicated by the width of the yellow bar labeled `Thermometer.fibonacci(int)`.
 - ***Top Consumers***: The `Thermometer` class's methods appears to be the top CPU consumer for the `/simulateTemperature` endpoint, taking up 410ms, which is 28% of the profiled CPU time.
 - ***Endpoint Performance***: The `/simulateTemperature` endpoint has a CPU Time of 620ms, which represents the aggregate time across all invocations of this endpoint during the profiling period. This is an indication of the endpoint's performance impact.
 - ***Other Activity***: Besides the `simulateTemperature` endpoint, there's "Other activity" taking up 1.61s of CPU time, which may be indicative of other operations happening within the application outside the specific endpoint.
@@ -247,10 +246,10 @@ Datadog ASM is designed to protect applications against runtime threats. It inte
 
 Datadog's Vulnerability Assessment feature focuses on identifying and managing software vulnerabilities within any application stack:
 
-- ***Dependency scanning***: It automatically scans applications and their dependencies for known vulnerabilities using package managers and software composition analysis (SCA) techniques.
-- ***Continuous monitoring***: Regularly checks for new vulnerabilities that may affect your application stack and alerts about any newly discovered issues.
-- ***Risk prioritization***: Helps prioritize remediation efforts by assessing the severity of detected vulnerabilities and their potential impact on the underlying environment.
-- ***Reporting and compliance***: Offers reports and dashboards that help track vulnerability management efforts and support compliance with various security standards.
+- **Dependency scanning**: It automatically scans applications and their dependencies for known vulnerabilities using package managers and software composition analysis (SCA) techniques.
+- **Continuous monitoring**: Regularly checks for new vulnerabilities that may affect your application stack and alerts about any newly discovered issues.
+- **Risk prioritization**: Helps prioritize remediation efforts by assessing the severity of detected vulnerabilities and their potential impact on the underlying environment.
+- **Reporting and compliance**: Offers reports and dashboards that help track vulnerability management efforts and support compliance with various security standards.
 
 Application security and vulnerability assessment are not enabled by default. In order to do so you would need to use the following system properties or equivalent environment variables:
 
@@ -258,8 +257,6 @@ Application security and vulnerability assessment are not enabled by default. In
 [root@pt-instance-1:~/oteljavalab/section08/activity]$ java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -Ddd.appsec.enabled=true -Ddd.iast.enabled=true -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
 </pre>
 
-
-The command you've provided is for running a Java application with the Datadog Agent attached as a Java agent to collect various telemetry data, including traces and security-related events. Here’s what each part of the command does:
 
 
 1. `-Ddd.appsec.enabled=true`: Enables Application security monitoring. This means that the agent will collect data about the security context of the application and detect security-related events such as attempted attacks.
