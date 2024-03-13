@@ -19,7 +19,7 @@ These can be leveraged while still adding custom instrumentation using OpenTelem
 ## Architecture overview
 
 <p align="left">
-  <img src="img/springotel83.png" width="650" />
+  <img src="img/springotel85.png" width="650" />
 </p>
 
 
@@ -235,7 +235,7 @@ Here's how to interpret the given profile:
 
 Application Security Monitoring (ASM) and Vulnerability Assessment features are part of their larger suite of Datadog's security tools designed to provide real-time threat detection and visibility into the security posture of applications.
 
-### Application Security Monitoring (ASM)
+***Application Security Monitoring (ASM)***
 
 Datadog ASM is designed to protect applications against runtime threats. It integrates with the Datadog Agent and provides the following capabilities:
 
@@ -243,18 +243,18 @@ Datadog ASM is designed to protect applications against runtime threats. It inte
 - **Runtime security**: It tracks the runtime behavior of applications, providing insights into potentially malicious activity such as command injections or unauthorized access attempts.
 - **Monitoring and alerting**: Provides real-time alerts and detailed information about security events, allowing teams to investigate and respond quickly to incidents.
 
-### Vulnerability Assessment
+***Vulnerability Assessment***
 
 Datadog's Vulnerability Assessment feature focuses on identifying and managing software vulnerabilities within any application stack:
 
-- **Dependency scanning**: It automatically scans applications and their dependencies for known vulnerabilities using package managers and software composition analysis (SCA) techniques.
-- **Continuous monitoring**: Regularly checks for new vulnerabilities that may affect your application stack and alerts about any newly discovered issues.
-- **Risk prioritization**: Helps prioritize remediation efforts by assessing the severity of detected vulnerabilities and their potential impact on the underlying environment.
-- **Reporting and compliance**: Offers reports and dashboards that help track vulnerability management efforts and support compliance with various security standards.
+- ***Dependency scanning***: It automatically scans applications and their dependencies for known vulnerabilities using package managers and software composition analysis (SCA) techniques.
+- ***Continuous monitoring***: Regularly checks for new vulnerabilities that may affect your application stack and alerts about any newly discovered issues.
+- ***Risk prioritization***: Helps prioritize remediation efforts by assessing the severity of detected vulnerabilities and their potential impact on the underlying environment.
+- ***Reporting and compliance***: Offers reports and dashboards that help track vulnerability management efforts and support compliance with various security standards.
 
 Application security and vulnerability assessment are not enabled by default. In order to do so you would need to use the following system properties or equivalent environment variables:
 
-re style="font-size: 12px">
+<pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab/section08/activity]$ java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -Ddd.appsec.enabled=true -Ddd.iast.enabled=true -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
 </pre>
 
@@ -277,27 +277,27 @@ This screenshot from Datadog's vulnerability assessment interface displays a sec
 
 Here's how that can be interpreted:
 
-1. **Vulnerability Title**: "Spring Web vulnerable to Open Redirect or Server Side Request Forgery (SSRF)"
+- **Vulnerability Title**: "Spring Web vulnerable to Open Redirect or Server Side Request Forgery (SSRF)"
    - This indicates that the application is using a version of the Spring web framework with known vulnerabilities that could allow open redirect and SSRF attacks.
 
-2. **Affected Library**: `org.springframework:spring-web` Version: `6.1.3`
+- **Affected Library**: `org.springframework:spring-web` Version: `6.1.3`
    - The application is using version `6.1.3` of the `spring-web` library, which is known to contain the vulnerability.
 
-3. **CVE Reference**: `CVE-2024-22243`
+- **CVE Reference**: `CVE-2024-22243`
    - The given CVE number associated with this specific security issue.
 
-4. **Detection Timeline**:
+- **Detection Timeline**:
    - **First detected**: 2 days ago, indicating when the issue was initially discovered.
    - **Last detected**: 2 days ago, which is the same as the first detection in this case.
    - **Window of exposure**: less than 15 minutes, suggesting that the period during which the application was vulnerable was brief.
 
-5. **Datadog severity breakdown**:
+- **Datadog severity breakdown**:
    - **Severity**: Medium, with a score of 5.9. This is Datadog's severity rating based on their risk analysis.
    - **Base Score**: High 8.1, according to the CVSS v3, indicating a more serious level of risk.
    - **In Production**: The service is running in at least one production environment, maintaining the risk score.
    - **Not Under Attack**: No attacks have been detected recently for this service, which may be a factor in lowering the overall risk score.
 
-6. **Next Steps**: An upgrade to `spring-web` library version `6.1.4` is recommended to mitigate this vulnerability. This newer version presumably does not include the reported vulnerabilities.
+- **Next Steps**: An upgrade to `spring-web` library version `6.1.4` is recommended to mitigate this vulnerability. This newer version presumably does not include the reported vulnerabilities.
 
 
 
