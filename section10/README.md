@@ -36,7 +36,7 @@ Otel provides thtree strategies for sending logs from applications to the collec
 In this strategy, logs are sent directly from the application to the OpenTelemetry Collector using Fluent Bit. Fluent Bit is a lightweight and highly efficient log processor and forwarder, which can be embedded in the application or run as a separate service. This approach is designed for real-time log processing and forwarding, minimizing latency and overhead by bypassing intermediary log files. It's particularly suitable for cloud-native applications that demand fast, efficient, and direct log shipping without the need for persistent storage or additional log processing steps. The direct integration with Fluent Bit allows for flexible and powerful log processing capabilities, such as filtering, enrichment, and transformation, before the logs are sent to the OpenTelemetry Collector.
 
 <p align="left">
-  <img src="img/springotel101.png" width="850" />
+  <img src="img/springotel101.png" width="650" />
 </p>
 
 ### 2. **Based on FileLog: Watching logs and parsing them before sending to the backend**
@@ -44,10 +44,10 @@ In this strategy, logs are sent directly from the application to the OpenTelemet
 The second strategy involves watching and parsing log files before they are sent to the backend. This method is typically implemented using the FileLog receiver in the OpenTelemetry Collector, which monitors log files for changes, reads new log entries, and processes them according to configured parsing rules. This strategy is well-suited for applications that write logs to files, providing a way to integrate with existing logging mechanisms without requiring changes to the application's logging configuration. It allows for the collection of logs that are written in various formats, transforming them into a structured format before forwarding them to the backend. This method is beneficial for batch processing, historical log analysis, and scenarios where logs need to be retained in files for compliance or auditing purposes.
 
 <p align="left">
-  <img src="img/springotel100.png" width="850" />
+  <img src="img/springotel100.png" width="650" />
 </p>
 
-### 3. **Based on an OpenTelemetry log appender 
+### 3. Based on an OpenTelemetry log appender 
 
 These initiatives represent a leap towards modernization. OpenTelemetry outlines best practices and guidance for emitting logs, traces, and metrics from these newly developed applications. For those languages and frameworks supported, employing auto-instrumentation or merely configuring a logging library to utilize an OpenTelemetry log appender often remains the most straightforward method for producing logs enriched with context. As previously discussed, ertain widely-used logging libraries across various programming languages have been enhanced to facilitate manual instrumentation efforts. These enhancements enable the integration of trace context within logs and permit the direct transmission of log data to the backend or to the Collector via the OTLP protocol, eliminating the need for logs to be stored as text files. Logs emitted in this manner are automatically enriched with specific resource contexts relevant to the application (for example, process ID, programming language, name and version of the logging library, etc.), ensuring comprehensive correlation across all dimensions of context for these logs.
 
@@ -55,7 +55,7 @@ These initiatives represent a leap towards modernization. OpenTelemetry outlines
 This is how a typical new application uses OpenTelemetry API, SDK and the existing log libraries:
 
 <p align="left">
-  <img src="img/springotel103.png" width="850" />
+  <img src="img/springotel103.png" width="650" />
 </p>
 
 
@@ -119,7 +119,7 @@ The provided configuration snippet for the OpenTelemetry Collector showcases the
 
 - **`filelog`**: This receiver is configured to monitor and read logs from the file specified in the `include` parameter. In this case, it's set to `/var/log/test/simple.log`. The `filelog` receiver will watch this file for new log entries and process them as they appear.
 
-### Operators (within `filelog` receiver)
+### Operators (within "filelog" receiver)
 
 - **`regex_parser`**: This operator is used to parse the incoming log lines using a regular expression defined in the `regex` parameter. The pattern `^(?P<time>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) (?P<sev>[A-Z]*) (?P<msg>.*)$` is designed to extract timestamps, severity levels, and the message content from each log entry.
 
@@ -145,7 +145,7 @@ Unified Service Tagging is a methodology recommended by Datadog to ensure a cons
 
 Here's a closer look at its key aspects:
 
-### Key Components
+### Key components
 
 - **Environment (`env`)**: This tag distinguishes data originating from different stages of your development lifecycle, such as production (`prod`), staging (`stage`), or development (`dev`). It's helpful for separating and filtering data based on the environment, allowing for targeted analysis and alerts.
 
@@ -227,7 +227,7 @@ service:
 
 The `attributes` section in the OpenTelemetry Collector configuration file is part of the processing phase that manipulates or adds attributes (metadata) to telemetry metrics, traces, and logs (before it is exported to a backend system, in this case, Datadog). This processor can modify the attributes of data passing through the collector, allowing for richer, more meaningful data to be sent to the backend. Here's a breakdown of how it works based on the provided configuration:
 
-### Configuration Details
+### Configuration details
 
 In the provided configuration, the `attributes` processor is defined with several actions, each specifying how to manipulate the data attributes:
 
