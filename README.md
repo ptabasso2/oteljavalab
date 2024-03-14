@@ -21,6 +21,8 @@ The structure is as follows:
 * **Section06**: Manual tracing: How to propagate context across services.
 * **Section07**: Manual tracing: Otel API and the Otel java agent
 * **Section08**: Manual tracing: Otel API and the Datadog java agent.
+* **Section09**: Sending other observability signals: Metrics
+
 
 In each section, we'll describe the required steps to take in order to reach the goal.
 The activities in this lab follow a logical order so that we can get to the more advanced concepts smoothly.

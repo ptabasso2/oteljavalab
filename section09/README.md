@@ -1,4 +1,4 @@
-# Sending metrics 
+# Sending other Observability signals: Metrics 
 
 
 ## Goal of this activity
