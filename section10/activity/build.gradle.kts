@@ -34,7 +34,6 @@ dependencies {
 	implementation("io.opentelemetry:opentelemetry-sdk-metrics:1.35.0")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.1.0-alpha")
 
-
 }
 
 

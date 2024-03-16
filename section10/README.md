@@ -153,15 +153,6 @@ Here's a closer look at its key aspects:
 
 - **Version (`version`)**: This tag is used to specify the version of the service or application, enabling you to compare metrics, logs, and traces across different releases. This is particularly useful for tracking down errors introduced in new deployments or observing improvements in performance over time.
 
-### Benefits
-
-1. **Correlation**: By using unified tags, Datadog enables you to correlate metrics, traces, and logs effortlessly. This means you can trace a problematic request from a high-level dashboard down to the specific logs and traces that detail the issue, all using common identifiers.
-
-2. **Improved Navigation**: It simplifies navigating Datadog's UI, as data can be filtered and searched based on standardized tags. This improves the efficiency of diagnosing problems and understanding system behavior.
-
-3. **Automated Alerting**: With consistent tagging, setting up alerts based on specific criteria across your entire stack becomes much simpler. For example, you could set an alert for error rates on a particular service in the production environment, ensuring you're immediately notified of potential issues.
-
-4. **Better Reporting**: Unified Service Tagging aids in generating more meaningful and contextual reports. You can compare services, versions, or environments to gain insights into the overall health and performance of your applications.
 
 ### Adjusting the collector configuration file
 
@@ -247,8 +238,151 @@ In the provided configuration, the `attributes` processor is defined with severa
 ## Enabling logging in our Spring Boot application 
 
 WIP
+- mdc put
+- mdc otel dependancy
 
-## Build, run and test the application
+Injecting trace IDs and span IDs into the logs is the required step for allowing the correlation between traces and logs. This process allows you to correlate log messages with specific transactions or operations, making it easier to debug and understand the application's behavior. Here's how to accomplish this with our Spring Boot application.
+
+The `opentelemetry-logback-mdc` dependency is part of the OpenTelemetry Java instrumentation ecosystem, designed to facilitate the integration of logging frameworks, such as Logback that is often used with Spring Boot. We will take advantage of the caapabilities this library offers and add it as a dependancy to our project to configure logback. This will make sure that trace context information—such as trace ID, span ID are automatically injected into the Mapped Diagnostic Context (MDC) of logback. 
+
+
+### 1. Add Dependencies
+
+By adding the following line to our dependancy section of our `build.gradle.kts` file
+
+`implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.1.0-alpha")`
+
+
+```java
+dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("io.opentelemetry:opentelemetry-api")
+	implementation("io.opentelemetry:opentelemetry-sdk")
+	implementation("io.opentelemetry:opentelemetry-exporter-logging")
+	implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
+	implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
+	implementation("io.opentelemetry:opentelemetry-sdk-metrics:1.35.0")
+	implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.1.0-alpha")
+
+}
+```
+
+### 2. Configure Logback
+
+Next, let's configure Logback to include trace and span IDs in our log entries. This is done by editing the `logback.xml` configuration file located in the `src/main/resources` directory. As the file doesn't exist, we'll create it.
+
+Here’s the configuration that adds pattern layout to include trace and span IDs:
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Define the Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - dd.trace_id=%X{trace_id} dd.span_id=%X{span_id} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Define the File Appender -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>/var/log/test/simple.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - dd.trace_id=%X{trace_id} dd.span_id=%X{span_id} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Wrap the Console Appender with OpenTelemetryAppender -->
+    <appender name="OTEL_CONSOLE" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender">
+        <appender-ref ref="CONSOLE"/>
+    </appender>
+
+    <!-- Wrap the File Appender with OpenTelemetryAppender -->
+    <appender name="OTEL_FILE" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender">
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <!-- Use both the wrapped "OTEL_CONSOLE" and "OTEL_FILE" appenders -->
+    <root level="INFO">
+        <appender-ref ref="OTEL_CONSOLE"/>
+        <appender-ref ref="OTEL_FILE"/>
+    </root>
+</configuration>
+```
+
+
+This Logback configuration file defines two primary appenders for logging: one for console output and one for file output. Both appenders are then wrapped with the `OpenTelemetryAppender` to automatically include trace and span IDs in the log entries. Here's a desciption of the components:
+
+**Console Appender (`CONSOLE`)**
+- This appender is configured to output log messages to the console.
+- The log message pattern includes the timestamp, log level, logger name, and the message itself, along with the trace and span IDs injected from the OpenTelemetry context (`dd.trace_id=%X{trace_id} dd.span_id=%X{span_id}`).
+
+**File Appender (`FILE`)**
+- Similar to the Console Appender but configured to write log messages to a file specified by the `<file>` tag (`/var/log/test/springotel.log`).
+- Uses the same pattern as the Console Appender for consistency in log message formatting across different output destinations.
+
+**OpenTelemetry Appender Wrappers (`OTEL_CONSOLE`, `OTEL_FILE`)**
+- Both the Console and File appenders are wrapped with `OpenTelemetryAppender`, which is a specialized appender from the `io.opentelemetry.instrumentation.logback.mdc.v1_0` package.
+- This wrapping mechanism ensures that the trace and span IDs are correctly injected into the (MDC) before each log message is processed by the underlying Console or File appender.
+
+
+**Root Logger Configuration**
+- The root logger is configured to use both `OTEL_CONSOLE` and `OTEL_FILE` appenders, meaning that all log messages processed by the root logger will be output to both the console and the file, with trace and span IDs included.
+- The log level is set to `INFO`, indicating that INFO, WARN, ERROR, and FATAL level messages will be logged, while DEBUG and TRACE level messages will be ignored.
+
+
+
+### 3. Log Your Application Messages
+
+With Logback configured, our application will automatically include trace IDs and span IDs in the logs. And anywhere we log messages, the trace context will be automatically added if they are available (e.g. inside the scope and from the active span context):
+
+```java
+        try (Scope scope = span.makeCurrent()) {
+            if (measurements.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
+            }
+
+            thermometer.setTemp(20, 35);
+            List<Integer> result = thermometer.simulateTemperature(measurements.get());
+
+            if (location.isPresent()) {
+                logger.info("Temperature simulation for {}: {}", location.get(), result);
+            } else {
+                logger.info("Temperature simulation for an unspecified location: {}", result);
+            }
+            return result;
+        } catch(Throwable t) {
+            span.recordException(t);
+            throw t;
+        } finally {
+            span.end();
+        }
+```
+
+### 4. Build, run and test and verify
+
+Run your Spring Boot application and make some requests to the endpoints that log messages. Check the application's logs to ensure that trace IDs and span IDs are included in the log entries as expected.
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker-compose -f docker-compose-section10.yml up -d
+Creating otel-collector ... done
+Creating springotel     ... done
+</pre>
+
+
+Accessing the container first
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
+[root@pt-instance-1:~/oteljavalab]$ 
+</pre>
+
+
+Going to the directory containing our project
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ cd section10/activity
+[root@pt-instance-1:~/oteljavalab/section10/activity]$
+</pre>
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab/section10/activity]$ gradle build
@@ -256,7 +390,7 @@ WIP
 BUILD SUCCESSFUL in 4s
 4 actionable tasks: 4 executed
 
-[root@pt-instance-1:~/oteljavalab/section09/activity]$ java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar &
+[root@pt-instance-1:~/oteljavalab/section10/activity]$ java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 2024-03-02T12:11:25.450Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 30923 (/root/oteljavalab/section10/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section10/activity)
 2024-03-02T12:11:25.484Z  INFO 30923 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-02T12:11:27.116Z  INFO 30923 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
@@ -273,13 +407,26 @@ Generate several requests from another terminal using curl (or from a browser or
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section10/activity]$ for i in {1..5}; do "localhost:8080/simulateTemperature?measurements=5&location=Paris"; sleep 1; done
+[root@pt-instance-1:~/oteljavalab/section10]$ for i in {1..2}; do curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"; done
+[33,28,35,30,35][34,28,35,32,27]
 
-[21,28,29,35,27]
-[24,32,29,33,32]
-...
-[28,21,24,22,23]
 </pre>
+
+
+By checking the `/var/log/test/sprinotel.log` we should see lines like this:
+ 
+<pre style="font-size: 12px">
+...
+2024-03-16 11:58:18 INFO  c.p.o.s.TemperatureController - dd.trace_id=83f2b6350cd5e1c5e953e73ae4344ed9 dd.span_id=67120398bf01506f - Temperature simulation for Paris: [20, 26, 30, 22, 25]
+2024-03-16 11:58:18 INFO  c.p.o.s.TemperatureController - dd.trace_id=4ee3839fb29f542982791b640888fa94 dd.span_id=f366b7cc42f67d4d - Temperature simulation for Paris: [23, 30, 30, 28, 28]
+...
+</pre>
+
+
+
+## Reviewing the log pipeline and trace remapper
+
+## Build, run and test the application
 
 
 ## Check the results in the Datadog UI (Log search)
