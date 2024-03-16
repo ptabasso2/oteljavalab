@@ -312,26 +312,26 @@ Here’s the configuration that adds pattern layout to include trace and span ID
 
 This Logback configuration file defines two primary appenders for logging: one for console output and one for file output. Both appenders are then wrapped with the `OpenTelemetryAppender` to automatically include trace and span IDs in the log entries. Here's a desciption of the components:
 
-**Console Appender (`CONSOLE`)**
+**Console appender (`CONSOLE`)**
 - This appender is configured to output log messages to the console.
 - The log message pattern includes the timestamp, log level, logger name, and the message itself, along with the trace and span IDs injected from the OpenTelemetry context (`dd.trace_id=%X{trace_id} dd.span_id=%X{span_id}`).
 
-**File Appender (`FILE`)**
+**File appender (`FILE`)**
 - Similar to the Console Appender but configured to write log messages to a file specified by the `<file>` tag (`/var/log/test/springotel.log`).
 - Uses the same pattern as the Console Appender for consistency in log message formatting across different output destinations.
 
-**OpenTelemetry Appender Wrappers (`OTEL_CONSOLE`, `OTEL_FILE`)**
+**OpenTelemetry appender wrappers (`OTEL_CONSOLE`, `OTEL_FILE`)**
 - Both the Console and File appenders are wrapped with `OpenTelemetryAppender`, which is a specialized appender from the `io.opentelemetry.instrumentation.logback.mdc.v1_0` package.
 - This wrapping mechanism ensures that the trace and span IDs are correctly injected into the (MDC) before each log message is processed by the underlying Console or File appender.
 
 
-**Root Logger Configuration**
+**Root logger configuration**
 - The root logger is configured to use both `OTEL_CONSOLE` and `OTEL_FILE` appenders, meaning that all log messages processed by the root logger will be output to both the console and the file, with trace and span IDs included.
 - The log level is set to `INFO`, indicating that INFO, WARN, ERROR, and FATAL level messages will be logged, while DEBUG and TRACE level messages will be ignored.
 
 
 
-### 3. Log Your Application Messages
+### 3. Log your application messages
 
 With Logback configured, our application will automatically include trace IDs and span IDs in the logs. And anywhere we log messages, the trace context will be automatically added if they are available (e.g. inside the scope and from the active span context):
 
@@ -358,7 +358,7 @@ With Logback configured, our application will automatically include trace IDs an
         }
 ```
 
-### 4. Build, run and test and verify
+### 4. Build, run, test and verify
 
 Run your Spring Boot application and make some requests to the endpoints that log messages. Check the application's logs to ensure that trace IDs and span IDs are included in the log entries as expected.
 
@@ -426,8 +426,7 @@ By checking the `/var/log/test/sprinotel.log` we should see lines like this:
 
 ## Reviewing the log pipeline and trace remapper
 
-## Build, run and test the application
-
+***WIP***
 
 ## Check the results in the Datadog UI (Log search)
 
