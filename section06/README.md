@@ -523,7 +523,7 @@ Exit the container
 Graceful shutdown
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section06/activity]$ docker-compose down
+[root@pt-instance-1:~/oteljavalab/section06/activity]$ docker-compose -f docker-compose-section06.yml down
 Stopping temperature-calculator ... done
 Stopping temperature-simulator  ... done
 Stopping otel-collector         ... done
