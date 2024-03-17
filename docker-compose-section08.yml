@@ -15,6 +15,7 @@ services:
       - DD_HOSTNAME=datadog
       - DD_APM_ENABLED=true
       - DD_API_KEY
+      - DD_SITE
     volumes:
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro

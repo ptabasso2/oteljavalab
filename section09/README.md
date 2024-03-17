@@ -22,6 +22,16 @@ In section 4, we explored how to set attributes through manual instrumentation. 
 
 ## Configure the SDK to send metrics
 
+**bootsrap the containers**
+
+(Make sure the `DD_API_KEY` and `DD_SITE` env variables are set)   
+
+```bash
+[root@pt-instance-1:~/oteljavalab]$ DD_SITE="your_site_value" DD_API_KEY="your_api_key_value" docker-compose up -d
+Creating otel-collector ... done
+Creating springotel     ... done
+```
+
 **Accessing the container**
 
 <pre style="font-size: 12px">
@@ -308,6 +318,23 @@ After having run the requests (consider running at least 10/20 requests to have 
 <p align="left">
   <img src="img/springotel90.png" width="850" />
 </p>
+
+## Tearing down the services
+
+Exit the container
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section09/activity]$ exit
+[root@pt-instance-1:~/oteljavalab/section09/activity]$ 
+</pre>
+
+Graceful shutdown
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section09/activity]$ docker-compose down
+Stopping otel-collector   ... done
+Stopping springotel       ... done
+</pre>
 
 
 ## End

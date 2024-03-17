@@ -4,6 +4,9 @@ services:
     container_name: otel-collector
     hostname: pt-instance-1
     image: otel/opentelemetry-collector-contrib
+    environment:
+      - DD_SITE
+      - DD_API_KEY
     volumes:
       - $PWD/section00/activity/collector.yaml:/etc/otelcol-contrib/config.yaml
     network_mode: host

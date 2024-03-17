@@ -62,6 +62,33 @@ This is how a typical new application uses OpenTelemetry API, SDK and the existi
 These strategies offer distinct advantages and can be chosen based on the specific requirements of your logging architecture, such as the need for real-time processing, integration with existing logging systems, log data format, and compliance requirements.
 
 
+### Setting up the environment
+
+1. Bootsrap the containers by using the corresponding docker-compose file `docker-compose-section10.yml`
+(Make sure the `DD_API_KEY` and `DD_SITE` env variables are set)   
+
+```bash
+[root@pt-instance-1:~/oteljavalab]$ DD_SITE="your_site_value" DD_API_KEY="your_api_key_value" docker-compose -f docker-compose-section10.yml up -d
+Creating springotel     ... done
+Creating otel-collector ... done
+```
+
+2. Accessing the application container
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
+[root@pt-instance-1:~/oteljavalab]$ 
+</pre>
+
+
+3. Navigating to the project directory.
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab]$ cd section10/activity
+[root@pt-instance-1:~/oteljavalab/section10/activity]$
+</pre>
+
+
 ## The Filelog receiver
 
 In the rest of lab we will use filelog to showcase how sending logs can be done. 
@@ -93,7 +120,8 @@ connectors:
 exporters:
   datadog:
     api:
-      key: 9842ecdxxxxxxxxxxxxxxxxxxxxxxx
+      site: ${DD_SITE}
+      key: ${DD_API_KEY}
 service:
   telemetry:
     logs:
@@ -165,7 +193,7 @@ receivers:
       http:
       grpc:
   filelog:
-    include: [ /var/log/test/simple.log ]
+    include: [ /var/log/test/springotel.log ]
     operators:
       - type: regex_parser
         regex: '^(?P<time>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) (?P<sev>[A-Z]*) (?P<msg>.*)$'
@@ -196,7 +224,8 @@ connectors:
 exporters:
   datadog:
     api:
-      key: 98xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      site: ${DD_SITE}
+      key: ${DD_API_KEY}
 service:
   telemetry:
     logs:
@@ -362,20 +391,6 @@ With Logback configured, our application will automatically include trace IDs an
 
 Run your Spring Boot application and make some requests to the endpoints that log messages. Check the application's logs to ensure that trace IDs and span IDs are included in the log entries as expected.
 
-<pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab]$ docker-compose -f docker-compose-section10.yml up -d
-Creating otel-collector ... done
-Creating springotel     ... done
-</pre>
-
-
-Accessing the container first
-
-<pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
-[root@pt-instance-1:~/oteljavalab]$ 
-</pre>
-
 
 Going to the directory containing our project
 
@@ -413,7 +428,7 @@ Generate several requests from another terminal using curl (or from a browser or
 </pre>
 
 
-By checking the `/var/log/test/sprinotel.log` we should see lines like this:
+By checking the `/var/log/test/springotel.log` we should see lines like this:
  
 <pre style="font-size: 12px">
 ...
@@ -434,6 +449,26 @@ After having run a few requests, you should be able to see the corresponding log
 
 
 WIP
+
+
+## Tearing down the services
+
+Exit the container
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section10/activity]$ exit
+[root@pt-instance-1:~/oteljavalab/section10/activity]$ 
+</pre>
+
+Graceful shutdown
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section10/activity]$ docker-compose -f docker-compose-section10.yml down
+Stopping otel-collector ... done
+Stopping springotel     ... done
+Removing otel-collector ... done
+Removing springotel     ... done
+</pre>
 
 
 ## End

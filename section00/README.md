@@ -57,8 +57,12 @@ Once you have cloned the repository, copy or rename the file named `collector-te
 [root@pt-instance-1:~/oteljavalab]$ cp section00/activity/collector-template.yaml section00/activity/collector.yaml
 ```
 
+**Important:** From there you would need to set the two environment variables DD_SITE and DD_API_KEY with their respective values:
+For the datadog site specifically it should be set to `datadoghq.com` unless you have access to another site (ex EU or US3, US4 etc...), you will want to set the site to the corresponding value. Ex for Europe, `site: datadoghq.eu`
 
-Edit it and add the required configuration details (`datadog.api.site`, `datadog.api.key`) 
+For the detailed list of sites:
+
+[Site list](https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site)
 
 
 ```ìni
@@ -75,8 +79,8 @@ connectors:
 exporters:
   datadog:
     api:
-      site: <your datadog api site (default is datadoghq.com)>
-      key: <your datadog api key>
+      site: ${DD_SITE}
+      key: ${DD_API_KEY}
 service:
   telemetry:
     logs:
@@ -92,15 +96,13 @@ service:
       exporters: [datadog]
 ```
 
-**Note**: By default the datadog site will be set to `datadoghq.com`. If you wish to target any other backend (ex for EU or US3, US4 etc...), you will want to set the site to the corresponding value. Ex for Europe, `site: datadoghq.eu` 
-
 
 Save the file and spin up the containers
 
 You would only need to run the following command that starts two containers one running the collector, the other one running the application container.
 
 ```bash
-[root@pt-instance-1:~/oteljavalab]$ docker-compose up -d
+[root@pt-instance-1:~/oteljavalab]$ DD_SITE="your_site_value" DD_API_KEY="your_api_key_value" docker-compose up -d
 Creating otel-collector ... done
 Creating springotel     ... done
 ```

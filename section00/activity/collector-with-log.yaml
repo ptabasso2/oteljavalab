@@ -1,0 +1,56 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+      grpc:
+  filelog:
+    include: [ /var/log/test/springotel.log ]
+    operators:
+      - type: regex_parser
+        regex: '^(?P<time>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) (?P<sev>[A-Z]*) (?P<msg>.*)$'
+        timestamp:
+          parse_from: attributes.time
+          layout: '%Y-%m-%d %H:%M:%S'
+        severity:
+          parse_from: attributes.sev      
+processors:
+  batch:
+    timeout: 10s
+  attributes:
+    actions:
+      - key: host
+        value: "pt-instance-1"
+        action: upsert
+      - key: service
+        value: "springotel"
+        action: upsert
+      - key: ddsource
+        value: "java"
+        action: upsert
+      - key: env
+        value: "dev"
+        action: upsert
+connectors:
+    datadog/connector:
+exporters:
+  datadog:
+    api:
+      site: ${DD_SITE}
+      key: ${DD_API_KEY}
+service:
+  telemetry:
+    logs:
+      level: info
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [datadog]
+    traces:
+      receivers: [otlp]
+      processors: [batch, attributes]
+      exporters: [datadog]
+    logs:
+      receivers: [filelog]
+      processors: [batch, attributes]
+      exporters: [datadog]

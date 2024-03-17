@@ -50,7 +50,18 @@ In the following we will assume that docker is being used as per the description
 
 ## Directory structure of the project
 
-Let's first connect to the container:
+
+If you haven't done so already, you will want to bootsrap first the containers
+(Make sure the `DD_API_KEY` and `DD_SITE` env variables are set)   
+
+
+```bash
+[root@pt-instance-1:~/oteljavalab]$ DD_SITE="your_site_value" DD_API_KEY="your_api_key_value" docker-compose up -d
+Creating otel-collector ... done
+Creating springotel     ... done
+```
+
+Let's connect to the application container (`springotel`):
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
@@ -177,6 +188,26 @@ If you check the output of the first terminal, you should see those new log entr
 2024-03-01T21:51:53.403Z  INFO 3917734 --- [nio-8080-exec-1] c.p.o.s.TemperatureController            : Temperature simulation for Paris: [27, 33, 34, 22, 20]
 ...
 </pre>
+
+## Tearing down the services
+
+Exit the container
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section01/activity]$ exit
+[root@pt-instance-1:~/oteljavalab/section01/activity]$ 
+</pre>
+
+Graceful shutdown
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section01/activity]$ docker-compose down
+Stopping otel-collector ... done
+Stopping springotel     ... done
+Removing otel-collector ... done
+Removing springotel     ... done
+</pre>
+
 
 ## Conclusion
 

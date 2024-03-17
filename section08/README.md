@@ -29,28 +29,18 @@ A specific docker-compose file (`docker-compose-section08.yml`) is provided and 
 
 ### Setting up the environment
 
-1. First let's stop the previous containers by running the following command on the docker host. 
 
-<pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab]$ docker-compose down
-Stopping springotel     ... done
-Stopping otel-collector ... done
-Removing springotel     ... done
-Removing otel-collector ... done
-</pre>
+1. Bootsrap the containers by using the corresponding docker-compose file `docker-compose-section08.yml`
+(Make sure the `DD_API_KEY` and `DD_SITE` env variables are set)   
 
-2. Set the environment variable **DD_API_KEY** with the value of your API key
-
-3. Loading the new configuration by using the corresponding docker-compose file `docker-compose-section08.yml`
-
-<pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab]$ docker-compose -f docker-compose-section08.yml up -d
-Creating dd-agent-dogfood-jmx ... done
-Creating springotel           ... done
-</pre>
+```bash
+[root@pt-instance-1:~/oteljavalab]$ DD_SITE="your_site_value" DD_API_KEY="your_api_key_value" docker-compose -f docker-compose-section08.yml up -d
+Starting springotel           ... done
+Starting dd-agent-dogfood-jmx ... done
+```
 
 
-4. Accessing the application container
+2. Accessing the application container
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
@@ -58,7 +48,7 @@ Creating springotel           ... done
 </pre>
 
 
-2. Navigating to the project directory.
+3. Navigating to the project directory.
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab]$ cd section08/activity
@@ -66,7 +56,7 @@ Creating springotel           ... done
 </pre>
 
 
-3. Download the Datadog java agent
+4. Download the Datadog java agent
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab/section08/activity]$ wget -O dd-java-agent.jar 'https://dtdg.co/latest-java-tracer'
@@ -79,10 +69,10 @@ For this we will simply run our application by passing the `-javaagent` pointing
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section08/solution]$ java -javaagent:dd-java-agent.jar -Ddd.service=springotel -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar 
+[root@pt-instance-1:~/oteljavalab/section08/activity]$ java -javaagent:dd-java-agent.jar -Ddd.service=springotel -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar 
 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
 [dd.trace 2024-03-09 22:47:07:699 +0000] [dd-task-scheduler] INFO datadog.trace.agent.core.StatusLogger - DATADOG TRACER CONFIGURATION {"version":"1.31.1~37358b9aa1","os_name":"Linux","os_version":"6.5.0-1008-gcp","architecture":"amd64","lang":"jvm","lang_version":"17.0.9","jvm_vendor":"Eclipse Adoptium","jvm_version":"17.0.9+9","java_class_version":"61.0","http_nonProxyHosts":"null","http_proxyHost":"null","enabled":true,"service":"springotel","agent_url":"http://localhost:8126","agent_error":false,"debug":false,"trace_propagation_style_extract":["datadog","tracecontext"],"trace_propagation_style_inject":["datadog","tracecontext"],"analytics_enabled":false,"sampling_rules":[{},{}],"priority_sampling_enabled":true,"logs_correlation_enabled":true,"profiling_enabled":false,"remote_config_enabled":true,"debugger_enabled":false,"appsec_enabled":"ENABLED_INACTIVE","telemetry_enabled":true,"telemetry_dependency_collection_enabled":true,"telemetry_log_collection_enabled":false,"dd_version":"","health_checks_enabled":true,"configuration_file":"no config file present","runtime_id":"43d1f66d-f837-4e43-8e4d-bd7b095dbd96","logging_settings":{"levelInBrackets":false,"dateTimeFormat":"'[dd.trace 'yyyy-MM-dd HH:mm:ss:SSS Z']'","logFile":"System.err","configurationFile":"simplelogger.properties","showShortLogName":false,"showDateTime":true,"showLogName":true,"showThreadName":true,"defaultLogLevel":"INFO","warnLevelString":"WARN","embedException":false},"cws_enabled":false,"cws_tls_refresh":5000,"datadog_profiler_enabled":true,"datadog_profiler_safe":true,"datadog_profiler_enabled_overridden":false,"data_streams_enabled":false}
-2024-03-09T22:47:09.069Z  INFO 424 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 424 (/oteljavalab/section08/solution/build/libs/springtotel-0.0.1-SNAPSHOT.jar started by root in /oteljavalab/section08/solution)
+2024-03-09T22:47:09.069Z  INFO 424 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 424 (/oteljavalab/section08/activity/build/libs/springtotel-0.0.1-SNAPSHOT.jar started by root in /oteljavalab/section08/activity)
 2024-03-09T22:47:09.100Z  INFO 424 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-09T22:47:11.116Z  INFO 424 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
 2024-03-09T22:47:11.187Z  INFO 424 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
@@ -122,7 +112,7 @@ After having modified and rebuilt the application, let's run and test it again.
  
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section08/solution]$ java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar 
+[root@pt-instance-1:~/oteljavalab/section08/activity]$ java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar 
 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
 [dd.trace 2024-03-09 23:03:09:968 +0000] [dd-task-scheduler] INFO datadog.trace.agent.core.StatusLogger - DATADOG 
 ...
@@ -157,7 +147,7 @@ Generate a request from another terminal using curl (or from a browser or postma
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section07/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
+[root@pt-instance-1:~/oteljavalab/section08/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"
 
 [21,28,29,35,27]
 </pre>
@@ -296,6 +286,24 @@ Here's how that can be interpreted:
 
 - **Next Steps**: An upgrade to `spring-web` library version `6.1.4` is recommended to mitigate this vulnerability. This newer version presumably does not include the reported vulnerabilities.
 
+## Tearing down the services
+
+Exit the container
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section08/activity]$ exit
+[root@pt-instance-1:~/oteljavalab/section08/activity]$ 
+</pre>
+
+Graceful shutdown
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section08/activity]$ docker-compose down
+Stopping springotel           ... done
+Stopping dd-agent-dogfood-jmx ... done
+Removing springotel           ... done
+Removing dd-agent-dogfood-jmx ... done
+</pre>
 
 
 ## End

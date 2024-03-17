@@ -124,24 +124,15 @@ The transformation involves splitting the original monolithic application into t
 </pre>
 
 
-For this section we've slightly changed our docker configuration to take into account the implementation change for our service.
-
-
-First let's stop the previous containers by running the following command on the docker host. 
-
-<pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab]$ docker-compose down
-Stopping springotel     ... done
-Stopping otel-collector ... done
-Removing springotel     ... done
-Removing otel-collector ... done
-</pre>
+For this section we've slightly changed our docker configuration to take into account the implementation change for our service. A specific docker compose file is provided (`docker-compose-section06.yml`) and we will rely on it for this section. 
 
 
 Now we will load the new configuration by using the corresponding docker-compose file `docker-compose-section06.yml`
 
+**Important:** Make sure the `DD_API_KEY` and `DD_SITE` env variables are set 
+
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab]$ docker-compose -f docker-compose-section06.yml up -d
+[root@pt-instance-1:~/oteljavalab]$ DD_SITE="your_default_site_value" DD_API_KEY="your_api_key_value" docker-compose -f docker-compose-section06.yml up -d
 Creating temperature-calculator ... done
 Creating temperature-simulator  ... done
 Creating otel-collector         ... done
@@ -519,6 +510,27 @@ The generated flamegraph depicts the behavior we were aiming at obtaining. We ca
 
 
 To view the generated traces: https://app.datadoghq.com/apm/traces
+
+## Tearing down the services
+
+Exit the container
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section06/activity]$ exit
+[root@pt-instance-1:~/oteljavalab/section06/activity]$ 
+</pre>
+
+Graceful shutdown
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section06/activity]$ docker-compose down
+Stopping temperature-calculator ... done
+Stopping temperature-simulator  ... done
+Stopping otel-collector         ... done
+Removing temperature-calculator ... done
+Removing temperature-simulator  ... done
+Removing otel-collector         ... done
+</pre>
 
 
 ## End

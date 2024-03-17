@@ -17,6 +17,14 @@ In this chapter we will see how to use the opentelemetry java agent to perform a
 
 ## Environment set-up
 
+bootsrap the containers
+(Make sure the `DD_API_KEY` and `DD_SITE` env variables are set)   
+
+```bash
+[root@pt-instance-1:~/oteljavalab]$ DD_SITE="your_site_value" DD_API_KEY="your_api_key_value" docker-compose up -d
+Creating otel-collector ... done
+Creating springotel     ... done
+```
 
 Accessing the container first
 
@@ -151,4 +159,23 @@ https://app.datadoghq.com/apm/traces
   <img src="img/springotel0.png" width="850" />
 </p>
 
+## Tearing down the services
 
+Exit the container
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section02/activity]$ exit
+[root@pt-instance-1:~/oteljavalab/section02/activity]$ 
+</pre>
+
+Graceful shutdown
+
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section01/activity]$ docker-compose down
+Stopping otel-collector ... done
+Stopping springotel     ... done
+Removing otel-collector ... done
+Removing springotel     ... done
+</pre>
+
+## End
