@@ -33,7 +33,11 @@ Otel provides thtree strategies for sending logs from applications to the collec
 
 ### 1. **Direct send from application to the collector using Fluent Bit**
 
-In this strategy, logs are sent directly from the application to the OpenTelemetry Collector using Fluent Bit. Fluent Bit is a lightweight and highly efficient log processor and forwarder, which can be embedded in the application or run as a separate service. This approach is designed for real-time log processing and forwarding, minimizing latency and overhead by bypassing intermediary log files. It's particularly suitable for cloud-native applications that demand fast, efficient, and direct log shipping without the need for persistent storage or additional log processing steps. The direct integration with Fluent Bit allows for flexible and powerful log processing capabilities, such as filtering, enrichment, and transformation, before the logs are sent to the OpenTelemetry Collector.
+In this strategy, logs are sent directly from the application to the OpenTelemetry Collector using Fluent Bit. Fluent Bit is a lightweight and highly efficient log processor and forwarder, which can be embedded in the application or run as a separate service. 
+
+This approach is designed for real-time log processing and forwarding, minimizing latency and overhead by bypassing intermediary log files. It's particularly suitable for cloud-native applications that demand fast, efficient, and direct log shipping without the need for persistent storage or additional log processing steps. 
+
+The direct integration with Fluent Bit allows for flexible and powerful log processing capabilities, such as filtering, enrichment, and transformation, before the logs are sent to the OpenTelemetry Collector.
 
 <p align="left">
   <img src="img/springotel101.png" width="650" />
@@ -41,7 +45,11 @@ In this strategy, logs are sent directly from the application to the OpenTelemet
 
 ### 2. **Based on FileLog: Watching logs and parsing them before sending to the backend**
 
-The second strategy involves watching and parsing log files before they are sent to the backend. This method is typically implemented using the FileLog receiver in the OpenTelemetry Collector, which monitors log files for changes, reads new log entries, and processes them according to configured parsing rules. This strategy is well-suited for applications that write logs to files, providing a way to integrate with existing logging mechanisms without requiring changes to the application's logging configuration. It allows for the collection of logs that are written in various formats, transforming them into a structured format before forwarding them to the backend. This method is beneficial for batch processing, historical log analysis, and scenarios where logs need to be retained in files for compliance or auditing purposes.
+The second strategy involves watching and parsing log files before they are sent to the backend. This method is typically implemented using the FileLog receiver in the OpenTelemetry Collector, which monitors log files for changes, reads new log entries, and processes them according to configured parsing rules. 
+
+This strategy is well-suited for applications that write logs to files, providing a way to integrate with existing logging mechanisms without requiring changes to the application's logging configuration. It allows for the collection of logs that are written in various formats, transforming them into a structured format before forwarding them to the backend. 
+
+This method is beneficial for batch processing, historical log analysis, and scenarios where logs need to be retained in files for compliance or auditing purposes.
 
 <p align="left">
   <img src="img/springotel100.png" width="650" />
@@ -49,7 +57,13 @@ The second strategy involves watching and parsing log files before they are sent
 
 ### 3. Based on an OpenTelemetry log appender 
 
-These initiatives represent a leap towards modernization. OpenTelemetry outlines best practices and guidance for emitting logs, traces, and metrics from these newly developed applications. For those languages and frameworks supported, employing auto-instrumentation or merely configuring a logging library to utilize an OpenTelemetry log appender often remains the most straightforward method for producing logs enriched with context. As previously discussed, ertain widely-used logging libraries across various programming languages have been enhanced to facilitate manual instrumentation efforts. These enhancements enable the integration of trace context within logs and permit the direct transmission of log data to the backend or to the Collector via the OTLP protocol, eliminating the need for logs to be stored as text files. Logs emitted in this manner are automatically enriched with specific resource contexts relevant to the application (for example, process ID, programming language, name and version of the logging library, etc.), ensuring comprehensive correlation across all dimensions of context for these logs.
+These initiatives represent a leap towards modernization. OpenTelemetry outlines best practices and guidance for emitting logs, traces, and metrics from these newly developed applications. 
+
+For those languages and frameworks supported, employing auto-instrumentation or merely configuring a logging library to utilize an OpenTelemetry log appender often remains the most straightforward method for producing logs enriched with context. As previously discussed, ertain widely-used logging libraries across various programming languages have been enhanced to facilitate manual instrumentation efforts. 
+
+These enhancements enable the integration of trace context within logs and permit the direct transmission of log data to the backend or to the Collector via the OTLP protocol, eliminating the need for logs to be stored as text files. 
+
+Logs emitted in this manner are automatically enriched with specific resource contexts relevant to the application (for example, process ID, programming language, name and version of the logging library, etc.), ensuring comprehensive correlation across all dimensions of context for these logs.
 
 
 This is how a typical new application uses OpenTelemetry API, SDK and the existing log libraries:
@@ -266,13 +280,13 @@ In the provided configuration, the `attributes` processor is defined with severa
 
 ## Enabling logging in our Spring Boot application 
 
-WIP
 - mdc put
-- mdc otel dependancy
 
 Injecting trace IDs and span IDs into the logs is the required step for allowing the correlation between traces and logs. This process allows you to correlate log messages with specific transactions or operations, making it easier to debug and understand the application's behavior. Here's how to accomplish this with our Spring Boot application.
 
 The `opentelemetry-logback-mdc` dependency is part of the OpenTelemetry Java instrumentation ecosystem, designed to facilitate the integration of logging frameworks, such as Logback that is often used with Spring Boot. We will take advantage of the caapabilities this library offers and add it as a dependancy to our project to configure logback. This will make sure that trace context information—such as trace ID, span ID are automatically injected into the Mapped Diagnostic Context (MDC) of logback. 
+
+**Note:** This dependancy is not as such mandatory as one could always considering interacting with the MDC methods explictly (`MDC.put()`, `MDC.remove()`). But this dependancy comes handy in order to avoid all the boiler plate code tied to it.
 
 
 ### 1. Add Dependencies
@@ -438,17 +452,99 @@ By checking the `/var/log/test/springotel.log` we should see lines like this:
 </pre>
 
 
-
 ## Reviewing the log pipeline and trace remapper
 
-***WIP***
+This section outlines the process of effectively managing java log events and linking them with traces. 
+The java log pipeline plays an important role in processing these log events. Additionally, the Trace ID Remapper is key in instructing Datadog to associate these events with their corresponding trace IDs.
+
+Previously, we explored configuring logback to leverage the OpenTelemetry appender, enabling the injection of trace and span IDs directly into log events. The next step involves defining a strategy to connect these enriched log events with their respective traces. This connection is facilitated by configuring the Trace ID Remapper, which ensures that log events are accurately associated with trace data based on their trace IDs.
+
+**1. The Java log pipeline**
+
+The "java" pipeline in Datadog is a pre-configured set of processing rules optimized for logs generated by java applications. This pipeline is designed to automatically detect and parse logs emitted by java frameworks and libraries, taking into consideration the common formats and structures of java log messages. Here's what it typically involves:
+
+- **Error Tracking**: Extracts and structures error messages and stack traces, making it easier to monitor and alert on application errors.
+
+- **Log Level Recognition**: Identifies log levels (INFO, WARN, ERROR, etc.), allowing for filtering and analysis based on the severity of log entries.
+
+- **Extraction of Common Attributes**: Identifies and extracts common attributes from java logs, such as class names, method names, and thread names, which can be crucial for debugging.
+
+### How to enable it?
+
+In order to enable it we need to set a reserved tag `ddsource` with the corresponding value for the java pipeline: `java`. 
+
+This is done in the `attributes` section of the processors items
+
+```java
+processors:
+  batch:
+    timeout: 10s
+  attributes:
+    actions:
+      - key: host
+        value: "pt-instance-1"
+        action: upsert
+      - key: service
+        value: "springotel"
+        action: upsert
+      - key: ddsource
+        value: "java"
+        action: upsert
+      - key: env
+        value: "dev"
+        action: upsert
+```
+
+This will help getting the following in Datadog:
+
+<p align="left">
+  <img src="img/springotel104.png" width="650" />
+</p>
+
+
+**2. The trace id remapper**
+
+The trace ID processor of the Java log pipeline is configured as follows:
+
+<p align="left">
+  <img src="img/springotel106.png" width="650" />
+</p>
+
+and
+
+<p align="left">
+  <img src="img/springotel107.png" width="650" />
+</p>
+
+
 
 ## Check the results in the Datadog UI (Log search)
 
-After having run a few requests, you should be able to see the corresponding log events in the `Log search` by searching it by its attributes
+After having run a few requests, you should be able to see the corresponding log events in the `log search` by searching it by its attributes. For example by searching by the service name `springotel`
+
+<p align="left">
+  <img src="img/springotel108.png" width="650" />
+</p>
 
 
-WIP
+And in summary, having injected the trace and span ids the logs, enabled `ddsource` and configured the trace id remapper yields:  
+
+<p align="left">
+  <img src="img/springotel109.png" width="650" />
+</p>
+
+By clicking on the trace tab, we can see that both trace and logs are linked:
+
+<p align="left">
+  <img src="img/springotel105.png" width="650" />
+</p>
+
+
+This can also be verified by searching from the trace search instead of the logs:
+
+<p align="left">
+  <img src="img/springotel110.png" width="650" />
+</p>
 
 
 ## Tearing down the services
