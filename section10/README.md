@@ -283,14 +283,14 @@ In the provided configuration, the `attributes` processor is defined with severa
 
 Injecting trace IDs and span IDs into the logs is the required step for allowing the correlation between traces and logs. This process allows you to correlate log messages with specific transactions or operations, making it easier to debug and understand the application's behavior. Here's how to accomplish this with our Spring Boot application.
 
-The `opentelemetry-logback-mdc` dependency is part of the OpenTelemetry Java instrumentation ecosystem, designed to facilitate the integration of logging frameworks, such as Logback that is often used with Spring Boot. We will take advantage of the caapabilities this library offers and add it as a dependancy to our project to configure logback. This will make sure that trace context information—such as trace ID, span ID are automatically injected into the Mapped Diagnostic Context (MDC) of logback. 
+The `opentelemetry-logback-mdc` dependency is part of the OpenTelemetry Java instrumentation ecosystem, designed to facilitate the integration of logging frameworks, such as Logback that is often used with Spring Boot. We will take advantage of the caapabilities this library offers and add it as a dependency to our project to configure logback. This will make sure that trace context information—such as trace ID, span ID are automatically injected into the Mapped Diagnostic Context (MDC) of logback. 
 
-**Note:** This dependancy is not as such mandatory as one could always considering interacting with the MDC methods explictly (`MDC.put()`, `MDC.remove()`). But this dependancy comes handy in order to avoid all the boiler plate code tied to it.
+**Note:** This dependency is not as such mandatory as one could always consider interacting with the MDC methods explictly (`MDC.put()`, `MDC.remove()`). But this dependency comes handy in order to avoid all the boiler plate code tied to it.
 
 
 ### 1. Add Dependencies
 
-By adding the following line to our dependancy section of our `build.gradle.kts` file
+By adding the following line to our dependency section of our `build.gradle.kts` file
 
 `implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.1.0-alpha")`
 
@@ -468,7 +468,7 @@ The "java" pipeline in Datadog is a pre-configured set of processing rules optim
 
 - **Extraction of Common Attributes**: Identifies and extracts common attributes from java logs, such as class names, method names, and thread names, which can be crucial for debugging.
 
-### How to enable it?
+***How to enable it?***
 
 In order to enable it we need to set a reserved tag `ddsource` with the corresponding value for the java pipeline: `java`. 
 
