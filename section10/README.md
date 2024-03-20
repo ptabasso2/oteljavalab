@@ -280,7 +280,6 @@ In the provided configuration, the `attributes` processor is defined with severa
 
 ## Enabling logging in our Spring Boot application 
 
-- mdc put
 
 Injecting trace IDs and span IDs into the logs is the required step for allowing the correlation between traces and logs. This process allows you to correlate log messages with specific transactions or operations, making it easier to debug and understand the application's behavior. Here's how to accomplish this with our Spring Boot application.
 
