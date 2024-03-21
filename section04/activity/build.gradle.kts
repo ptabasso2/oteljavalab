@@ -40,6 +40,6 @@ tasks.named("jar") {
 
 tasks {
 	bootJar {
-		archiveFileName.set("springtotel-0.0.1-SNAPSHOT.jar")
+		archiveFileName.set("springotel-0.0.1-SNAPSHOT.jar")
 	}
 }

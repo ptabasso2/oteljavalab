@@ -120,16 +120,16 @@ Revision:     e9251e572c9bd1d01e503a0dfdf43aedaeecdc3f
 Kotlin:       1.9.10
 Groovy:       3.0.17
 Ant:          Apache Ant(TM) version 1.10.13 compiled on January 4 2023
-JVM:          17.0.9 (Azul Systems, Inc. 17.0.9+8-LTS)
+JVM:          17.0.9 (Eclipse Adoptium 17.0.9+9)
 OS:           Linux 6.5.0-1008-gcp amd64
 </pre>
 
 JDK
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab/section01/activity]$ java -version 
-openjdk version "17.0.9" 2023-10-17 LTS
-OpenJDK Runtime Environment Zulu17.46+19-CA (build 17.0.9+8-LTS)
-OpenJDK 64-Bit Server VM Zulu17.46+19-CA (build 17.0.9+8-LTS, mixed mode, sharing)
+openjdk version "17.0.9" 2023-10-17
+OpenJDK Runtime Environment Temurin-17.0.9+9 (build 17.0.9+9)
+OpenJDK 64-Bit Server VM Temurin-17.0.9+9 (build 17.0.9+9, mixed mode, sharing)
 </pre>
 
 
