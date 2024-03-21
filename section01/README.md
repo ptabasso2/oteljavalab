@@ -170,7 +170,7 @@ The application will start a Tomcat server that will load our application that w
 
 ## Test the application
 
-In another terminal run the following command either locally on your host or from within the container, you should receive something like `[29,34,35,21,24]`
+In another terminal run the following command **from within the container**, you should receive something like `[29,34,35,21,24]`
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab/section01/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"

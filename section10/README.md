@@ -431,7 +431,7 @@ BUILD SUCCESSFUL in 4s
 
 </pre>
 
-Generate several requests from another terminal using curl (or from a browser or postman)
+Generate several requests from another terminal using curl **from within the container**
 
 <pre style="font-size: 12px">
 

@@ -349,7 +349,7 @@ BUILD SUCCESSFUL in 4s
 
 </pre>
 
-Generate a request from another terminal using curl either locally or from the container (or from a browser or postman)
+Generate a request from another terminal using curl **from within the container**
 
 <pre style="font-size: 12px">
 

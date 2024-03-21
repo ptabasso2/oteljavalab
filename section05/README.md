@@ -212,7 +212,7 @@ This log entry gives a comprehensive overview of a single span, including when i
 </pre>
 
 
-Executing the request:
+Executing the request **from within the container**:
 
 <pre style="font-size: 12px">
 

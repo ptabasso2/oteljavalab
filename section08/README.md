@@ -143,7 +143,7 @@ java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enable
 
 ### Test the application and check the results in the Datadog UI
 
-Generate a request from another terminal using curl (or from a browser or postman) either locally on the host or from the container 
+Generate a request from another terminal using curl **from within the container** 
 
 <pre style="font-size: 12px">
 

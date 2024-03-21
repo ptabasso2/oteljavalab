@@ -475,7 +475,7 @@ Now we can start the services:
 You can hit `Ctrl + C` and run the second service
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab]$ docker exec temperature-calculator bash -c "java -jar section06/activity/temperature-calculator/build/libs/springtempcalc-0.0.1-SNAPSHOT.jar"
+[root@pt-instance-1:~/oteljavalab]$ docker exec temperature-calculator bash -c "java -jar section06/activity/temperature-calculator/build/libs/springtempcalc-0.0.1-SNAPSHOT.jar --server.port=8088"
 2024-03-08T16:14:53.180Z  INFO 368 --- [           main] c.p.o.s.CalculatorApplication            : Starting CalculatorApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 368 (/oteljavalab/section06/activity/temperature-calculator/build/libs/springtempcalc-0.0.1-SNAPSHOT.jar started by root in /oteljavalab)
 2024-03-08T16:14:53.191Z  INFO 368 --- [           main] c.p.o.s.CalculatorApplication            : No active profile set, falling back to 1 default profile: "default"
 2024-03-08T16:14:54.618Z  INFO 368 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8088 (http)
@@ -489,7 +489,7 @@ You can hit `Ctrl + C` and run the second service
 </pre>
 
 
-Generate a request from another terminal using curl (or from a browser or postman)
+Generate a request from another terminal using curl **from within the container** "temperature-simulator"
 
 <pre style="font-size: 12px">
 

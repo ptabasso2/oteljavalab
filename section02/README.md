@@ -144,7 +144,7 @@ java -javaagent:./opentelemetry-javaagent.jar -Dotel.service.name=springotel -Do
 
 ## Test the application
 
-In another terminal run the following command either locally on your host or from the docker container, you should see the following output `[23, 33, 35, 33, 35]`
+In another terminal run the following command **from within the container**, you should see the following output `[23, 33, 35, 33, 35]`
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab/section02/activity]$ curl "localhost:8080/simulateTemperature?measurements=5&location=Paris"

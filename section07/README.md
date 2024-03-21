@@ -311,7 +311,7 @@ This setup is particularly useful for gaining insights into application performa
 
 ### Test the application
 
-Generate a request from another terminal using curl (or from a browser or postman) either locally on the host or from the container 
+Generate a request from another terminal using curl **from within the container** 
 
 <pre style="font-size: 12px">
 
