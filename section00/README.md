@@ -51,13 +51,10 @@ Overall, the Otel collector plays a critical role in the observability ecosystem
 
 ## Installation steps if using Docker
 
-Once you have cloned the repository, copy or rename the file named `collector-template.yaml` to `collector.yaml` located under the `./oteljavalab/section00/activity` directory.
+Once you have cloned the repository, the collector config file named `collector.yaml` (already present under the `./oteljavalab/section00/activity` directory) will be used in the following sections.
 
-```bash
-[root@pt-instance-1:~/oteljavalab]$ cp section00/activity/collector-template.yaml section00/activity/collector.yaml
-```
 
-**Important:** From there you would need to set the two environment variables DD_SITE and DD_API_KEY with their respective values:
+You would need to set the two environment variables DD_SITE and DD_API_KEY with their respective values:
 For the datadog site specifically it should be set to `datadoghq.com` unless you have access to another site (ex EU or US3, US4 etc...), you will want to set the site to the corresponding value. Ex for Europe, `site: datadoghq.eu`
 
 For the detailed list of sites:
@@ -97,9 +94,8 @@ service:
 ```
 
 
-Save the file and spin up the containers
-
-You would only need to run the following command that starts two containers one running the collector, the other one running the application container.
+You would only need to run the following command that starts two containers one running the collector, the other one running the application container. 
+Make sure to execute de command from the project root directory 
 
 ```bash
 [root@pt-instance-1:~/oteljavalab]$ DD_SITE="your_site_value" DD_API_KEY="your_api_key_value" docker-compose up -d

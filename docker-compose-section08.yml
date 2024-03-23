@@ -29,7 +29,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - $PWD/:/root/oteljavalab/
+      - ./:/root/oteljavalab/
     stdin_open: true
     tty: true
     command: "sleep infinity"

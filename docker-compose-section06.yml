@@ -8,7 +8,7 @@ services:
       - DD_SITE
       - DD_API_KEY
     volumes:
-      - $PWD/section00/activity/collector.yaml:/etc/otelcol-contrib/config.yaml
+      - ./section00/activity/collector.yaml:/etc/otelcol-contrib/config.yaml
     network_mode: host
 
   temperature-simulator:
@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - $PWD/:/root/oteljavalab/
+      - ./:/root/oteljavalab/
     stdin_open: true
     tty: true
     command: "sleep infinity"
@@ -31,7 +31,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - $PWD/:/root/oteljavalab/
+      - ./:/root/oteljavalab/
     stdin_open: true
     tty: true
     command: "sleep infinity"

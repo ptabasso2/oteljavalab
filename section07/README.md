@@ -93,7 +93,7 @@ Unlike what we did in the previous sections where we had to add the Otej java sd
 
 ```java
 dependencies {
-        compile("org.springframework.boot:spring-boot-starter-web")
+        implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("io.opentelemetry:opentelemetry-api")
 }
 ```
@@ -264,10 +264,10 @@ Now let's start the application
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section07/activity]$ java -javaagent:opentelemetry-javaagent.jar -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar 
+[root@pt-instance-1:~/oteljavalab/section07/activity]$ java -javaagent:opentelemetry-javaagent.jar -jar build/libs/springotel-0.0.1-SNAPSHOT.jar 
 OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
 [otel.javaagent 2024-03-09 10:20:23:649 +0000] [main] INFO io.opentelemetry.javaagent.tooling.VersionLogger - opentelemetry-javaagent - version: 2.1.0
-2024-03-09T10:20:28.540Z  INFO 3359426 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 3359426 (/root/oteljavalab/section07/activity/build/libs/springtotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section07/activity)
+2024-03-09T10:20:28.540Z  INFO 3359426 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 3359426 (/root/oteljavalab/section07/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section07/activity)
 2024-03-09T10:20:28.609Z  INFO 3359426 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 [otel.javaagent 2024-03-09 10:20:29:654 +0000] [OkHttp http://localhost:4318/...] WARN io.opentelemetry.exporter.internal.http.HttpExporter - Failed to export logs. Server responded with HTTP status code 404. Error message: Unable to parse response body, HTTP status message: Not Found
 2024-03-09T10:20:30.293Z  INFO 3359426 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
@@ -289,14 +289,14 @@ OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader clas
 ### Observations about the command executed
 
 ```sh
-java -javaagent:opentelemetry-javaagent.jar -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
+java -javaagent:opentelemetry-javaagent.jar -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 
 - `java`: This is the command to run a java application. It invokes the JVM and starts the application.
 
 - `-javaagent:opentelemetry-javaagent.jar`: This option specifies that the JVM should load the OpenTelemetry java agent at startup. The java agent is responsible for automatically instrumenting the application to collect telemetry data such as metrics and traces. The agent does this by modifying bytecode at runtime to insert instrumentation code. `opentelemetry-javaagent.jar` is the path to the OpenTelemetry java agent JAR file. This path might need to be adjusted based on the actual location of the file.
 
-- `-jar build/libs/springtotel-0.0.1-SNAPSHOT.jar`: This part of the command tells the JVM to run the application packaged as a JAR file. The `-jar` option is followed by the path to the JAR file, which in this case is `build/libs/springtotel-0.0.1-SNAPSHOT.jar`. This file is our Spring Boot application (as indicated by the naming convention), and the version of the application is `0.0.1-SNAPSHOT`, a common convention for indicating a development version in Maven and Gradle projects.
+- `-jar build/libs/springotel-0.0.1-SNAPSHOT.jar`: This part of the command tells the JVM to run the application packaged as a JAR file. The `-jar` option is followed by the path to the JAR file, which in this case is `build/libs/springotel-0.0.1-SNAPSHOT.jar`. This file is our Spring Boot application (as indicated by the naming convention), and the version of the application is `0.0.1-SNAPSHOT`, a common convention for indicating a development version in Maven and Gradle projects.
 
 Here's a breakdown of what happens when you run this command:
 
@@ -331,7 +331,7 @@ This will produce the following trace
 ### Observations about the java agent configuration.
 
 
-When examining the trace, you might have noticed that the service is actually named after the name of the artifact (`springtotel-0.0.1-snapshot`). Which is probably not what we would like to see in a production environment.
+When examining the trace, you might have noticed that the service is actually named after the name of the artifact (`springotel-0.0.1-snapshot`). Which is probably not what we would like to see in a production environment.
 
 Thankfully this is something that can be changed through the java agent configuration
 
@@ -340,7 +340,7 @@ To specify a custom service name for the application when using the Otel java ag
 You can pass the `otel.service.name` as a system property directly in the command line that runs your application. This is done using the `-D` flag followed by the property name and value. Here's how you can modify the previous command to include a custom service name:
 
 ```sh
-java -javaagent:opentelemetry-javaagent.jar -Dotel.service.name=springotel -jar build/libs/springtotel-0.0.1-SNAPSHOT.jar
+java -javaagent:opentelemetry-javaagent.jar -Dotel.service.name=springotel -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 
 In this command, `-Dotel.service.name=springotel` sets the service name to "springotel".

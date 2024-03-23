@@ -70,7 +70,7 @@ In order to create metrics we need to provide an additional dependency to our pr
 
 ```java
 dependencies {
-        compile("org.springframework.boot:spring-boot-starter-web")
+        implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("io.opentelemetry:opentelemetry-api")
         implementation("io.opentelemetry:opentelemetry-sdk")
         implementation("io.opentelemetry:opentelemetry-exporter-logging")

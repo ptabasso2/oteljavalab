@@ -57,7 +57,7 @@ This should look like
 
 ```java
 dependencies {
-        compile("org.springframework.boot:spring-boot-starter-web")
+        implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("io.opentelemetry:opentelemetry-api")
         implementation("io.opentelemetry:opentelemetry-sdk")
         implementation("io.opentelemetry:opentelemetry-exporter-logging")
@@ -125,7 +125,7 @@ import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
-import io.opentelemetry.semconv.resource.attributes.ResourceAttributes;
+import io.opentelemetry.semconv.ResourceAttributes;
 
 ```
 
