@@ -115,7 +115,7 @@ Let's first add the following block in the `TemperatureApplication` class *after
 ```
 
 **Note**: At this point, you will also need to consider importing the various classes manually that are needed if you use a Text editor or they will be inferred if you use an IDE (IntelliJ or VSCode).
-If you have to do it manually, add the following to the import section of your `TemperatureApplication` class
+If you have to do it manually, add the following lines to the existing import section of your `TemperatureApplication` class
 
 ```java
 
@@ -126,6 +126,7 @@ import io.opentelemetry.sdk.resources.Resource;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.semconv.ResourceAttributes;
+import org.springframework.context.annotation.Bean;
 
 ```
 
@@ -260,11 +261,6 @@ private int measureOnce() {
 }
 
 
-public void setTemp(int minTemp, int maxTemp){
-        this.minTemp = minTemp;
-        this.maxTemp = maxTemp;
-}
-
 ```
 
 
@@ -310,6 +306,21 @@ private int measureOnce() {
     	childSpan.end();
     }
 }
+```
+
+With the following imports:
+
+```java
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 ```
 
 
