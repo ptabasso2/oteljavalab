@@ -161,8 +161,9 @@ drwxr-xr-x 7 root root 4096 Mar  3 01:06 build
 
 ## Instrumenting our services
 
-Before going into the details of setting up context propagation, you will want to first follow the steps described in section03 to add the OpenTelemetry SDK and initialize it. Then create spans in the Controller classes `TemperatureController` (for the `index()`) method and also the `simulateTemperature()` method in the `Temperature` class. You will consider the same steps for the `measure` method in the  `CalculatorController` class of the second service.
+The required code to initialize the OpenTelemetry has already been provided so that we can focus on the context propagation implementation. But let's review the slight change we did in SDK initialization compared to what we had in the previous sections
 
+We also already have the spans created as we did in section03 in the classes of the respective projects `temperature simulator` and `temperature calculator` but we haven't yet added the necessary details about context propagation
 
 ### Importance of setting propagators
 
@@ -188,6 +189,16 @@ Setting propagators can be achieved by changing slightly the way the OpenTelemet
     }
 
 ```
+
+The above example is done in the `TemperatureApplication` class from the `temperature simulator` service.
+The same modification needs to be done in the `CalculatorApplication` class from the `temperature calculator` service and by making sure the service name is properly set to `springcalc`
+
+Through
+```java
+       Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springcalc").build();
+```
+
+
 
 The line `setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))` in the OpenTelemetry SDK initialization code above is key for ensuring that the tracing context can be propagated across service boundaries in a distributed system. In the previous sections, we omitted the propagators configuration as weren't in need of dealing with context propagation. 
 
@@ -294,19 +305,9 @@ drwxr-xr-x 7 root root 4096 Mar  3 01:06 build
 </pre>
 
 
-1. Updating the `build.gradle.sdk` file. We will simply name the artifact differently 
 
-```java
-tasks {
-	bootJar {
-		archiveFileName.set("springtempcalc-0.0.1-SNAPSHOT.jar")
-	}
-}
-```
-
-2. Initializing the OpenTelemetry SDK with the propagator as we did above
-3. Modifying the `CalculatorController` class by injecting the OpenTelemetry object and acquiring a Tracer instance
-4. Modifying the  `CalculatorController` class to use a TextMapGetter 
+1. The OpenTelemetry SDK is already initialized as per the above description with the propagator. 
+2. Modifying the  `CalculatorController` class to use a TextMapGetter 
 
 ```java
 
@@ -354,7 +355,7 @@ In this line, `extract` uses `getter` to scan the `HttpServletRequest`'s headers
 This implementation of `TextMapGetter<HttpServletRequest>` is an essential part of integrating OpenTelemetry's tracing capabilities into web applications where HTTP requests are the carriers of trace context. It abstracts the extraction of tracing information from HTTP headers, enabling seamless context propagation across microservices or distributed components within an application.
 
 
-5. In the `CalculatorController` class, we change the implementation of the `measure` 
+3. In the `CalculatorController` class, we change the implementation of the `measure` 
 
 ```java
 @GetMapping("/measureTemperature")
