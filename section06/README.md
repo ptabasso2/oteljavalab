@@ -253,6 +253,25 @@ In the `simulateTemperature` method definition. We perform the following changes
     }
 ```
 
+These changes rely on the following imports:
+
+```java
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.Scope;
+import io.opentelemetry.context.propagation.TextMapSetter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+```
+
 
 Let's break down what's happening in this method:
 
@@ -324,6 +343,23 @@ drwxr-xr-x 7 root root 4096 Mar  3 01:06 build
     };
 ```
 
+With the following imports:
+
+```java
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
+import io.opentelemetry.context.Scope;
+import io.opentelemetry.context.propagation.TextMapGetter;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+```
 
 This implementation is crucial for extracting trace context from incoming HTTP requests within the OpenTelemetry framework. Let's break down its components and understand its significance:
 
@@ -378,7 +414,6 @@ This implementation of `TextMapGetter<HttpServletRequest>` is an essential part 
         }
     }
 ```
-
 
 
 The `measure` method annotated with `@GetMapping("/measureTemperature")` is a REST controller method designed to handle HTTP GET requests to the `/measureTemperature` endpoint. This method performs temperature measurement by invoking a downstream service or logic encapsulated within a `Thermometer` class. The method also integrates OpenTelemetry tracing to monitor and trace the execution of this temperature measurement operation. Here's a detailed breakdown of what happens inside this method:
