@@ -59,7 +59,7 @@ service:
     # Pipelines starting with `metrics` or `metrics/` define a metrics pipeline.
     metrics:
       # This pipeline has an OTLP receiver, a batch processor and a Datadog exporter.
-      receivers: [otlp]
+      receivers: [datadog/connector, otlp]
       processors: [batch]
       exporters: [datadog]
     # Pipelines starting with `traces` or `traces/` define a traces pipeline.
@@ -67,4 +67,4 @@ service:
       # This pipeline has an OTLP receiver, a batch processor and a Datadog exporter.
       receivers: [otlp]
       processors: [batch]
-      exporters: [datadog]
+      exporters: [datadog/connector, datadog]

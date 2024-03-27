@@ -43,13 +43,13 @@ service:
       level: info
   pipelines:
     metrics:
-      receivers: [otlp]
+      receivers: [datadog/connector, otlp]
       processors: [batch]
       exporters: [datadog]
     traces:
       receivers: [otlp]
       processors: [batch, attributes]
-      exporters: [datadog]
+      exporters: [datadog/connector, datadog]
     logs:
       receivers: [filelog]
       processors: [batch, attributes]
