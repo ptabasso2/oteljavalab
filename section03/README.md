@@ -127,6 +127,7 @@ import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.BatchSpanProcessor;
 import io.opentelemetry.semconv.ResourceAttributes;
 import org.springframework.context.annotation.Bean;
+import java.util.concurrent.TimeUnit;
 
 ```
 
