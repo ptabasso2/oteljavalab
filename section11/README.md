@@ -39,7 +39,7 @@ Creating springotel     ... done
 2. Going to the directory containing our project
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab]$ cd section1&/activity
+[root@pt-instance-1:~/oteljavalab]$ cd section11/activity
 [root@pt-instance-1:~/oteljavalab/section11/activity]$
 </pre>
 
@@ -142,7 +142,7 @@ The code change involves the use of Java's `ExecutorService` and the `Future` AP
     - The `ExecutorService` provides a way to asynchronously execute tasks in a separate thread or a pool of threads. In the code, `executorService.submit()` is used to submit a callable task that performs the temperature simulation.
     - The callable task encapsulates the logic that was previously executed synchronously within the `index` method.
 
-2. **Context Propagation**:
+2. **Context propagation**:
     - `Context.current()` is called outside the lambda expression to capture the current tracing context before submitting the task. This ensures that the trace context is available and can be propagated into the asynchronous task, allowing for consistent tracing across thread boundaries.
     - Inside the callable task, `try (Scope ignored = currentContext.makeCurrent())` makes the captured context active in the thread that executes the task, ensuring that any spans created within this context are correctly associated with the original trace.
 
@@ -159,7 +159,7 @@ This approach to making the temperature simulation asynchronous allows for bette
 
 ### Observations
 
-When running the service (See the instructions to build, run and test here), we will get the exact same pattern in the trace. And the span hierarchy will look the same with one major difference from the synchronous approach.
+When running the service (See the instructions to build, run and test [here](#build)), we will get the exact same pattern in the trace. And the span hierarchy will look the same with one major difference from the synchronous approach.
 The main thread was handling the `temperatureSimulation` span while both `simulateTemperature` and `measureOnce` spans were controlled by a speparate  Thread from the `ExecutorService`.
 
 <p align="left">
@@ -242,7 +242,7 @@ The screenshot below shows that the `asyncTemperatureSimulation` is displayed as
 </p>
 
 
-One could think of a mistake as we these two following lines are inverted:
+One could think of a mistake by seeing these two lines inverted:
 
 ```java
                 try (Scope ignored = currentContext.makeCurrent()) {
@@ -282,7 +282,7 @@ This can be seen in the following screenshot where the trace is "broken" meaning
 </p>
 
 
-### How do fix this? ###
+### How to fix this? ###
 
 In order to get around these issues we would need to introduce the corresponding scope for `currentContext` make it a current and then create and start `newSpan` and activaate the corresponding context.
 
@@ -396,7 +396,7 @@ The benefit of these two methods is that they do not require to alter the task i
 
 
 
-## Build, run and test the application
+## Build, run and test the application <a name="build"></a>
 
 <pre style="font-size: 12px">
 [root@pt-instance-1:~/oteljavalab/section1&/activity]$ gradle build
