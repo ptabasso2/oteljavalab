@@ -399,7 +399,7 @@ The benefit of these two methods is that they do not require to alter the task i
 ## Build, run and test the application <a name="build"></a>
 
 <pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section1&/activity]$ gradle build
+[root@pt-instance-1:~/oteljavalab/section11/activity]$ gradle build
 
 BUILD SUCCESSFUL in 4s
 4 actionable tasks: 4 executed
