@@ -163,7 +163,7 @@ When running the service (See the instructions to build, run and test here), we 
 The main thread was handling the `temperatureSimulation` span while both `simulateTemperature` and `measureOnce` spans were controlled by a speparate  Thread from the `ExecutorService`.
 
 <p align="left">
-  <img src="img/springotel111.png" width="650" />
+  <img src="img/springotel111.png" width="750" />
 </p>
 
 
@@ -238,7 +238,7 @@ The modification seems to comply with the requirement of activating the context 
 The screenshot below shows that the `asyncTemperatureSimulation` is displayed as a child of the `temperatureSimulation` one. Which is not what we want.
 
 <p align="left">
-  <img src="img/springotel112.png" width="650" />
+  <img src="img/springotel112.png" width="750" />
 </p>
 
 
@@ -278,7 +278,7 @@ This can be seen in the following screenshot where the trace is "broken" meaning
 
 
 <p align="left">
-  <img src="img/springotel113.png" width="650" />
+  <img src="img/springotel113.png" width="750" />
 </p>
 
 
