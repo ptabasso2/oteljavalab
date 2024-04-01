@@ -23,6 +23,7 @@ The structure is as follows:
 * **Section08**: Manual tracing: Otel API and the Datadog java agent.
 * **Section09**: Sending other observability signals: Metrics
 * **Section10**: Sending other observability signals: Logs (Log collection and connecting traces and logs)
+* **Section11**: Manual tracing: Asynchronous activities and tracing across thread boundaries
 
 
 
