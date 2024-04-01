@@ -348,6 +348,8 @@ it remains current because its scope has not been exited.
 
 ### Simplifying our code ###
 
+**Method 1:** Using the `Context.wrap()` method
+
 The Context interface provides a `wrap()` method that simplifies a bit the implementation by removing some of the boiler plate code:
 
 ```java
@@ -364,6 +366,33 @@ Callable<List<Integer>> task = currentContext.wrap(() -> {
     }
 });
 ```
+
+
+**Method 2:** Using the `Context.taskWrapping()` method
+
+This approach is even more concise and peferred and consists of decorating an `ExecutorService` with current context propagation.
+
+
+```java
+            ExecutorService wrappedExecutorService = Context.taskWrapping(executorService);
+
+            Callable<List<Integer>> task = () -> {
+                Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation").startSpan();
+                try (Scope newScope = newSpan.makeCurrent()) {
+                    // Now 'newSpan' is the current span, and its context is active.
+                    // Any spans created in this block will have 'newSpan' as their parent, which in turn has 'parentSpan' as its parent.
+                    thermometer.setTemp(20, 35);
+                    return thermometer.simulateTemperature(measurements.get());
+                } finally {
+                    newSpan.end(); // Ensure to end 'newSpan' after its work is done
+                }
+            };
+
+            Future<List<Integer>> futureResult = wrappedExecutorService.submit(task);
+            List<Integer> result = futureResult.get(); // This blocks until the task is completed and retrieves the result
+```
+
+The benefit of these two methods is that they do not require to alter the task implementation by decoupling and speparating concerns.   
 
 
 

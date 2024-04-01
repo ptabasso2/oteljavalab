@@ -46,8 +46,9 @@ public class TemperatureController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
             }
 
-            Context currentContext = Context.current();
-            Callable<List<Integer>> task = currentContext.wrap(() -> {
+            ExecutorService wrappedExecutorService = Context.taskWrapping(executorService);
+
+            Callable<List<Integer>> task = () -> {
                 Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation").startSpan();
                 try (Scope newScope = newSpan.makeCurrent()) {
                     // Now 'newSpan' is the current span, and its context is active.
@@ -57,11 +58,11 @@ public class TemperatureController {
                 } finally {
                     newSpan.end(); // Ensure to end 'newSpan' after its work is done
                 }
-            });
+            };
 
 
 
-            Future<List<Integer>> futureResult = executorService.submit(task);
+            Future<List<Integer>> futureResult = wrappedExecutorService.submit(task);
             List<Integer> result = futureResult.get(); // This blocks until the task is completed and retrieves the result
 
             // Use the result as needed
