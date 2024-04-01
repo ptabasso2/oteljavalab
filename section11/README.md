@@ -106,7 +106,7 @@ In order to make our code asynchronous we introduce an `ExecutorService` to show
                 }
             });
 
-            List<Integer> result = futureResult.get(); // Consider handling InterruptedException and ExecutionException
+            List<Integer> result = futureResult.get(); 
 
             if (location.isPresent()) {
                 logger.info("Temperature simulation for {}: {}", location.get(), result);
@@ -190,7 +190,7 @@ In the above code example we saw that inside the callable task, we used this pat
 Context currentContext = Context.current();
 executorService.submit(() -> {
     try (Scope ignored = currentContext.makeCurrent()) {
-        // Your code here. Any spans created in this block will be part of the trace defined by currentContext.
+        // Code here. Any spans created in this block will be part of the trace defined by currentContext.
     }
 });
 ```
@@ -228,7 +228,7 @@ By
                         newSpan.end();
                     }
                 }
-            }; // This blocks until the task is completed, you may need to adjust handling based on your actual logic
+            };
 
 ```
 
@@ -300,7 +300,7 @@ Callable<List<Integer>> task = () -> {
             thermometer.setTemp(20, 35);
             return thermometer.simulateTemperature(measurements.get());
         } finally {
-            newSpan.end(); // Ensure to end 'newSpan' after its work is done
+            newSpan.end(); // End 'newSpan' after its work is done
         }
     }
 };
@@ -312,12 +312,12 @@ The general idea is to follow this type of pattern to ensure that we get the rig
 ```java
 Span parentSpan = tracer.spanBuilder("parent").startSpan();
 try (Scope parentScope = parentSpan.makeCurrent()) {
-    // Do something within the parent span's context
+    // Any activity within the parent span's context
     
     Span childSpan = tracer.spanBuilder("child").startSpan();
     try (Scope childScope = childSpan.makeCurrent()) {
         // Child span is now current
-        // Do something within the child span's context
+        // Any activity within the child span's context
     } finally {
         childSpan.end(); // Ending the child span
     }
@@ -362,7 +362,7 @@ Callable<List<Integer>> task = currentContext.wrap(() -> {
         thermometer.setTemp(20, 35);
         return thermometer.simulateTemperature(measurements.get());
     } finally {
-        newSpan.end(); // Ensure to end 'newSpan' after its work is done
+        newSpan.end(); // End 'newSpan' after its work is done
     }
 });
 ```
@@ -379,17 +379,15 @@ This approach is even more concise and peferred and consists of decorating an `E
             Callable<List<Integer>> task = () -> {
                 Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation").startSpan();
                 try (Scope newScope = newSpan.makeCurrent()) {
-                    // Now 'newSpan' is the current span, and its context is active.
-                    // Any spans created in this block will have 'newSpan' as their parent, which in turn has 'parentSpan' as its parent.
                     thermometer.setTemp(20, 35);
                     return thermometer.simulateTemperature(measurements.get());
                 } finally {
-                    newSpan.end(); // Ensure to end 'newSpan' after its work is done
+                    newSpan.end();
                 }
             };
 
             Future<List<Integer>> futureResult = wrappedExecutorService.submit(task);
-            List<Integer> result = futureResult.get(); // This blocks until the task is completed and retrieves the result
+            List<Integer> result = futureResult.get();
 ```
 
 The benefit of these two methods is that they do not require to alter the task implementation by decoupling and speparating concerns.   
