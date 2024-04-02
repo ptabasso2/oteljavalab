@@ -48,7 +48,7 @@ public class TemperatureController {
                 logger.info("Temperature simulation for an unspecified location: {}", result);
             }
             return result;
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             span.recordException(t);
             throw t;
         } finally {

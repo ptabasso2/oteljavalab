@@ -28,13 +28,13 @@ public class TemperatureApplication {
     }
 
     @Bean
-    public RestTemplate restTemplate(){
+    public RestTemplate restTemplate() {
         return new RestTemplateBuilder().build();
     }
 
 
     @Bean
-    public OpenTelemetry openTelemetry(){
+    public OpenTelemetry openTelemetry() {
 
         Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springsimul").build();
 

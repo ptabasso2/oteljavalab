@@ -61,7 +61,6 @@ public class TemperatureController {
             };
 
 
-
             Future<List<Integer>> futureResult = wrappedExecutorService.submit(task);
             List<Integer> result = futureResult.get(); // This blocks until the task is completed and retrieves the result
 
@@ -72,7 +71,7 @@ public class TemperatureController {
                 logger.info("Temperature simulation for an unspecified location: {}", result);
             }
             return result; // Return the result from the method
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             span.recordException(t);
             throw t;
         } finally {

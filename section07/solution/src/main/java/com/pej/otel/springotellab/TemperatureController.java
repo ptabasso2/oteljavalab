@@ -22,7 +22,6 @@ public class TemperatureController {
     Thermometer thermometer;
 
 
-
     @GetMapping("/simulateTemperature")
     public List<Integer> index(@RequestParam("location") Optional<String> location,
                                @RequestParam("measurements") Optional<Integer> measurements) {

@@ -20,7 +20,7 @@ public class TemperatureApplication {
 
 
     @Bean
-    public Tracer tracer(){
+    public Tracer tracer() {
         return GlobalOpenTelemetry.getTracer(TemperatureApplication.class.getName(), "0.1.0");
     }
 

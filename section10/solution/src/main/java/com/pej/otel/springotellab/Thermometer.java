@@ -29,7 +29,7 @@ public class Thermometer {
     Thermometer(OpenTelemetry openTelemetry) {
         tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
         meter = openTelemetry.getMeter("TemperatureMeter");
-        this.temperatureMeasurementsCounter  = meter.counterBuilder("temperature_measurements")
+        this.temperatureMeasurementsCounter = meter.counterBuilder("temperature_measurements")
                 .setDescription("Counts the number of temperature measurements made")
                 .setUnit("1")
                 .build();
@@ -38,7 +38,7 @@ public class Thermometer {
     public List<Integer> simulateTemperature(int measurements) {
         List<Integer> temperatures = new ArrayList<Integer>();
         Span parentSpan = tracer.spanBuilder("simulateTemperature").startSpan();
-        try (Scope scope = parentSpan.makeCurrent()){
+        try (Scope scope = parentSpan.makeCurrent()) {
             for (int i = 0; i < measurements; i++) {
                 temperatures.add(this.measureOnce());
                 temperatureMeasurementsCounter.add(1);
@@ -58,7 +58,7 @@ public class Thermometer {
         }
     }
 
-    public void setTemp(int minTemp, int maxTemp){
+    public void setTemp(int minTemp, int maxTemp) {
         this.minTemp = minTemp;
         this.maxTemp = maxTemp;
     }

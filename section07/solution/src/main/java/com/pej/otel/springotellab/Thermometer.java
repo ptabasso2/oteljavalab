@@ -19,7 +19,7 @@ public class Thermometer {
     private final Tracer tracer;
 
     @Autowired
-    Thermometer (Tracer tracer){
+    Thermometer(Tracer tracer) {
         this.tracer = tracer;
 
     }
@@ -28,7 +28,7 @@ public class Thermometer {
     public List<Integer> simulateTemperature(int measurements) {
         List<Integer> temperatures = new ArrayList<Integer>();
         Span parentSpan = tracer.spanBuilder("simulateTemperature").startSpan();
-        try (Scope scope = parentSpan.makeCurrent()){
+        try (Scope scope = parentSpan.makeCurrent()) {
             for (int i = 0; i < measurements; i++) {
                 temperatures.add(this.measureOnce());
             }

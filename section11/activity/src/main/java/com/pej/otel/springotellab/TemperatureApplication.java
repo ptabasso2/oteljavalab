@@ -25,7 +25,7 @@ public class TemperatureApplication {
 
 
     @Bean
-    public OpenTelemetry openTelemetry(){
+    public OpenTelemetry openTelemetry() {
 
         Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springotel").build();
 

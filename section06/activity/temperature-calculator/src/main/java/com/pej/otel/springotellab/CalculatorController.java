@@ -21,7 +21,7 @@ public class CalculatorController {
     private final Thermometer thermometer;
 
     @Autowired
-    public CalculatorController(Thermometer thermometer, OpenTelemetry openTelemetry){
+    public CalculatorController(Thermometer thermometer, OpenTelemetry openTelemetry) {
         this.thermometer = thermometer;
         this.tracer = openTelemetry.getTracer(CalculatorController.class.getName(), "0.1.0");
 

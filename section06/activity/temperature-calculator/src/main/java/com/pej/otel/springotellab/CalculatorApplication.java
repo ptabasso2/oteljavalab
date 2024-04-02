@@ -26,7 +26,7 @@ public class CalculatorApplication {
     }
 
     @Bean
-    public OpenTelemetry openTelemetry(){
+    public OpenTelemetry openTelemetry() {
 
         Resource resource = Resource.getDefault().toBuilder().put(ResourceAttributes.SERVICE_NAME, "springcalc").build();
 

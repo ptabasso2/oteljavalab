@@ -34,8 +34,8 @@ public class TemperatureController {
                                @RequestParam("measurements") Optional<Integer> measurements) {
 
         Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
-	    span.setAttribute("span.type", "web");
-	    span.setAttribute("resource.name", "GET /simulateTemperature");
+        span.setAttribute("span.type", "web");
+        span.setAttribute("resource.name", "GET /simulateTemperature");
         try (Scope scope = span.makeCurrent()) {
 
             if (measurements.isEmpty()) {
@@ -51,7 +51,7 @@ public class TemperatureController {
                 logger.info("Temperature simulation for an unspecified location: {}", result);
             }
             return result;
-        } catch(Throwable t) {
+        } catch (Throwable t) {
             span.recordException(t);
             throw t;
         } finally {
