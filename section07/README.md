@@ -3,7 +3,7 @@
 
 ## Goal of this activity
 
-Combining the OpenTelemetry (Otel) java agent with the Otel API enables automatic instrumentation of java applications for distributed tracing, while also offering the flexibility to manually enrich traces with additional information. The Otel Java agent automatically instruments well-known frameworks and libraries to capture traces and metrics without the need for code modification. However, there may be instances where automatic instrumentation does not sufficiently detect or identify specific areas of the application code. In such cases, using the Otel API in conjunction with the java agent can help overcome these instrumentation limitations by allowing the addition of custom spans, attributes, or events.
+Combining the OpenTelemetry (Otel) java agent with the Otel API enables automatic instrumentation of java applications for distributed tracing, while also offering the flexibility to manually enrich traces with additional information. The Otel Java agent automatically instruments well-known frameworks and libraries to capture traces, logs and metrics without the need for code modification. However, there may be instances where automatic instrumentation does not sufficiently detect or identify specific areas of the application code. In such cases, using the Otel API in conjunction with the java agent can help overcome these instrumentation limitations by allowing the addition of custom spans, attributes, or events.
 
 
 ## Architecture overview
@@ -15,7 +15,7 @@ Combining the OpenTelemetry (Otel) java agent with the Otel API enables automati
 
 ## Main steps
 
-* Using the API and adding the necessary dependency to the project 
+* Using the API and adding the necessary dependencies to the project 
 * Gaining access to a `Tracer` instance
 * Create any additional span to the ones the java agent is creating  
 
@@ -88,30 +88,21 @@ Creating springotel     ... done
 </pre>
 
 
-Unlike what we did in the previous sections where we had to add the Otej java sdk to the project and configure it. In this scenario we will only add the Otel API. This all boils down to modifying the `build.gradle.kts` file as follows:
+Unlike what we did in the previous sections where we had to add the Otej java SDK to the project and configure it.
+In this scenario we will only add the Otel API.
+This all boils down to modifying the `build.gradle.kts` file as follows:
 
 
-```java
+```groovy
 dependencies {
-        implementation("org.springframework.boot:spring-boot-starter-web")
-        implementation("io.opentelemetry:opentelemetry-api")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation(platform("io.opentelemetry:opentelemetry-bom:1.35.0"))
+    implementation("io.opentelemetry:opentelemetry-api")
 }
 ```
 
+Where `platform("io.opentelemetry:opentelemetry-bom:1.35.0")` defines the Bill of Materials of Otel libraries versions, and `"io.opentelemetry:opentelemetry-api"` will include the OTel API.
 
-And to make sure that our dependencies (particularly the ones that come through transitive dependency) are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
-
-
-```java
-configurations.all {
-	resolutionStrategy.eachDependency {
-		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
-			useVersion("1.35.0")
-
-		}
-	}
-}
-```
 
 ## Instantiate a tracer
 
@@ -124,42 +115,31 @@ We will actually refer to it later in the `Thermometer` class.
 
 Let's add now the following block in the `TemperatureApplication` class *after* the `main()` method:
 
-```java
-    @Bean
-    public Tracer tracer(){
-        return GlobalOpenTelemetry.getTracer(TemperatureApplication.class.getName(), "0.1.0");
-    }
-```
-
-We also need to import these packages if they are not inferred by the IDE
-
-```java
+```java    
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
 
+@Bean
+public Tracer tracer() {
+    return GlobalOpenTelemetry.getTracer(TemperatureApplication.class.getName(), "0.1.0");
+}
 ```
 
-Now in `Thermometer` class we will need to gain access to the `Tracer` object and create a tracer instance. For this we need to add the following lines immediately after the Logger instance declaration:
-
-```java
-
-    private final Tracer tracer;
-
-
-    @Autowired
-    TemperatureController(Tracer tracer) {
-       this.tracer = tracer;
-    }
-```
-
-Declaring the tracer variable and using constructor injection to initialize the tracer.
-
-
-The corresponding package to import is:
+Now in `Thermometer` class we will need to gain access to the `Tracer` object and create a tracer instance.
+For this we need to add the following lines immediately after the Logger instance declaration:
 
 ```java
 import io.opentelemetry.api.trace.Tracer;
+
+private final Tracer tracer;
+
+@Autowired
+TemperatureController(Tracer tracer) {
+    this.tracer = tracer;
+}
 ```
+
+Declaring the tracer variable and using constructor injection to initialize the tracer.
 
 
 ## Creating additional span to the ones created by the java agent
@@ -208,16 +188,20 @@ public void setTemp(int minTemp, int maxTemp){
 #### After: with manual instrumentation
 
 ```java
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.context.Scope;
+
 private final Tracer tracer;
 
 @Autowired
-Thermometer(OpenTelemetry openTelemetry) {
+Thermometer(OpenTelemetry openTelemetry) { // QUESTION: We made a Tracer bean, not an OTel one. What about using it?
    tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
 }
 
 public List<Integer> simulateTemperature(int measurements) {
-    List<Integer> temperatures = new ArrayList<Integer>();
-    Span parentSpan = tracer.spanBuilder("simulateTemperature").startSpan();
+    List<Integer> temperatures = new ArrayList<>();
+    Span parentSpan = tracer.spanBuilder("simulateTemperature")
+                            .startSpan();
     try (Scope scope = parentSpan.makeCurrent()){
         for (int i = 0; i < measurements; i++) {
             temperatures.add(this.measureOnce());
@@ -230,22 +214,15 @@ public List<Integer> simulateTemperature(int measurements) {
 
 
 private int measureOnce() {
-	Span childSpan = tracer.spanBuilder("measureOnce").startSpan();
-	try {
+    Span childSpan = tracer.spanBuilder("measureOnce")
+                           .startSpan();
+    try {
        return ThreadLocalRandom.current().nextInt(this.minTemp, this.maxTemp + 1);
     } finally {
     	childSpan.end();
     }
 }
 ```
-
-We also need to add these packages:
-
-```java
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.context.Scope;
-```
-
 
 ## Build, run and test the application
 
@@ -289,12 +266,12 @@ OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader clas
 ### Observations about the command executed
 
 ```sh
-java -javaagent:opentelemetry-javaagent.jar -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
+java -javaagent:/path/to/opentelemetry-javaagent.jar -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 
 - `java`: This is the command to run a java application. It invokes the JVM and starts the application.
 
-- `-javaagent:opentelemetry-javaagent.jar`: This option specifies that the JVM should load the OpenTelemetry java agent at startup. The java agent is responsible for automatically instrumenting the application to collect telemetry data such as metrics and traces. The agent does this by modifying bytecode at runtime to insert instrumentation code. `opentelemetry-javaagent.jar` is the path to the OpenTelemetry java agent JAR file. This path might need to be adjusted based on the actual location of the file.
+- `-javaagent:opentelemetry-javaagent.jar`: This option specifies that the JVM should load the OpenTelemetry java agent at startup. The java agent is responsible for automatically instrumenting the application to collect telemetry data such as metrics, logs and traces. The agent does this by modifying bytecode at runtime to insert instrumentation code. `/path/to/opentelemetry-javaagent.jar` is the absolute path to the OpenTelemetry java agent JAR file. This path might need to be adjusted based on the actual location of the file.
 
 - `-jar build/libs/springotel-0.0.1-SNAPSHOT.jar`: This part of the command tells the JVM to run the application packaged as a JAR file. The `-jar` option is followed by the path to the JAR file, which in this case is `build/libs/springotel-0.0.1-SNAPSHOT.jar`. This file is our Spring Boot application (as indicated by the naming convention), and the version of the application is `0.0.1-SNAPSHOT`, a common convention for indicating a development version in Maven and Gradle projects.
 
@@ -333,7 +310,7 @@ This will produce the following trace
 
 When examining the trace, you might have noticed that the service is actually named after the name of the artifact (`springotel-0.0.1-snapshot`). Which is probably not what we would like to see in a production environment.
 
-Thankfully this is something that can be changed through the java agent configuration
+Thankfully this is something that can be changed through the java agent configuration.
 
 To specify a custom service name for the application when using the Otel java agent, you can set the `otel.service.name` property. This property allows you to define a meaningful and recognizable name for your service, which is particularly useful for distinguishing between different services in your telemetry data.
 
@@ -350,7 +327,7 @@ Additionally, here are a few more examples of system properties you might find u
 
 1. **Exporter URL**: If you're using an OpenTelemetry Protocol (OTLP) exporter to send telemetry data to an observability backend, you can specify the endpoint:
 
-    ```java
+    ```bash
     -Dotel.exporter.otlp.endpoint=http://my-collector:4317
     ```
 
@@ -358,7 +335,7 @@ Additionally, here are a few more examples of system properties you might find u
 
 2. **Resource attributes**: You can specify additional resource attributes, such as environment, to be attached to all spans and metrics:
 
-    ```java
+    ```bash
     -Dotel.resource.attributes=environment=production
     ```
 
@@ -366,7 +343,7 @@ Additionally, here are a few more examples of system properties you might find u
 
 3. **Sampling rate**: To control the amount of telemetry data collected, you can adjust the sampling rate. For example, to sample 50% of traces:
 
-    ```java
+    ```bash
     -Dotel.traces.sampler=traceidratio -Dotel.traces.sampler.arg=0.5
     ```
 
@@ -383,7 +360,7 @@ If we run the application by providing the service name and test it, we can see 
   <img src="img/springotel72.png" width="850" />
 </p>
 
-To view the generated traces: https://app.datadoghq.com/apm/traces
+[View the generated traces](https://app.datadoghq.com/apm/traces)
 
 ## Tearing down the services
 
