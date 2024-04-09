@@ -1,0 +1,24 @@
+[package]
+name = "dataprocessing"
+version = "1.0.0"
+edition = "2021"
+
+[[bin]]
+name = "dataprocessing"
+path = "src/main.rs"
+
+[dependencies]
+actix-web = "4"
+actix-web-opentelemetry = { version = "0.17.0", features = ["sync-middleware", "awc"] }
+awc = { version = "3.0", default-features = false, features = ["compress-zstd"] }
+tokio = { version = "1.37", features = ["macros", "rt-multi-thread"] }
+
+opentelemetry = { version = "0.22", features = ["trace", "metrics"] }
+opentelemetry_sdk = { version = "0.22", features = ["rt-tokio", "metrics"]}
+opentelemetry-semantic-conventions = "0.14.0"
+opentelemetry-http = "0.11.0"
+opentelemetry-otlp = { version = "0.15.0", features = ["metrics", "tokio", "trace"] }
+
+tracing = { version = "0.1", features = ["max_level_debug", "release_max_level_info"] }
+tracing-opentelemetry = "0.23.0"
+tracing-subscriber = "0.3"
