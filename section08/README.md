@@ -3,9 +3,9 @@
 
 ## Goal of this activity
 
-This section will demonstrate how you can achieve the same objectives as the previous section, but this time by using the Datadog java agent. The main difference lies in the goals we aim to achieve. The benefit of using the Datadog agent is the ability to take advantage of features not yet available in the OpenTelemetry ecosystem, such as **continuous profiling**, **application security**, and **dynamic instrumentation**. 
+This section will demonstrate how you can achieve the same objectives as the previous section, but this time by using the Datadog java agent. The main difference lies in the goals we aim to achieve. The benefit of using the Datadog java agent is the ability to take advantage of features not yet available in the OpenTelemetry ecosystem, such as **continuous profiling**, **application security**, and **dynamic instrumentation**. 
 
-These can be leveraged while still adding custom instrumentation using OpenTelemetry. The instructions regarding code modification remain unchanged; therefore, we won't repeat them here. Instead, we will focus on the specifics of enabling these capabilities with the Datadog agent. 
+These can be leveraged while still adding custom instrumentation using OpenTelemetry. The instructions regarding code modification remain unchanged; therefore, we won't repeat them here. Instead, we will focus on the specifics of enabling these capabilities with the Datadog java agent. 
 
 
 ## Main steps
@@ -91,7 +91,7 @@ And then we can send a request and observe the result
 </p>
 
 
-What we get is fairly comparable to the result obtained when using the OpenTelemetry java agent except that in the case of the Datadog agent we get two spans (One for the `servlet.request` operation and the second for the controller handler method `index()`). 
+What we get is fairly comparable to the result obtained when using the OpenTelemetry java agent except that in the case of the Datadog java agent we get two spans (One for the `servlet.request` operation and the second for the controller handler method `index()`). 
 
 But like the Otel java agent, the Datadog java agent doesn't capture either the details associated to the `Thermometer` methods `simulateTemperature()` and `measureOnce()`.   
 
@@ -127,16 +127,16 @@ OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader clas
 ### Observations about the command executed
 
 ```sh
-java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
+java -javaagent:/path/to/dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 
 - `java`: This invokes the JVM to start the java application.
 
-- `-javaagent:dd-java-agent.jar`: This option specifies the Datadog java agent (`dd-java-agent.jar`) that should be attached to the JVM. The Datadog java agent provides automatic instrumentation for a wide range of java frameworks and libraries, enabling the collection of traces and metrics without modifying the application code.
+- `-javaagent:/path/to/dd-java-agent.jar`: This option specifies the absolute path to the Datadog java agent (`dd-java-agent.jar`) that should be attached to the JVM. The Datadog java agent provides automatic instrumentation for a wide range of java frameworks and libraries, enabling the collection of traces and metrics without modifying the application code.
 
-- `-Ddd.service=springotel`: This system property (`-D`) sets the name of the service as `springotel`. In Datadog, service names are used to group related traces, logs and metrics, making it easier to navigate and monitor the application's performance.
+- `-Ddd.service=springotel`: This system property (starting with `-D`) sets the name of the service as `springotel`. In Datadog, service names are used to group related traces, logs and metrics, making it easier to navigate and monitor the application's performance.
 
-- `-Ddd.trace.otel.enabled=true`: This option enables the OpenTelemetry interoperability within the Datadog java agent. By setting this property to `true`, we are allowing the Datadog agent to consume telemetry data (traces, metrics) using the OpenTelemetry protocol. This is particularly useful if transitioning from OpenTelemetry to Datadog or if using tools and libraries that are instrumented with OpenTelemetry.
+- `-Ddd.trace.otel.enabled=true`: This option enables the OpenTelemetry interoperability within the Datadog java agent. By setting this property to `true`, we are allowing the Datadog java agent to consume telemetry data (traces, metrics) using the OpenTelemetry API. This is particularly useful if transitioning from OpenTelemetry to Datadog or if using tools and libraries that are instrumented with OpenTelemetry.
 
 - `-jar build/libs/springotel-0.0.1-SNAPSHOT.jar`: This part of the command specifies that the JVM should run the application packaged in the JAR file `build/libs/springotel-0.0.1-SNAPSHOT.jar`. This is the application's JAR, tied to our Spring Boot application.
 
@@ -153,7 +153,7 @@ Generate a request from another terminal using curl **from within the container*
 </pre>
 
 
-This will produce the following trace
+This will produce the following trace:
 
 <p align="left">
   <img src="img/springotel82.png" width="850" />
@@ -161,12 +161,12 @@ This will produce the following trace
 
 This demonstrates that the previously missing spans are now visible and correctly correlated with those generated by the automatic instrumentation.
 
-To view the generated traces: https://app.datadoghq.com/apm/traces
+[View the generated traces](https://app.datadoghq.com/apm/traces)
 
 
-## Why using the Datadog agent together with the Otel API?
+## Why using the Datadog java agent together with the Otel API?
 
-As mentioned in the introduction of this section, the benefit of using the Datadog agent is the ability to take advantage of features not yet available in the OpenTelemetry ecosystem, such as **continuous profiling**, **application security**, and **dynamic instrumentation**. 
+As mentioned in the introduction of this section, the benefit of using the Datadog java agent is the ability to take advantage of features not yet available in the OpenTelemetry ecosystem, such as **continuous profiling**, **application security**, and **dynamic instrumentation**. 
 
 
 Here are a few examples of how this looks like:
