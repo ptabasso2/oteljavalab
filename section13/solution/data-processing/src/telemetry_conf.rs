@@ -8,11 +8,10 @@ use opentelemetry_sdk::{
     },
     runtime, trace as sdktrace, Resource,
 };
-use tracing_subscriber::{layer::SubscriberExt, Registry};
 
 use std::time::Duration;
 
-pub fn get_resource_attr() -> Resource {
+fn get_resource_attr() -> Resource {
     let os_resource = OsResourceDetector.detect(Duration::from_secs(0));
     let process_resource = ProcessResourceDetector.detect(Duration::from_secs(0));
     let sdk_resource = SdkProvidedResourceDetector.detect(Duration::from_secs(0));
@@ -26,17 +25,13 @@ pub fn get_resource_attr() -> Resource {
         .merge(&telemetry_resource)
 }
 
-pub fn init_tracer() -> Result<(), tracing::subscriber::SetGlobalDefaultError> {
+pub fn init_tracer() -> () {
     global::set_text_map_propagator(TraceContextPropagator::new());
 
-    let tracer = opentelemetry_otlp::new_pipeline()
+    opentelemetry_otlp::new_pipeline()
         .tracing()
         .with_exporter(opentelemetry_otlp::new_exporter().tonic())
         .with_trace_config(sdktrace::config().with_resource(get_resource_attr()))
         .install_batch(runtime::Tokio)
-        .unwrap();
-
-    let telemetry = tracing_opentelemetry::layer().with_tracer(tracer);
-    let subscriber = Registry::default().with(telemetry);
-    tracing::subscriber::set_global_default(subscriber)
+        .expect("pipeline install error");
 }

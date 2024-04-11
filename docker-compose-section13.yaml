@@ -8,9 +8,9 @@ networks:
 services:
 
   temperature-simulator:
-    container_name: temperature-simulator
+    image: otel-workshop-temp-simulator
     build:
-      context: ./section12/activity/temperature-simulator
+      context: ./section13/activity/temperature-simulator
     ports:
       - 8080:8080
     environment:
@@ -22,9 +22,9 @@ services:
         condition: service_started
     
   temperature-calculator:
-    container_name: temperature-calculator
+    image: otel-workshop-temp-calculator
     build:
-      context: ./section12/activity/temperature-calculator
+      context: ./section13/activity/temperature-calculator
     ports:
       - 8088
     environment:
@@ -37,7 +37,7 @@ services:
   dataprocessing:
     image: otel-workshop-dataprocessing
     build:
-      context: ./section12/activity/data-processing
+      context: ./section13/activity/data-processing
     deploy:
       resources:
         limits:
@@ -64,7 +64,7 @@ services:
     restart: unless-stopped
     command: [ "--config=/etc/otelcol-config.yaml" ]
     volumes:
-      - ./section12/activity/otelcollector/otelcol-config.yaml:/etc/otelcol-config.yaml
+      - ./section13/activity/otelcollector/otelcol-config.yaml:/etc/otelcol-config.yaml
     ports:
       - 4317
       - 4318

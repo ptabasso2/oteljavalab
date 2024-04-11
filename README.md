@@ -12,18 +12,20 @@
 The purpose of this tutorial is to cover various activities around tracing using OpenTelemetry. Each activity is covered in a dedicated section.
 The structure is as follows:
 
-* **Section00**: Setting up the Otel collector contrib and the Datadog exporter
-* **Section01**: Overview of the java application that will be used in this lab
-* **Section02**: Automatic instrumentation using the Otel java agent
-* **Section03**: Manual tracing: Span creation and management using the Otel SDK
-* **Section04**: Manual tracing: How to set span attributes.
-* **Section05**: Manual tracing: Automatic configuration of the SDK
-* **Section06**: Manual tracing: How to propagate context across services.
-* **Section07**: Manual tracing: Otel API and the Otel java agent
-* **Section08**: Manual tracing: Otel API and the Datadog java agent.
-* **Section09**: Sending other observability signals: Metrics
-* **Section10**: Sending other observability signals: Logs (Log collection and connecting traces and logs)
-* **Section11**: Manual tracing: Asynchronous activities and tracing across thread boundaries
+* **[Section00](section00)**: Setting up the Otel collector contrib and the Datadog exporter
+* **[Section01](section01)**: Overview of the java application that will be used in this lab
+* **[Section02](section02)**: Automatic instrumentation using the Otel java agent
+* **[Section03](section03)**: Manual tracing: Span creation and management using the Otel SDK
+* **[Section04](section04)**: Manual tracing: How to set span attributes.
+* **[Section05](section05)**: Manual tracing: Automatic configuration of the SDK
+* **[Section06](section06)**: Manual tracing: How to propagate context across services.
+* **[Section07](section07)**: Manual tracing: Otel API and the Otel java agent
+* **[Section08](section08)**: Manual tracing: Otel API and the Datadog java agent.
+* **[Section09](section09)**: Sending other observability signals: Metrics
+* **[Section10](section10)**: Sending other observability signals: Logs (Log collection and connecting traces and logs)
+* **[Section11](section11)**: Manual tracing: Asynchronous activities and tracing across thread boundaries
+* **[Section12](section12)**: Overview of the Rust application
+* **[Section13](section13)**: Rust OTel Instrumentation
 
 
 

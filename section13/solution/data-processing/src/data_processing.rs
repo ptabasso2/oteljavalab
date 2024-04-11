@@ -1,4 +1,5 @@
 use actix_web::{get, Responder};
+use actix_web_opentelemetry::ClientExt;
 use log::{info, warn};
 use std::env;
 use std::io;
@@ -32,6 +33,7 @@ async fn get_temperature() -> io::Result<String> {
 
     let mut response = client
         .get(temp_calculator_addr)
+        .trace_request()
         .send()
         .await
         .map_err(|err| io::Error::new(io::ErrorKind::Other, err.to_string()))?;
