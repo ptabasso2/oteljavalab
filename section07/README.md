@@ -96,12 +96,18 @@ This all boils down to modifying the `build.gradle.kts` file as follows:
 ```groovy
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation(platform("io.opentelemetry:opentelemetry-bom:1.35.0"))
     implementation("io.opentelemetry:opentelemetry-api")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("io.opentelemetry:opentelemetry-bom:1.35.0")
+        mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:2.2.0-alpha")
+    }
 }
 ```
 
-Where `platform("io.opentelemetry:opentelemetry-bom:1.35.0")` defines the Bill of Materials of Otel libraries versions, and `"io.opentelemetry:opentelemetry-api"` will include the OTel API.
+Where the `dependencyManagent` section defines the Bill of Materials of Otel libraries versions, and `"io.opentelemetry:opentelemetry-api"` will include the OTel API.
 
 
 ## Instantiate a tracer
