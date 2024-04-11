@@ -123,8 +123,8 @@ Both use cases show different approaches to configuring and initializing the Ope
 We will also take advantage of the AutoConfigureSDK capabilities that allows for example to use env variables or system properies to specify certain settings:
 
 
-```java
-[root@pt-instance-1:~/oteljavalab/section05/activity]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
+```bash
+[root@pt-instance-1:~/oteljavalab/section05/activity]$ OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 
 In this example we can give a service name to our application or specify the type of exporters we would like to use.
@@ -150,7 +150,7 @@ The below output shows the result of the requests made against the endpoint expo
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section05/activity]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=logging OTEL_METRICS_EXPORTER=logging OTEL_LOGS_EXPORTER=logging java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar 
+[root@pt-instance-1:~/oteljavalab/section05/activity]$ OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=logging OTEL_METRICS_EXPORTER=logging OTEL_LOGS_EXPORTER=logging java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar 
 2024-03-06T10:42:23.376Z  INFO 2274086 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 2274086 (/root/oteljavalab/section05/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section05)
 2024-03-06T10:42:23.396Z  INFO 2274086 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-06T10:42:24.830Z  INFO 2274086 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
@@ -200,7 +200,7 @@ This log entry gives a comprehensive overview of a single span, including when i
 
 <pre style="font-size: 12px">
 
-[root@pt-instance-1:~/oteljavalab/section05/activity]$ env OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar 
+[root@pt-instance-1:~/oteljavalab/section05/activity]$ OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar 
 2024-03-06T11:00:33.335Z  INFO 2284901 --- [           main] c.p.o.s.TemperatureApplication           : Starting TemperatureApplication v0.0.1-SNAPSHOT using Java 17.0.9 with PID 2284901 (/root/oteljavalab/section05/activity/build/libs/springotel-0.0.1-SNAPSHOT.jar started by root in /root/oteljavalab/section05/activity)
 2024-03-06T11:00:33.344Z  INFO 2284901 --- [           main] c.p.o.s.TemperatureApplication           : No active profile set, falling back to 1 default profile: "default"
 2024-03-06T11:00:34.817Z  INFO 2284901 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)

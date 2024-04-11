@@ -126,7 +126,7 @@ OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader clas
 
 ### Observations about the command executed
 
-```sh
+```bash
 java -javaagent:dd-java-agent.jar -Ddd.service=springotel -Ddd.trace.otel.enabled=true -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 

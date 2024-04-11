@@ -68,7 +68,7 @@ In order to create metrics we need to provide an additional dependency to our pr
 (in the dependency block of the `build.gradle.kts` file)
 
 
-```java
+```kotlin
 dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("io.opentelemetry:opentelemetry-api")

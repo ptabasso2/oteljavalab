@@ -295,7 +295,7 @@ By adding the following line to our dependency section of our `build.gradle.kts`
 `implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.1.0-alpha")`
 
 
-```java
+```kotlin
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("io.opentelemetry:opentelemetry-api")
@@ -315,7 +315,7 @@ Next, let's configure Logback to include trace and span IDs in our log entries. 
 
 Here’s the configuration that adds pattern layout to include trace and span IDs:
 
-```java
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <!-- Define the Console Appender -->
@@ -474,7 +474,7 @@ In order to enable it we need to set a reserved tag `ddsource` with the correspo
 
 This is done in the `attributes` section of the processors items
 
-```java
+```yaml
 processors:
   batch:
     timeout: 10s

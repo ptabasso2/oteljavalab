@@ -91,7 +91,7 @@ Creating springotel     ... done
 Unlike what we did in the previous sections where we had to add the Otej java sdk to the project and configure it. In this scenario we will only add the Otel API. This all boils down to modifying the `build.gradle.kts` file as follows:
 
 
-```java
+```kotlin
 dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("io.opentelemetry:opentelemetry-api")
@@ -102,7 +102,7 @@ dependencies {
 And to make sure that our dependencies (particularly the ones that come through transitive dependency) are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
 
 
-```java
+```kotlin
 configurations.all {
 	resolutionStrategy.eachDependency {
 		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
@@ -288,7 +288,7 @@ OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader clas
 
 ### Observations about the command executed
 
-```sh
+```bash
 java -javaagent:opentelemetry-javaagent.jar -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 
@@ -339,7 +339,7 @@ To specify a custom service name for the application when using the Otel java ag
 
 You can pass the `otel.service.name` as a system property directly in the command line that runs your application. This is done using the `-D` flag followed by the property name and value. Here's how you can modify the previous command to include a custom service name:
 
-```sh
+```bash
 java -javaagent:opentelemetry-javaagent.jar -Dotel.service.name=springotel -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 
@@ -350,7 +350,7 @@ Additionally, here are a few more examples of system properties you might find u
 
 1. **Exporter URL**: If you're using an OpenTelemetry Protocol (OTLP) exporter to send telemetry data to an observability backend, you can specify the endpoint:
 
-    ```java
+    ```bash
     -Dotel.exporter.otlp.endpoint=http://my-collector:4317
     ```
 
@@ -358,7 +358,7 @@ Additionally, here are a few more examples of system properties you might find u
 
 2. **Resource attributes**: You can specify additional resource attributes, such as environment, to be attached to all spans and metrics:
 
-    ```java
+    ```bash
     -Dotel.resource.attributes=environment=production
     ```
 
@@ -366,7 +366,7 @@ Additionally, here are a few more examples of system properties you might find u
 
 3. **Sampling rate**: To control the amount of telemetry data collected, you can adjust the sampling rate. For example, to sample 50% of traces:
 
-    ```java
+    ```bash
     -Dotel.traces.sampler=traceidratio -Dotel.traces.sampler.arg=0.5
     ```
 

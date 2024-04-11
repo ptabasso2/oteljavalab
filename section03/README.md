@@ -55,7 +55,7 @@ In order to add the sdk, we will simply add the following dependencies to the de
 
 This should look like
 
-```java
+```kotlin
 dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("io.opentelemetry:opentelemetry-api")
@@ -71,7 +71,7 @@ dependencies {
 And to make sure that our dependencies are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
 
 
-```java
+```kotlin
 configurations.all {
 	resolutionStrategy.eachDependency {
 		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
@@ -404,5 +404,5 @@ Removing springotel     ... done
 
 At this stage, the objective is well achieved, we managed to instrument our application 
 using the instrumentation api and the spans and traces are sent to the backend after 
-having been processed by the Datadog Agent.
+having been processed by the Otel SDK.
 
