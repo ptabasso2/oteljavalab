@@ -94,26 +94,23 @@ This all boils down to modifying the `build.gradle.kts` file as follows:
 
 
 ```kotlin
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("io.opentelemetry:opentelemetry-api")
 }
-```
 
-
-And to make sure that our dependencies (particularly the ones that come through transitive dependency) are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
-
-
-```kotlin
-configurations.all {
-	resolutionStrategy.eachDependency {
-		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
-			useVersion("1.35.0")
-
-		}
-	}
+dependencyManagement {
+    imports {
+        mavenBom("io.opentelemetry:opentelemetry-bom:1.35.0")
+    }
 }
+
 ```
+
+Where the dependencyManagent section defines the "Bill of Materials" (BOM) of Otel libraries versions, and "io.opentelemetry:opentelemetry-api" will include the OTel API.
+
+
 
 ## Instantiate a tracer
 
