@@ -203,7 +203,7 @@ private final Tracer tracer;
 
 @Autowired
 Thermometer(OpenTelemetry openTelemetry) {
-   tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
+   this.tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
 }
 
 public List<Integer> simulateTemperature(int measurements) {

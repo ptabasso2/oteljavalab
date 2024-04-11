@@ -51,7 +51,8 @@ Going to the directory containing our project
 [root@pt-instance-1:~/oteljavalab/section03/activity]$
 </pre>
 
-In order to add the sdk, we will simply add the following dependencies to the dependency block of the `build.gradle.kts` file
+In order to add and configure the sdk, we will simply add the following dependencies to the dependency block of the `build.gradle.kts` file.
+
 
 This should look like
 
@@ -65,23 +66,13 @@ dependencies {
         implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
 
 }
-```
 
-
-And to make sure that our dependencies are all aligned on the same version we will add that snippet right after the `plugin` block of the `build.gradle.kts` file
-
-
-```kotlin
-configurations.all {
-	resolutionStrategy.eachDependency {
-		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
-			useVersion("1.35.0")
-
-		}
-	}
+dependencyManagement {
+    imports {
+        mavenBom("io.opentelemetry:opentelemetry-bom:1.35.0")
+    }
 }
 ```
-
 
 ## Instantiate a tracer
 
@@ -140,7 +131,7 @@ Now in `TemperatureController` we will need to get a hold on the `OpenTelemetry`
 
     @Autowired
     TemperatureController(OpenTelemetry openTelemetry) {
-       tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
+       this.tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
     }
 ```
 
@@ -282,7 +273,7 @@ private final Tracer tracer;
 
 @Autowired
 Thermometer(OpenTelemetry openTelemetry) {
-   tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
+   this.tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
 }
 
 public List<Integer> simulateTemperature(int measurements) {

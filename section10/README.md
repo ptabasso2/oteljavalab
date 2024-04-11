@@ -142,13 +142,13 @@ service:
       level: info
   pipelines:
     metrics:
-      receivers: [otlp]
+      receivers: [datadog/connector, otlp]
       processors: [batch]
       exporters: [datadog]
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [datadog]
+      exporters: [datadog/connector, datadog]
     logs:
       receivers: [filelog]
       processors: [batch]
@@ -246,13 +246,13 @@ service:
       level: info
   pipelines:
     metrics:
-      receivers: [otlp]
+      receivers: [datadog/connector, otlp]
       processors: [batch, attributes]
       exporters: [datadog]
     traces:
       receivers: [otlp]
       processors: [batch, attributes]
-      exporters: [datadog]
+      exporters: [datadog/connector, datadog]
     logs:
       receivers: [filelog]
       processors: [batch, attributes]
@@ -305,8 +305,14 @@ dependencies {
 	implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
 	implementation("io.opentelemetry:opentelemetry-sdk-metrics:1.35.0")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0:2.1.0-alpha")
-
 }
+
+dependencyManagement {
+    imports {
+        mavenBom("io.opentelemetry:opentelemetry-bom:1.35.0")
+    }
+}
+
 ```
 
 ### 2. Configure Logback

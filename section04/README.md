@@ -90,37 +90,6 @@ We need to edit the `TemperatureController.java` file and adapt the line where w
 
 ## Setting semantic attributes in spans
 
-Let's connect to the application container, ensure you're in the correct working directory.
-
-```bash
-[root@pt-instance-1:~/oteljavalab]$ docker exec -it springotel bash
-[root@pt-instance-1:~/oteljavalab]$ 
-```
-
-**Navigate to the project directory**
-
-First, change into the directory containing your Spring Boot project:
-
-```bash
-[root@pt-instance-1:~/oteljavalab]$ cd section04/activity
-[root@pt-instance-1:~/oteljavalab/section04/activity]$
-```
-
-**Examine the project's java source files**
-
-Review the existing Java source files in your project:
-
-```bash
-[root@pt-instance-1:~/oteljavalab/section04/activity]$ ll src/main/java/com/pej/otel/springotellab/
-total 20
-drwxr-xr-x 2 root root 4096 Mar  6 15:42 ./
-drwxr-xr-x 3 root root 4096 Mar  3 10:09 ../
--rw-r--r-- 1 root root 1617 Mar  3 12:53 TemperatureApplication.java
--rw-r--r-- 1 root root 2151 Mar  3 12:55 TemperatureController.java
--rw-r--r-- 1 root root 1687 Mar  3 13:04 Thermometer.java
-```
-
-**Adding semantic attributes to spans**
 
 Semantic attributes allow you to annotate spans with a standardized set of attributes that provide context about the nature of the operation being traced. For instance, when tracing web requests, you might want to include attributes like HTTP method, URL path, and status code. These attributes make it easier to filter and analyze trace data in observability platforms like Datadog.
 
@@ -161,6 +130,9 @@ This requires importing the following package:
 
 `import io.opentelemetry.semconv.SemanticAttributes;`
 
+> [!NOTE]
+> In the previous section, we mentioned that in order to add and configure the SDK, we needed some dependencies for our project.
+> As an example, the package above is actually provided through the `io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha` dependency. 
 
 **Key points**
 

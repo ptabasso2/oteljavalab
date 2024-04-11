@@ -85,10 +85,23 @@ to
     }
 ```
 
-This would require adding the following package `AutoConfiguredOpenTelemetrySdk` by adding this to thhe import section:
+This would require adding the following package `AutoConfiguredOpenTelemetrySdk` by adding this to the import section:
 `import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;`
 
+In order to do so, we need to add the `io.opentelemetry:opentelemetry-sdk-extension-autoconfigure` dependency to our dependency block in the `build.gradle.kts` file.
 
+
+```kotlin
+	dependencies {
+	    implementation("org.springframework.boot:spring-boot-starter-web")
+	    implementation("io.opentelemetry:opentelemetry-api")
+	    implementation("io.opentelemetry:opentelemetry-sdk")
+	    implementation("io.opentelemetry:opentelemetry-exporter-logging")
+	    implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
+	    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
+	    implementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure"); // Here
+    }
+```
 
 Previously we had to add much more details in that block by specifying `Resource`, `SpanExporter`, `BatchSpanProcessor`, and `TracerProvider`. You can observe that it is now a lot simpler.
 
@@ -123,6 +136,15 @@ Both use cases show different approaches to configuring and initializing the Ope
 We will also take advantage of the AutoConfigureSDK capabilities that allows for example to use env variables or system properies to specify certain settings:
 
 
+<pre style="font-size: 12px">
+[root@pt-instance-1:~/oteljavalab/section05/activity]$ gradle build
+
+BUILD SUCCESSFUL in 4s
+4 actionable tasks: 4 executed
+</pre>
+
+
+
 ```bash
 [root@pt-instance-1:~/oteljavalab/section05/activity]$ OTEL_SERVICE_NAME=springotel OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp java -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
@@ -132,14 +154,6 @@ For a more complete list of parameters, you might want to consult them here:
 
 [AutoConfigureSDK settings](https://github.com/open-telemetry/opentelemetry-java/tree/main/sdk-extensions/autoconfigure)
 
-
-
-<pre style="font-size: 12px">
-[root@pt-instance-1:~/oteljavalab/section05/activity]$ gradle build
-
-BUILD SUCCESSFUL in 4s
-4 actionable tasks: 4 executed
-</pre>
 
 ### Using the logging exporter
 

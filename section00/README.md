@@ -62,7 +62,7 @@ For the detailed list of sites:
 [Site list](https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site)
 
 
-```ìni
+```yaml
 receivers:
   otlp:
     protocols:
@@ -84,14 +84,37 @@ service:
       level: info
   pipelines:
     metrics:
-      receivers: [otlp]
+      receivers: [datadog/connector, otlp]
       processors: [batch]
       exporters: [datadog]
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [datadog]
+      exporters: [datadog/connector, datadog]
 ```
+
+### Description:
+
+1. **Receivers**: These are components responsible for receiving telemetry data. In this configuration, there are two types of receivers defined:
+   - **OTLP (OpenTelemetry Protocol)**: This receiver is configured to use two protocols: HTTP and gRPC.
+   
+2. **Processors**: Processors are responsible for manipulating or transforming the incoming data. In this configuration, there's one processor defined:
+   - **Batch**: This processor batches incoming telemetry data with a timeout of 10 seconds.
+
+3. **Connectors**: Connectors bridge the service with external systems or services. In this configuration, there's one connector defined:
+   - **Datadog Connector**: The Datadog Connector is responsible for computing stats and APM metrics tied to the traces it receives and then exports them. These then go through the metrics pipeline which has the Datadog connector as a receiver. The Datadog exporter then translates them into stats payload that gets sent to the platform. 
+
+4. **Exporters**: Exporters are responsible for sending telemetry data to external systems or services. In this configuration, there's one exporter defined:
+   - **Datadog Exporter**: This exporter is configured to send telemetry data to Datadog. It requires API credentials, which are specified using environment variables (${DD_SITE} and ${DD_API_KEY}).
+
+5. **Service**: This section specifies configurations related to the telemetry service itself:
+   - **Telemetry**: Defines telemetry-related configurations.
+     - **Logs**: Configures log-related settings, setting the log level to "info".
+   - **Pipelines**: Defines different pipelines for processing telemetry data.
+     - **Metrics**: Defines a pipeline for handling metrics data. It specifies which receivers, processors, and exporters to use.
+     - **Traces**: Defines a pipeline for handling trace data. It specifies which receivers, processors, and exporters to use.
+
+
 
 
 You would only need to run the following command that starts two containers one running the collector, the other one running the application container. 
@@ -167,7 +190,7 @@ Create a configuration file.
 
 Add your configuration as follows:
 
-```ìni
+```yaml
 receivers:
   otlp:
     protocols:
@@ -189,13 +212,13 @@ service:
       level: info
   pipelines:
     metrics:
-      receivers: [otlp]
+      receivers: [datadog/connector, otlp]
       processors: [batch]
       exporters: [datadog]
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [datadog]
+      exporters: [datadog/connector, datadog]
 ```
 
 **Note**: By default the datadog site will be set to datadoghq.com. If you wish to target any other backend (ex for EU or US3, US4 etc...), you will want to set the site to the corresponding value. Ex for Europe, `site: datadoghq.eu` 
