@@ -279,7 +279,7 @@ java -javaagent:/path/to/opentelemetry-javaagent.jar -jar build/libs/springotel-
 
 - `java`: This is the command to run a java application. It invokes the JVM and starts the application.
 
-- `-javaagent:opentelemetry-javaagent.jar`: This option specifies that the JVM should load the OpenTelemetry java agent at startup. The java agent is responsible for automatically instrumenting the application to collect telemetry data such as metrics, logs and traces. The agent does this by modifying bytecode at runtime to insert instrumentation code. `/path/to/opentelemetry-javaagent.jar` is the absolute path to the OpenTelemetry java agent JAR file. This path might need to be adjusted based on the actual location of the file.
+- `-javaagent:/path/to/opentelemetry-javaagent.jar`: This option specifies that the JVM should load the OpenTelemetry java agent at startup. The java agent is responsible for automatically instrumenting the application to collect telemetry data such as metrics, logs and traces. The agent does this by modifying bytecode at runtime to insert instrumentation code. `/path/to/opentelemetry-javaagent.jar` is the absolute path to the OpenTelemetry java agent JAR file. This path might need to be adjusted based on the actual location of the file.
 
 - `-jar build/libs/springotel-0.0.1-SNAPSHOT.jar`: This part of the command tells the JVM to run the application packaged as a JAR file. The `-jar` option is followed by the path to the JAR file, which in this case is `build/libs/springotel-0.0.1-SNAPSHOT.jar`. This file is our Spring Boot application (as indicated by the naming convention), and the version of the application is `0.0.1-SNAPSHOT`, a common convention for indicating a development version in Maven and Gradle projects.
 
@@ -325,7 +325,7 @@ To specify a custom service name for the application when using the Otel java ag
 You can pass the `otel.service.name` as a system property directly in the command line that runs your application. This is done using the `-D` flag followed by the property name and value. Here's how you can modify the previous command to include a custom service name:
 
 ```bash
-java -javaagent:opentelemetry-javaagent.jar -Dotel.service.name=springotel -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
+java -javaagent:/path/to/opentelemetry-javaagent.jar -Dotel.service.name=springotel -jar build/libs/springotel-0.0.1-SNAPSHOT.jar
 ```
 
 In this command, `-Dotel.service.name=springotel` sets the service name to "springotel".
