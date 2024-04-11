@@ -27,7 +27,7 @@ public class TemperatureController {
 
     @Autowired
     TemperatureController(OpenTelemetry openTelemetry) {
-        tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
+        this.tracer = openTelemetry.getTracer(TemperatureController.class.getName(), "0.1.0");
     }
 
     @GetMapping("/simulateTemperature")

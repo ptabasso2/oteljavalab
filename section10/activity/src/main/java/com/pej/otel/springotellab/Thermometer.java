@@ -27,8 +27,8 @@ public class Thermometer {
 
     @Autowired
     Thermometer(OpenTelemetry openTelemetry) {
-        tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
-        meter = openTelemetry.getMeter("TemperatureMeter");
+        this.tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
+        this.meter = openTelemetry.getMeter("TemperatureMeter");
         this.temperatureMeasurementsCounter = meter.counterBuilder("temperature_measurements")
                 .setDescription("Counts the number of temperature measurements made")
                 .setUnit("1")

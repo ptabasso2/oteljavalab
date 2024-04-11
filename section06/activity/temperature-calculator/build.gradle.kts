@@ -4,14 +4,6 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.4"
 }
 
-configurations.all {
-	resolutionStrategy.eachDependency {
-		if (requested.group == "io.opentelemetry" && requested.name !in listOf("opentelemetry-semconv","opentelemetry-api-events", "opentelemetry-extension-incubator")) {
-			useVersion("1.35.0")
-
-		}
-	}
-}
 
 group = "com.pej.otel"
 version = "0.0.1-SNAPSHOT"
@@ -31,6 +23,12 @@ dependencies {
 	implementation("io.opentelemetry:opentelemetry-exporter-logging")
 	implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
 	implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom("io.opentelemetry:opentelemetry-bom:1.35.0")
+	}
 }
 
 tasks.named("jar") {
