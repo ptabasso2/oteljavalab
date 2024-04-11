@@ -56,11 +56,15 @@ The current implementation we have is as follows:
     @GetMapping("/simulateTemperature")
     public List<Integer> index(@RequestParam("location") Optional<String> location, @RequestParam("measurements") Optional<Integer> measurements) {
 
-        Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
+        Span span = tracer.spanBuilder("temperatureSimulation")
+                          .startSpan();
         try (Scope scope = span.makeCurrent()) {
 
             if (measurements.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Missing measurements parameter",
+                    null);
             }
 
             thermometer.setTemp(20, 35);
@@ -87,15 +91,25 @@ In order to make our code asynchronous we introduce an `ExecutorService` to show
 **_After_**
 
 ```java
+import io.opentelemetry.context.Context;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
     @GetMapping("/simulateTemperature")
     public List<Integer> index(@RequestParam("location") Optional<String> location,
                                @RequestParam("measurements") Optional<Integer> measurements) throws ExecutionException, InterruptedException {
 
-        Span span = tracer.spanBuilder("temperatureSimulation").startSpan();
+        Span span = tracer.spanBuilder("temperatureSimulation")
+                          .startSpan();
         try (Scope scope = span.makeCurrent()) {
 
             if (measurements.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing measurements parameter", null);
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Missing measurements parameter",
+                    null);
             }
 
             Context currentContext = Context.current();
@@ -125,17 +139,6 @@ In order to make our code asynchronous we introduce an `ExecutorService` to show
 ```
 
 
-With the following imports (In addition to the existing ones):
-
-```java
-import io.opentelemetry.context.Context;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-```
-
-
 The code change involves the use of Java's `ExecutorService` and the `Future` API, which are key components for executing tasks asynchronously in Java. Here's a breakdown of the change:
 
 1. **ExecutorService submission**:
@@ -145,6 +148,7 @@ The code change involves the use of Java's `ExecutorService` and the `Future` AP
 2. **Context propagation**:
     - `Context.current()` is called outside the lambda expression to capture the current tracing context before submitting the task. This ensures that the trace context is available and can be propagated into the asynchronous task, allowing for consistent tracing across thread boundaries.
     - Inside the callable task, `try (Scope ignored = currentContext.makeCurrent())` makes the captured context active in the thread that executes the task, ensuring that any spans created within this context are correctly associated with the original trace.
+    - The `try-with-resource` pattern closes the `Scope ignored` by the end of the `try` block to disable the captured context after the task complete. This prevent the context to leak if the worker thread is part of a thread pool and reused later for some other tasks.
 
 3. **Asynchronous execution**:
     - The temperature simulation logic within the callable (`thermometer.simulateTemperature(measurements.get())`) is now executed in a separate thread managed by the `ExecutorService`. This allows the main thread to continue without waiting for the simulation to complete, thereby achieving asynchrony.
@@ -218,9 +222,11 @@ By
             Context currentContext = Context.current();
             Callable<List<Integer>> task = () -> {
                 try (Scope ignored = currentContext.makeCurrent()) {
-                    Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation").startSpan();
+                    Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation")
+                                         .startSpan();
                     try {
-                        // Perform the simulated temperature measurement within the new span's context
+                        // Perform the simulated temperature measurement
+                        // within the new span's context
                         thermometer.setTemp(20, 35);
                         // Return the result for future use
                         return thermometer.simulateTemperature(measurements.get());
@@ -246,7 +252,8 @@ One could think of a mistake by seeing these two lines inverted:
 
 ```java
                 try (Scope ignored = currentContext.makeCurrent()) {
-                    Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation").startSpan();
+                    Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation")
+                                         .startSpan();
                 ...
                 }
 ```
@@ -258,7 +265,8 @@ Now let's try to correct this with:
     
     Context currentContext = Context.current();
     Callable<List<Integer>> task = () -> {
-    Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation").startSpan();
+    Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation")
+                         .startSpan();
     try (Scope newScope = newSpan.makeCurrent()) {
         // Now newSpan is the current span, and its Context is active.
         // Any spans created in this block will have newSpan as their parent.
@@ -293,10 +301,12 @@ Callable<List<Integer>> task = () -> {
     // Activating the context captured outside the Callable to maintain the trace context
     try (Scope ignored = currentContext.makeCurrent()) {
         // Within this scope, 'parentSpan' is the active span
-        Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation").startSpan();
+        Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation")
+                             .startSpan();
         try (Scope newScope = newSpan.makeCurrent()) {
             // Now 'newSpan' is the current span, and its context is active.
-            // Any spans created in this block will have 'newSpan' as their parent, which in turn has 'parentSpan' as its parent.
+            // Any spans created in this block will have 'newSpan' as their parent,
+            // which in turn has 'parentSpan' as its parent.
             thermometer.setTemp(20, 35);
             return thermometer.simulateTemperature(measurements.get());
         } finally {
@@ -310,11 +320,13 @@ The general idea is to follow this type of pattern to ensure that we get the rig
 
 
 ```java
-Span parentSpan = tracer.spanBuilder("parent").startSpan();
+Span parentSpan = tracer.spanBuilder("parent")
+                        .startSpan();
 try (Scope parentScope = parentSpan.makeCurrent()) {
     // Any activity within the parent span's context
     
-    Span childSpan = tracer.spanBuilder("child").startSpan();
+    Span childSpan = tracer.spanBuilder("child")
+                           .startSpan();
     try (Scope childScope = childSpan.makeCurrent()) {
         // Child span is now current
         // Any activity within the child span's context
@@ -322,7 +334,8 @@ try (Scope parentScope = parentSpan.makeCurrent()) {
         childSpan.end(); // Ending the child span
     }
     
-    // At this point, even though the child span has ended, we're still within the parentSpan's scope due to the try-with-resources block.
+    // At this point, even though the child span has ended,
+    // we're still within the parentSpan's scope due to the try-with-resources block.
     // The parent span does not automatically become "current" again after the child span ends;
     // it remains current because its scope has not been exited.
 } finally {
@@ -338,12 +351,11 @@ Now here is the result we get:
 
 This time the spans are reordered and get displayed as expected.
 
-**Note:** 
-
-Important to note that exiting a scope doesn't automatically revert and activate the preceding context per se. 
-When a child span has ended, we're still within the parentSpan's scope due to the try-with-resources block.
-The parent span does not automatically become "current" again after the child span ends;
-it remains current because its scope has not been exited.
+> [!NOTE]
+> Important to note that exiting a scope doesn't automatically revert and activate the preceding context per se.  
+> When a child span has ended, we're still within the parentSpan's scope due to the try-with-resources block.
+> The parent span does not automatically become "current" again after the child span ends;
+> it remains current because its scope has not been exited.
 
 
 ### Simplifying our code ###
@@ -355,10 +367,12 @@ The Context interface provides a `wrap()` method that simplifies a bit the imple
 ```java
 Context currentContext = Context.current();
 Callable<List<Integer>> task = currentContext.wrap(() -> {
-    Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation").startSpan();
+    Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation")
+                         .startSpan();
     try (Scope newScope = newSpan.makeCurrent()) {
         // Now 'newSpan' is the current span, and its context is active.
-        // Any spans created in this block will have 'newSpan' as their parent, which in turn has 'parentSpan' as its parent.
+        // Any spans created in this block will have 'newSpan' as their parent,
+        // which in turn has 'parentSpan' as its parent.
         thermometer.setTemp(20, 35);
         return thermometer.simulateTemperature(measurements.get());
     } finally {
@@ -370,14 +384,15 @@ Callable<List<Integer>> task = currentContext.wrap(() -> {
 
 **Method 2:** Using the `Context.taskWrapping()` method
 
-This approach is even more concise and peferred and consists of decorating an `ExecutorService` with current context propagation.
+This approach is even more concise and preferred, and consists of decorating an `ExecutorService` with current context propagation.
 
 
 ```java
             ExecutorService wrappedExecutorService = Context.taskWrapping(executorService);
 
             Callable<List<Integer>> task = () -> {
-                Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation").startSpan();
+                Span newSpan = tracer.spanBuilder("asyncTemperatureSimulation")
+                                     .startSpan();
                 try (Scope newScope = newSpan.makeCurrent()) {
                     thermometer.setTemp(20, 35);
                     return thermometer.simulateTemperature(measurements.get());
