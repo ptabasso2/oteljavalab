@@ -202,7 +202,7 @@ import io.opentelemetry.context.Scope;
 private final Tracer tracer;
 
 @Autowired
-Thermometer(OpenTelemetry openTelemetry) { // QUESTION: We made a Tracer bean, not an OTel one. What about using it?
+Thermometer(OpenTelemetry openTelemetry) {
    tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
 }
 
