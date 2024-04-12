@@ -101,6 +101,12 @@ In order to do so, we need to add the `io.opentelemetry:opentelemetry-sdk-extens
 	    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
 	    implementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure"); // Here
     }
+    
+  dependencyManagement {
+    imports {
+        mavenBom("io.opentelemetry:opentelemetry-bom:1.35.0")
+    }
+}
 ```
 
 Previously we had to add much more details in that block by specifying `Resource`, `SpanExporter`, `BatchSpanProcessor`, and `TracerProvider`. You can observe that it is now a lot simpler.
