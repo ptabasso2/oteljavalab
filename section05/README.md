@@ -92,17 +92,17 @@ In order to do so, we need to add the `io.opentelemetry:opentelemetry-sdk-extens
 
 
 ```kotlin
-	dependencies {
-	    implementation("org.springframework.boot:spring-boot-starter-web")
-	    implementation("io.opentelemetry:opentelemetry-api")
-	    implementation("io.opentelemetry:opentelemetry-sdk")
-	    implementation("io.opentelemetry:opentelemetry-exporter-logging")
-	    implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
-	    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
-	    implementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure"); // Here
-    }
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("io.opentelemetry:opentelemetry-api")
+    implementation("io.opentelemetry:opentelemetry-sdk")
+    implementation("io.opentelemetry:opentelemetry-exporter-logging")
+    implementation("io.opentelemetry.semconv:opentelemetry-semconv:1.23.1-alpha")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.35.0")
+    implementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure"); // Here
+}
     
-  dependencyManagement {
+dependencyManagement {
     imports {
         mavenBom("io.opentelemetry:opentelemetry-bom:1.35.0")
     }

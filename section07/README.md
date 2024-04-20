@@ -126,6 +126,8 @@ Let's add now the following block in the `TemperatureApplication` class *after* 
 ```java    
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
+import org.springframework.context.annotation.Bean;
+
 
 @Bean
 public Tracer tracer() {
@@ -133,7 +135,7 @@ public Tracer tracer() {
 }
 ```
 
-Now in `Thermometer` class we will need to gain access to the `Tracer` object and create a tracer instance.
+Now in `TemperatureController` class we will need to gain access to the `Tracer` object and create a tracer instance.
 For this we need to add the following lines immediately after the Logger instance declaration:
 
 ```java
@@ -184,12 +186,6 @@ private int measureOnce() {
     return ThreadLocalRandom.current().nextInt(this.minTemp, this.maxTemp + 1);
 }
 
-
-public void setTemp(int minTemp, int maxTemp){
-        this.minTemp = minTemp;
-        this.maxTemp = maxTemp;
-}
-
 ```
 
 
@@ -198,12 +194,16 @@ public void setTemp(int minTemp, int maxTemp){
 ```java
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.context.Scope;
+import io.opentelemetry.api.trace.Tracer;
+import org.springframework.beans.factory.annotation.Autowired;
+
+
 
 private final Tracer tracer;
 
 @Autowired
-Thermometer(OpenTelemetry openTelemetry) {
-   this.tracer = openTelemetry.getTracer(Thermometer.class.getName(), "0.1.0");
+Thermometer(Tracer tracer) {
+   this.tracer = tracer;
 }
 
 public List<Integer> simulateTemperature(int measurements) {
@@ -230,6 +230,7 @@ private int measureOnce() {
     	childSpan.end();
     }
 }
+
 ```
 
 ## Build, run and test the application
