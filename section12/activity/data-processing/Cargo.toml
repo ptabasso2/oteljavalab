@@ -1,0 +1,15 @@
+[package]
+name = "dataprocessing"
+version = "1.0.0"
+edition = "2021"
+
+[[bin]]
+name = "dataprocessing"
+path = "src/main.rs"
+
+[dependencies]
+actix-web = "4"
+awc = { version = "3.0", default-features = false, features = ["compress-zstd"] }
+tokio = { version = "1.37", features = ["macros", "rt-multi-thread"] }
+log = "0.4"
+simplelog = "0.12.2"

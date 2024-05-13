@@ -1,0 +1,42 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  debug:
+  datadog:
+    traces:
+      span_name_as_resource_name: true
+      trace_buffer: 500
+    hostname: "otelcol-docker"
+    api:
+      site: ${DD_SITE_PARAMETER}
+      key: ${DD_API_KEY}
+
+processors:
+  batch:
+  resource:
+    attributes:
+      - key: deployment.environment   # Set env tag for Datadog
+        value: "otel-workshop"
+        action: upsert
+
+connectors:
+  datadog/connector:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [debug, datadog, datadog/connector]
+    metrics:
+      receivers: [otlp, datadog/connector]
+      processors: [batch, resource]
+      exporters: [debug, datadog]
+    logs:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [debug, datadog]
